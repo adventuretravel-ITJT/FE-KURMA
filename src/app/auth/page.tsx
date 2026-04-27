@@ -427,7 +427,7 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
             <div className="auth-divider"><span>or with email</span></div>
 
             <form onSubmit={handleSubmit} noValidate>
-                <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 8, marginBottom: 0 }}>
+                <div className="grid grid-cols-2 sm:grid-cols-2" style={{ gap: 8, marginBottom: 0 }}>
                     <FormInput label="First name" id="reg-fname" placeholder="Ada"
                         value={firstName} onChange={(v) => { setFirstName(v); setErrors((p) => ({ ...p, name: undefined })) }}
                         error={errors.name} autoComplete="given-name" />
