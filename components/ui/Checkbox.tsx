@@ -1,4 +1,6 @@
-import react from 'react'
+'use client'
+
+import React from 'react'
 
 interface CheckboxProps {
     id?: string
@@ -10,29 +12,29 @@ interface CheckboxProps {
 
 export default function Checkbox({ id, label, checked, onChange, error }: CheckboxProps) {
     return (
-        <div className="flex flex-col gap-1">
-            <div className="flex items-start gap-2.5">
+        <div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                 <input
                     type="checkbox"
                     id={id}
                     checked={checked}
                     onChange={(e) => onChange?.(e.target.checked)}
-                    className="
-                mt-0.5 w-4 h-4 shrink-0 rounded
-                border border-[var(--line-strong)]
-                accent-[#2c54f4e]
-                cursor-pointer
-                "
+                    style={{
+                        width: 16, height: 16, flexShrink: 0, marginTop: 2,
+                        accentColor: 'var(--accent)', cursor: 'pointer',
+                    }}
                 />
-                <label
-                    htmlFor={id}
-                    className="text-sm text-[var(--ink-50)] cursor-pointer leading-snug"
-                >
+                <label htmlFor={id} style={{
+                    fontSize: 11.5, color: 'var(--ink-50)',
+                    fontWeight: 400, cursor: 'pointer', lineHeight: 1.65,
+                }}>
                     {label}
                 </label>
             </div>
             {error && (
-                <p className="text-xs text-[var(--error)] ml-6">{error}</p>
+                <p style={{ fontSize: 11.5, color: 'var(--error)', marginTop: 4, fontWeight: 500 }}>
+                    {error}
+                </p>
             )}
         </div>
     )

@@ -3,49 +3,43 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 
-// ─── Types ────────────────────────────────────────────
 type Panel = 'login' | 'register'
 
-// ─── Helpers ──────────────────────────────────────────
 function isValidEmail(v: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 }
 
 function getPasswordStrength(password: string) {
-    if (!password) return { score: 0, label: '', color: '' }
+    if (!password) return { score: 0, label: '', barClass: '', color: '' }
     let score = 0
     if (password.length >= 8) score++
     if (/[A-Z]/.test(password)) score++
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
     const levels = [
-        { label: 'Too short', color: '#E74C3C' },
-        { label: 'Weak', color: '#E74C3C' },
-        { label: 'Fair', color: '#E67E22' },
-        { label: 'Good', color: '#B8956A' },
-        { label: 'Strong', color: '#2C5F4E' },
+        { label: 'Too short', barClass: 'weak',   color: '#E74C3C' },
+        { label: 'Weak',      barClass: 'weak',   color: '#E74C3C' },
+        { label: 'Fair',      barClass: 'fair',   color: '#E67E22' },
+        { label: 'Good',      barClass: 'good',   color: '#B8956A' },
+        { label: 'Strong',    barClass: 'strong', color: 'var(--accent)' },
     ]
     return { score, ...levels[score] }
 }
 
-// ─── Password Strength Bar ────────────────────────────
 function PasswordStrengthBar({ password }: { password: string }) {
-    const { score, label, color } = useMemo(() => getPasswordStrength(password), [password])
-    if (!password) return null
+    const { score, label, barClass, color } = useMemo(() => getPasswordStrength(password), [password])
     return (
-        <div className="mt-1.5 mb-0.5">
-            <div className="flex gap-1 mb-1">
+        <div className={`pw-strength ${password ? 'show' : ''}`}>
+            <div className="pw-bars">
                 {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-[3px] flex-1 rounded-full transition-all duration-300"
-                        style={{ backgroundColor: i <= score ? color : 'rgba(17,17,16,0.1)' }} />
+                    <div key={i} className={`pw-bar ${i <= score ? barClass : ''}`} />
                 ))}
             </div>
-            <span className="text-[10.5px] font-medium" style={{ color }}>{label}</span>
+            <span className="pw-label" style={{ color: color || 'var(--ink-25)' }}>{label || 'Enter a password'}</span>
         </div>
     )
 }
 
-// ─── Form Input ───────────────────────────────────────
 function FormInput({
     label, id, type = 'text', placeholder, value, onChange, error, autoComplete, children,
 }: {
@@ -58,53 +52,58 @@ function FormInput({
     const inputType = isPassword ? (showPw ? 'text' : 'password') : type
 
     return (
-        <div className="flex flex-col gap-0.5">
+        <div className="form-group" style={{ marginBottom: 10 }}>
             {label && (
-                <label htmlFor={id} className="block text-[11px] font-semibold tracking-[.01em]"
-                    style={{ color: 'rgba(17,17,16,.8)' }}>
+                <label htmlFor={id} style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--ink-80)', marginBottom: 3, letterSpacing: '.01em' }}>
                     {label}
                 </label>
             )}
-            <div className="relative">
+            <div style={{ position: 'relative' }}>
                 <input
                     id={id} type={inputType} placeholder={placeholder}
                     value={value} onChange={(e) => onChange(e.target.value)}
                     autoComplete={autoComplete}
-                    className="w-full text-[13px] rounded-[10px] outline-none transition-all duration-[250ms]"
+                    className={error ? 'form-input error' : 'form-input'}
                     style={{
+                        width: '100%',
                         padding: isPassword ? '8px 48px 8px 12px' : '8px 12px',
-                        border: `1px solid ${error ? '#C0392B' : 'rgba(17,17,16,.12)'}`,
-                        background: error ? 'rgba(192,57,43,.06)' : '#fff',
-                        color: '#111110',
-                        boxShadow: error ? '0 0 0 3px rgba(192,57,43,.08)' : 'none',
+                        border: '1px solid var(--line-strong)',
+                        borderRadius: 10,
+                        background: 'var(--bg-card)',
+                        color: 'var(--ink)',
+                        fontSize: 13,
                         fontFamily: 'Plus Jakarta Sans, sans-serif',
+                        fontWeight: 400,
+                        outline: 'none',
+                        transition: 'border-color .25s, box-shadow .25s, background .25s',
+                        WebkitAppearance: 'none',
                     }}
                     onFocus={(e) => {
                         if (!error) {
-                            e.target.style.borderColor = '#2C5F4E'
-                            e.target.style.boxShadow = '0 0 0 3px rgba(44,95,78,.1)'
+                            e.target.style.borderColor = 'var(--accent)'
+                            e.target.style.boxShadow = '0 0 0 3px var(--accent-10)'
                         }
                     }}
                     onBlur={(e) => {
                         if (!error) {
-                            e.target.style.borderColor = 'rgba(17,17,16,.12)'
+                            e.target.style.borderColor = 'var(--line-strong)'
                             e.target.style.boxShadow = 'none'
                         }
                     }}
                 />
                 {isPassword && (
                     <button type="button" onClick={() => setShowPw(!showPw)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 transition-colors duration-200"
-                        style={{ color: 'rgba(17,17,16,.25)', background: 'none', border: 'none', cursor: 'pointer' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(17,17,16,.5)')}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(17,17,16,.25)')}
-                        aria-label="Toggle password">
+                        className="input-toggle"
+                        style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-25)', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color .2s' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-25)')}
+                        aria-label={showPw ? 'Hide password' : 'Show password'}>
                         {showPw ? (
-                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4 h-4" strokeLinecap="round">
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 16, height: 16 }} strokeLinecap="round">
                                 <path d="M2 2l12 12M6.5 6.7A3 3 0 0 0 9.3 9.5M4.6 4.7C2.8 5.9 1 8 1 8s2.5 5 7 5a7.1 7.1 0 0 0 3.4-.9M9 3.1A6.9 6.9 0 0 1 15 8s-.7 1.5-2 2.8" />
                             </svg>
                         ) : (
-                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4 h-4">
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 16, height: 16 }}>
                                 <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" />
                                 <circle cx="8" cy="8" r="2.2" />
                             </svg>
@@ -113,140 +112,133 @@ function FormInput({
                 )}
             </div>
             {children}
-            {error && (
-                <div className="flex items-center gap-1 mt-1">
-                    <svg viewBox="0 0 12 12" className="w-3 h-3 shrink-0" fill="#C0392B">
-                        <circle cx="6" cy="6" r="6" opacity=".15" />
-                        <path d="M6 3.5v3M6 8.5v.5" stroke="#C0392B" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                    </svg>
-                    <span className="text-[11.5px] font-medium" style={{ color: '#C0392B' }}>{error}</span>
-                </div>
+            <div className={`form-error ${error ? 'show' : ''}`}>
+                <svg viewBox="0 0 12 12" style={{ width: 12, height: 12, flexShrink: 0 }}>
+                    <circle cx="6" cy="6" r="6" fill="var(--error)" opacity=".15" />
+                    <path d="M6 3.5v3M6 8.5v.5" stroke="var(--error)" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                </svg>
+                {error}
+            </div>
+        </div>
+    )
+}
+
+/* ── Google SVG ──────────────────────────────────── */
+function GoogleIcon() {
+    return (
+        <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, flexShrink: 0 }} xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+        </svg>
+    )
+}
+
+/* ── Apple SVG ───────────────────────────────────── */
+function AppleIcon() {
+    return (
+        <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 16, height: 16, flexShrink: 0 }}>
+            <path d="M17.06 10.74c-.02-2.32 1.88-3.43 1.97-3.48-1.08-1.57-2.75-1.79-3.34-1.81-1.43-.15-2.78.84-3.51.84s-1.84-.82-3.04-.79c-1.57.02-3.02.91-3.83 2.32-1.63 2.84-.42 7.04 1.16 9.31.77 1.11 1.69 2.36 2.89 2.31 1.15-.05 1.59-.75 2.99-.75s1.79.75 3.01.73c1.24-.02 2.03-1.12 2.8-2.24.89-1.3 1.25-2.55 1.27-2.62-.03-.01-2.44-.94-2.47-3.75zM15.42 5.37c.64-.78 1.07-1.86.96-2.94-.93.04-2.05.62-2.72 1.4-.6.69-1.12 1.79-.98 2.85 1.04.08 2.1-.53 2.74-1.31z" />
+        </svg>
+    )
+}
+
+/* ── Social buttons ──────────────────────────────── */
+function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
+    const btnStyle: React.CSSProperties = {
+        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        padding: '12px 16px', border: '1px solid var(--line-strong)', borderRadius: 10,
+        background: 'var(--bg-card)', fontSize: 12.5, fontWeight: 600, color: 'var(--ink)',
+        cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', textDecoration: 'none',
+    }
+    return (
+        <div className="flex flex-col sm:flex-row" style={{ gap: 10, marginBottom: 4 }}>
+            <button type="button" className="btn-social" style={btnStyle}>
+                <GoogleIcon />
+                {variant === 'register' ? 'Sign up with Google' : 'Google'}
+            </button>
+            {variant === 'login' && (
+                <button type="button" className="btn-social" style={btnStyle}>
+                    <AppleIcon />
+                    Apple
+                </button>
             )}
         </div>
     )
 }
 
-// ─── Auth Button ──────────────────────────────────────
-function AuthButton({ loading, children }: { loading: boolean; children: React.ReactNode }) {
-    return (
-        <button type="submit" disabled={loading}
-            className="w-full flex items-center justify-center gap-2 font-semibold transition-all duration-300"
-            style={{
-                padding: '15px 24px',
-                background: '#111110',
-                color: '#FBFAF8',
-                border: 'none',
-                borderRadius: 100,
-                fontSize: 14,
-                letterSpacing: '.01em',
-                cursor: loading ? 'wait' : 'pointer',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                opacity: loading ? .7 : 1,
-            }}
-            onMouseEnter={(e) => {
-                if (!loading) {
-                    e.currentTarget.style.background = '#2C5F4E'
-                    e.currentTarget.style.transform = 'translateY(-1px)'
-                    e.currentTarget.style.boxShadow = '0 8px 28px rgba(44,95,78,.15)'
-                }
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#111110'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'none'
-            }}>
-            {loading
-                ? <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white" style={{ animation: 'spin .7s linear infinite' }} />
-                : children}
-        </button>
-    )
-}
-
-// ─── Left Panel ───────────────────────────────────────
+/* ── Left panel ──────────────────────────────────── */
 function AuthLeft() {
     return (
-        <div className="relative hidden lg:flex flex-col justify-between sticky top-0 h-screen overflow-hidden"
-            style={{ background: '#111110', padding: '48px 56px' }}>
+        <div className="auth-left hidden lg:flex flex-col justify-between" style={{
+            position: 'sticky', top: 0, height: '100vh', overflow: 'hidden',
+            background: 'var(--ink)', padding: '48px 56px',
+        }}>
 
             {/* Noise grain */}
-            <div className="absolute inset-0 pointer-events-none z-0" style={{
-                opacity: .4,
+            <div style={{
+                position: 'absolute', inset: 0, pointerEvents: 'none',
                 backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E")`,
+                opacity: .4, zIndex: 0,
             }} />
-
             {/* Green orb */}
-            <div className="absolute pointer-events-none z-0 rounded-full" style={{
-                width: 640, height: 640,
+            <div style={{
+                position: 'absolute', width: 640, height: 640, borderRadius: '50%',
                 background: 'radial-gradient(circle, rgba(44,95,78,.35) 0%, transparent 70%)',
-                bottom: -180, right: -120,
+                bottom: -180, right: -120, pointerEvents: 'none', zIndex: 0,
             }} />
 
-            <div className="relative z-10 flex flex-col h-full">
+            <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
 
                 {/* Logo */}
                 <Link href="/" style={{
                     fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500,
                     color: 'rgba(255,255,255,.9)', textDecoration: 'none', letterSpacing: '-.03em',
                 }}>
-                    Kurma<em style={{ fontStyle: 'italic', color: 'rgba(44,150,100,.85)', fontWeight: 300 }}>.Guide</em>
+                    kurma<em style={{ fontStyle: 'italic', color: 'rgba(44,150,100,.85)', fontWeight: 300 }}>.guide</em>
                 </Link>
 
                 {/* Body */}
-                <div className="flex-1 flex flex-col justify-start" style={{ padding: '20px 0 40px', marginTop: 20 }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: '20px 0 40px', marginTop: 20 }}>
 
-                    {/* Live badge */}
-                    <div className="inline-flex items-center gap-2 w-fit mb-8" style={{
-                        padding: '6px 14px 6px 8px',
-                        background: 'rgba(255,255,255,.06)',
-                        border: '1px solid rgba(255,255,255,.1)',
-                        borderRadius: 100,
-                    }}>
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#38795F', animation: 'pulse-dot 2s infinite' }} />
-                        <span style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.4)', letterSpacing: '.05em' }}>
-                            NOW IN BETA
-                        </span>
-                    </div>
+                    {/* <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px 6px 8px', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 100, marginBottom: 32, width: 'fit-content' }}>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent-light)', animation: 'pulse-dot 2s infinite', display: 'inline-block' }} />
+                        <span style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.4)', letterSpacing: '.05em' }}>NOW IN BETA</span>
+                    </div> */}
 
-                    {/* Heading */}
                     <h2 style={{
-                        fontFamily: 'Fraunces, serif',
-                        fontSize: 'clamp(28px, 3vw, 40px)',
-                        fontWeight: 500,
-                        lineHeight: 1.12,
-                        letterSpacing: '-.04em',
-                        color: 'rgba(255,255,255,.9)',
-                        marginBottom: 20,
+                        fontFamily: 'Fraunces, serif', fontSize: 'clamp(28px, 3vw, 40px)',
+                        fontWeight: 500, lineHeight: 1.12, letterSpacing: '-.04em',
+                        color: 'rgba(255,255,255,.9)', marginBottom: 20,
                     }}>
-                        Plan your trip<br />
-                        <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'rgba(44,150,100,.8)' }}>smarter</em>, not harder.
+                        Your next trip,<br />
+                        <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'rgba(44,150,100,.8)' }}>thoughtfully</em><br />
+                        planned.
                     </h2>
 
                     <p style={{ fontSize: 14, color: 'rgba(255,255,255,.35)', lineHeight: 1.75, maxWidth: 380 }}>
-                        Kurma helps you craft personalized itineraries in minutes — so you can spend less time planning and more time exploring.
+                        Join thousands of travellers who plan smarter with Kurma — your personal itinerary companion for every journey.
                     </p>
                 </div>
 
                 {/* Testimonial */}
                 <div style={{
-                    background: 'rgba(255,255,255,.04)',
-                    border: '1px solid rgba(255,255,255,.08)',
-                    borderRadius: 16,
-                    padding: '24px 28px',
-                    marginBottom: 10,
+                    background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)',
+                    borderRadius: 16, padding: '24px 28px', marginBottom: 10,
                     animation: 'fadeUp .9s ease .3s both',
                 }}>
                     <p style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,.6)', lineHeight: 1.65, marginBottom: 16 }}>
-                        <span style={{ display: 'block', fontSize: 22, fontStyle: 'normal', color: '#38795F', lineHeight: 1, marginBottom: 4 }}>&ldquo;</span>
-                        Planned a 10-day Japan trip in under an hour. The suggestions felt like they came from a local.
+                        <span style={{ display: 'block', fontSize: 22, fontStyle: 'normal', color: 'var(--accent-light)', lineHeight: 1, marginBottom: 4 }}>&ldquo;</span>
+                        Kurma changed how I travel. Every detail, beautifully organised in one place.
                     </p>
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0"
-                            style={{ background: 'linear-gradient(135deg, #2C5F4E, rgba(184,149,106,.6))', color: 'white', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent), rgba(184,149,106,.6))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: 'white', fontFamily: 'Plus Jakarta Sans, sans-serif', flexShrink: 0 }}>
                             SA
                         </div>
                         <div>
                             <p style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,.55)' }}>Sarah A.</p>
-                            <p style={{ fontSize: 11, color: 'rgba(255,255,255,.25)' }}>Solo traveler · 12 trips planned</p>
+                            <p style={{ fontSize: 11, color: 'rgba(255,255,255,.25)' }}>Frequent traveller · 12 trips planned</p>
                         </div>
                     </div>
                 </div>
@@ -256,7 +248,7 @@ function AuthLeft() {
     )
 }
 
-// ─── Login Form ───────────────────────────────────────
+/* ── Login form ──────────────────────────────────── */
 function LoginForm({ onSwitch }: { onSwitch: () => void }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -293,52 +285,69 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-[10px]" noValidate>
+        <>
+            <div style={{ marginBottom: 20 }}>
+                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(22px, 2.5vw, 28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 6, color: 'var(--ink)' }}>
+                    Welcome <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>back</em>
+                </h1>
+                <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.6 }}>Sign in to continue planning your journeys.</p>
+            </div>
 
-            <FormInput label="Email" id="login-email" type="email" placeholder="you@example.com"
-                value={email} onChange={(v) => { setEmail(v); setErrors((p) => ({ ...p, email: undefined })) }}
-                error={errors.email} autoComplete="email" />
+            <SocialButtons variant="login" />
+            <div className="auth-divider"><span>or continue with email</span></div>
 
-            <div>
-                <div className="flex items-center justify-between mb-[3px]">
-                    <label htmlFor="login-pw" className="text-[11px] font-semibold" style={{ color: 'rgba(17,17,16,.8)', letterSpacing: '.01em' }}>
-                        Password
-                    </label>
-                    <Link href="/forgot-password" className="text-[12px] font-medium transition-colors duration-250"
-                        style={{ color: 'rgba(17,17,16,.5)', textDecoration: 'none' }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = '#2C5F4E')}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(17,17,16,.5)')}>
-                        Forgot password?
-                    </Link>
+            <form onSubmit={handleSubmit} noValidate>
+                <FormInput label="Email address" id="login-email" type="email" placeholder="you@example.com"
+                    value={email} onChange={(v) => { setEmail(v); setErrors((p) => ({ ...p, email: undefined })) }}
+                    error={errors.email} autoComplete="email" />
+
+                <div className="form-group" style={{ marginBottom: 10 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
+                        <label htmlFor="login-pw" style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-80)', letterSpacing: '.01em' }}>
+                            Password
+                        </label>
+                        <Link href="/forgot-password" style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-50)', textDecoration: 'none', transition: 'color .25s' }}
+                            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent)')}
+                            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
+                            Forgot password?
+                        </Link>
+                    </div>
+                    <FormInput label="" id="login-pw" type="password" placeholder="Enter your password"
+                        value={password} onChange={(v) => { setPassword(v); setErrors((p) => ({ ...p, password: undefined })) }}
+                        error={errors.password} autoComplete="current-password" />
                 </div>
-                <FormInput label="" id="login-pw" type="password" placeholder="••••••••"
-                    value={password} onChange={(v) => { setPassword(v); setErrors((p) => ({ ...p, password: undefined })) }}
-                    error={errors.password} autoComplete="current-password" />
-            </div>
 
-            <div className="mt-2">
-                <AuthButton loading={loading}>
-                    <span>Sign in</span>
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4">
-                        <path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5" />
-                    </svg>
-                </AuthButton>
-            </div>
+                <button type="submit" disabled={loading} className="auth-submit-btn"
+                    style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
+                    onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(44,95,78,.15)' } }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
+                    {loading ? (
+                        <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
+                    ) : (
+                        <>
+                            <span>Sign in</span>
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="auth-submit-arrow" style={{ width: 16, height: 16 }}>
+                                <path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5" />
+                            </svg>
+                        </>
+                    )}
+                </button>
+            </form>
 
-            <p className="text-center mt-6 text-[13px]" style={{ color: 'rgba(17,17,16,.5)' }}>
+            <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--ink-50)' }}>
                 Don&apos;t have an account?{' '}
-                <button type="button" onClick={onSwitch} className="font-semibold"
-                    style={{ color: '#2C5F4E', background: 'none', border: 'none', cursor: 'pointer' }}
+                <button type="button" onClick={onSwitch}
+                    style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', textDecoration: 'none', fontSize: 13 }}
                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
-                    Create account
+                    Create Now
                 </button>
             </p>
-        </form>
+        </>
     )
 }
 
-// ─── Register Form ────────────────────────────────────
+/* ── Register form ───────────────────────────────── */
 function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess: () => void }) {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -383,90 +392,111 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-[10px]" noValidate>
-
-            <div className="grid grid-cols-2 gap-2">
-                <FormInput label="First name" id="reg-fname" placeholder="John"
-                    value={firstName} onChange={(v) => { setFirstName(v); setErrors((p) => ({ ...p, name: undefined })) }}
-                    error={errors.name} autoComplete="given-name" />
-                <FormInput label="Last name" id="reg-lname" placeholder="Doe"
-                    value={lastName} onChange={setLastName} autoComplete="family-name" />
+        <>
+            <div style={{ marginBottom: 20 }}>
+                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(22px, 2.5vw, 28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 6, color: 'var(--ink)' }}>
+                    Start your journey <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>here</em>
+                </h1>
+                <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.6 }}>Create your free account and plan your first trip in minutes.</p>
             </div>
 
-            <FormInput label="Email" id="reg-email" type="email" placeholder="you@example.com"
-                value={email} onChange={(v) => { setEmail(v); setErrors((p) => ({ ...p, email: undefined })) }}
-                error={errors.email} autoComplete="email" />
+            <SocialButtons variant="register" />
+            <div className="auth-divider"><span>or with email</span></div>
 
-            <FormInput label="Password" id="reg-pw" type="password" placeholder="••••••••"
-                value={password} onChange={(v) => { setPassword(v); setErrors((p) => ({ ...p, password: undefined })) }}
-                error={errors.password} autoComplete="new-password">
-                <PasswordStrengthBar password={password} />
-            </FormInput>
-
-            <div className="flex items-start gap-2 mt-1 mb-1">
-                <input type="checkbox" id="reg-terms" checked={terms}
-                    onChange={(e) => { setTerms(e.target.checked); setErrors((p) => ({ ...p, terms: undefined })) }}
-                    className="mt-0.5 w-4 h-4 shrink-0 cursor-pointer" style={{ accentColor: '#2C5F4E' }} />
-                <div>
-                    <label htmlFor="reg-terms" className="cursor-pointer" style={{ fontSize: 11.5, color: 'rgba(17,17,16,.5)', fontWeight: 400 }}>
-                        I agree to the{' '}
-                        <a href="/terms" style={{ color: '#2C5F4E', fontWeight: 500, textDecoration: 'none' }}
-                            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
-                            Terms of Service
-                        </a>
-                        {' '}and{' '}
-                        <a href="/privacy" style={{ color: '#2C5F4E', fontWeight: 500, textDecoration: 'none' }}
-                            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
-                            Privacy Policy
-                        </a>
-                    </label>
-                    {errors.terms && <p className="text-[11px] mt-0.5" style={{ color: '#C0392B' }}>{errors.terms}</p>}
+            <form onSubmit={handleSubmit} noValidate>
+                <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 8, marginBottom: 0 }}>
+                    <FormInput label="First name" id="reg-fname" placeholder="Ada"
+                        value={firstName} onChange={(v) => { setFirstName(v); setErrors((p) => ({ ...p, name: undefined })) }}
+                        error={errors.name} autoComplete="given-name" />
+                    <FormInput label="Last name" id="reg-lname" placeholder="Lovelace"
+                        value={lastName} onChange={setLastName} autoComplete="family-name" />
                 </div>
-            </div>
 
-            <AuthButton loading={loading}>
-                <span>Create account</span>
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4">
-                    <path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5" />
-                </svg>
-            </AuthButton>
+                <FormInput label="Email address" id="reg-email" type="email" placeholder="you@example.com"
+                    value={email} onChange={(v) => { setEmail(v); setErrors((p) => ({ ...p, email: undefined })) }}
+                    error={errors.email} autoComplete="email" />
 
-            <p className="text-center mt-6 text-[13px]" style={{ color: 'rgba(17,17,16,.5)' }}>
+                <FormInput label="Password" id="reg-pw" type="password" placeholder="Min. 8 characters"
+                    value={password} onChange={(v) => { setPassword(v); setErrors((p) => ({ ...p, password: undefined })) }}
+                    error={errors.password} autoComplete="new-password">
+                    <PasswordStrengthBar password={password} />
+                </FormInput>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 16 }}>
+                    <input type="checkbox" id="reg-terms" checked={terms}
+                        onChange={(e) => { setTerms(e.target.checked); setErrors((p) => ({ ...p, terms: undefined })) }}
+                        style={{ width: 16, height: 16, flexShrink: 0, marginTop: 2, accentColor: 'var(--accent)', cursor: 'pointer' }} />
+                    <div>
+                        <label htmlFor="reg-terms" style={{ fontSize: 11.5, color: 'var(--ink-50)', fontWeight: 400, cursor: 'pointer' }}>
+                            I agree to the{' '}
+                            <a href="/terms" style={{ color: 'var(--accent)', fontWeight: 500, textDecoration: 'none' }}
+                                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
+                                Terms of Service
+                            </a>
+                            {' '}and{' '}
+                            <a href="/privacy" style={{ color: 'var(--accent)', fontWeight: 500, textDecoration: 'none' }}
+                                onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                                onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
+                                Privacy Policy
+                            </a>
+                        </label>
+                        {errors.terms && (
+                            <p style={{ fontSize: 11.5, color: 'var(--error)', marginTop: 3, fontWeight: 500 }}>{errors.terms}</p>
+                        )}
+                    </div>
+                </div>
+
+                <button type="submit" disabled={loading} className="auth-submit-btn"
+                    style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
+                    onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(44,95,78,.15)' } }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
+                    {loading ? (
+                        <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
+                    ) : (
+                        <>
+                            <span>Create account</span>
+                            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="auth-submit-arrow" style={{ width: 16, height: 16 }}>
+                                <path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5" />
+                            </svg>
+                        </>
+                    )}
+                </button>
+            </form>
+
+            <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--ink-50)' }}>
                 Already have an account?{' '}
-                <button type="button" onClick={onSwitch} className="font-semibold"
-                    style={{ color: '#2C5F4E', background: 'none', border: 'none', cursor: 'pointer' }}
+                <button type="button" onClick={onSwitch}
+                    style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 13 }}
                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
                     Sign in
                 </button>
             </p>
-        </form>
+        </>
     )
 }
 
-// ─── Success State ────────────────────────────────────
+/* ── Success state ───────────────────────────────── */
 function SuccessState() {
     return (
-        <div className="text-center" style={{ animation: 'fadeUp .5s ease both' }}>
-            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
-                style={{ background: 'rgba(44,95,78,.05)', border: '1px solid rgba(44,95,78,.1)' }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="#2C5F4E" strokeWidth="2" strokeLinecap="round" className="w-6 h-6">
+        <div style={{ textAlign: 'center', animation: 'fadeUp .5s ease both' }}>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" style={{ width: 24, height: 24 }}>
                     <path d="M20 6L9 17l-5-5" />
                 </svg>
             </div>
-            <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, letterSpacing: '-.03em', marginBottom: 8, color: '#111110' }}>
+            <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, letterSpacing: '-.03em', marginBottom: 8, color: 'var(--ink)' }}>
                 You&apos;re in! Welcome to Kurma.
             </h3>
-            <p style={{ fontSize: 13.5, color: 'rgba(17,17,16,.5)', lineHeight: 1.65 }}>
+            <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65 }}>
                 Your account is ready. Redirecting you to the dashboard to start planning your first trip…
             </p>
         </div>
     )
 }
 
-// ─── Main Page ────────────────────────────────────────
+/* ── Main page ───────────────────────────────────── */
 export default function AuthPage() {
     const [panel, setPanel] = useState<Panel>('login')
     const [success, setSuccess] = useState(false)
@@ -477,104 +507,58 @@ export default function AuthPage() {
         return () => clearTimeout(t)
     }, [success])
 
-    const headings: Record<Panel, { title: string; sub: string }> = {
-        login: { title: 'Welcome back.', sub: 'Sign in to continue planning your next adventure.' },
-        register: { title: 'Join Kurma.', sub: 'Create your free account and start planning smarter.' },
-    }
-
     return (
-        <>
-            <style>{`
-        @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.35} }
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes spin { to{transform:rotate(360deg)} }
-        .auth-wrap { animation: fadeUp .7s ease both; }
-        .panel-anim { animation: fadeUp .4s ease both; }
-      `}</style>
+        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '100vh', background: '#FBFAF8' }}
-                className="max-lg:block">
+            <AuthLeft />
 
-                {/* Left */}
-                <AuthLeft />
+            {/* Right: form */}
+            <div className="flex flex-col justify-center items-center relative min-h-screen pt-20 pb-10 lg:pt-10"
+                style={{ paddingLeft: 'clamp(24px, 5vw, 80px)', paddingRight: 'clamp(24px, 5vw, 80px)' }}>
 
-                {/* Right */}
-                <div className="flex flex-col justify-center items-center relative"
-                    style={{ padding: '40px clamp(32px, 6vw, 80px)', minHeight: '100vh' }}>
+                {/* <Link href="/" className="absolute top-6 right-6 lg:top-8 lg:right-10" style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-50)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, transition: 'color .25s', zIndex: 50 }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 14, height: 14 }}>
+                        <path d="M10 3L5.5 8 10 13" />
+                    </svg>
+                    Back to home
+                </Link> */}
 
-                    {/* Back to home */}
-                    <Link href="/" className="absolute flex items-center gap-1.5 transition-colors duration-200"
-                        style={{ top: 32, right: 40, fontSize: 12, fontWeight: 500, color: 'rgba(17,17,16,.5)', textDecoration: 'none', zIndex: 50 }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = '#111110')}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(17,17,16,.5)')}>
-                        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-3.5 h-3.5" strokeLinecap="round">
-                            <path d="M9 2L4 7l5 5" />
-                        </svg>
-                        Back to home
-                    </Link>
+                <div className="auth-wrap-inner" style={{ width: '100%', maxWidth: 420, animation: 'fadeUp .7s ease both' }}>
 
-                    <div className="auth-wrap w-full" style={{ maxWidth: 420 }}>
+                    {success ? <SuccessState /> : (
+                        <>
+                            {/* Tab switcher */}
+                            <div style={{ display: 'flex', gap: 0, marginBottom: 20, border: '1px solid var(--line-strong)', borderRadius: 12, overflow: 'hidden', background: 'var(--bg-warm)' }}>
+                                {(['login', 'register'] as Panel[]).map((tab) => (
+                                    <button key={tab} type="button" onClick={() => setPanel(tab)}
+                                        style={{
+                                            flex: 1, padding: '13px 20px', textAlign: 'center', fontSize: 13,
+                                            fontWeight: 600, color: panel === tab ? 'var(--ink)' : 'var(--ink-50)',
+                                            cursor: 'pointer', transition: 'all .25s', border: 'none',
+                                            background: panel === tab ? 'var(--bg-card)' : 'none',
+                                            fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em',
+                                            boxShadow: panel === tab ? '0 1px 6px rgba(17,17,16,.06)' : 'none',
+                                            borderRadius: panel === tab ? 10 : 0,
+                                            margin: panel === tab ? (tab === 'login' ? '3px 0 3px 3px' : '3px 3px 3px 0') : 0,
+                                        }}>
+                                        {tab === 'login' ? 'Sign in' : 'Create account'}
+                                    </button>
+                                ))}
+                            </div>
 
-                        {success ? <SuccessState /> : (
-                            <>
-                                {/* Tabs */}
-                                <div className="flex mb-5" style={{
-                                    border: '1px solid rgba(17,17,16,.12)', borderRadius: 12,
-                                    overflow: 'hidden', background: '#F5F3EE',
-                                }}>
-                                    {(['login', 'register'] as Panel[]).map((tab) => (
-                                        <button key={tab} onClick={() => setPanel(tab)}
-                                            className="flex-1 font-semibold transition-all duration-[250ms]"
-                                            style={{
-                                                padding: '13px 20px',
-                                                fontSize: 13,
-                                                letterSpacing: '.01em',
-                                                background: panel === tab ? '#fff' : 'transparent',
-                                                color: panel === tab ? '#111110' : 'rgba(17,17,16,.5)',
-                                                border: 'none',
-                                                cursor: 'pointer',
-                                                boxShadow: panel === tab ? '0 1px 6px rgba(17,17,16,.06)' : 'none',
-                                                borderRadius: panel === tab ? 10 : 0,
-                                                margin: panel === tab ? 3 : 0,
-                                                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                                            }}>
-                                            {tab === 'login' ? 'Sign in' : 'Create account'}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {/* Heading */}
-                                <div className="mb-5">
-                                    <h1 style={{
-                                        fontFamily: 'Fraunces, serif',
-                                        fontSize: 'clamp(22px, 2.5vw, 28px)',
-                                        fontWeight: 500,
-                                        letterSpacing: '-.03em',
-                                        lineHeight: 1.2,
-                                        marginBottom: 6,
-                                        color: '#111110',
-                                    }}>
-                                        {headings[panel].title}
-                                    </h1>
-                                    <p style={{ fontSize: 13.5, color: 'rgba(17,17,16,.5)', lineHeight: 1.6 }}>
-                                        {headings[panel].sub}
-                                    </p>
-                                </div>
-
-                                {/* Form */}
-                                <div className="panel-anim" key={panel}>
-                                    {panel === 'login'
-                                        ? <LoginForm onSwitch={() => setPanel('register')} />
-                                        : <RegisterForm onSwitch={() => setPanel('login')} onSuccess={() => setSuccess(true)} />
-                                    }
-                                </div>
-                            </>
-                        )}
-
-                    </div>
+                            {/* Form panel */}
+                            <div className="panel-anim" key={panel}>
+                                {panel === 'login'
+                                    ? <LoginForm onSwitch={() => setPanel('register')} />
+                                    : <RegisterForm onSwitch={() => setPanel('login')} onSuccess={() => setSuccess(true)} />
+                                }
+                            </div>
+                        </>
+                    )}
                 </div>
-
             </div>
-        </>
+        </div>
     )
 }

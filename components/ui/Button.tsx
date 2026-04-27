@@ -1,7 +1,8 @@
-import { exportTraceState } from "next/dist/trace";
-import React from "react";
+'use client'
 
-type ButtonVariant = 'primary' | 'outline' | 'ghost'
+import React from 'react'
+
+type ButtonVariant = 'primary' | 'social' | 'outline' | 'ghost'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -11,28 +12,38 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children?: React.ReactNode
 }
 
-const variantStyles: Record<ButtonVariant, string> = {
-    primary: `
-    bg-[#2C5F4E] text-white border border-[#2C5F4E]
-    hover:bg-[#38795F] hover:border-[#38795F]
-    disabled:opacity-50 disabled:cursor-not-allowed
-  `,
-    outline: `
-    bg-transparent text-[#2C5F4E] border border-[#2C5F4E]
-    hover:bg-[rgba(44,95,78,0.05)]
-    disabled:opacity-50 disabled:cursor-not-allowed
-  `,
-    ghost: `
-    bg-transparent text-[var(--ink-50)] border border-transparent
-    hover:text-[var(--ink)] hover:bg-[var(--ink-05)]
-    disabled:opacity-50 disabled:cursor-not-allowed
-  `,
+const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
+    primary: {
+        background: 'var(--ink)',
+        color: 'var(--bg)',
+        border: 'none',
+        borderRadius: 100,
+        letterSpacing: '.01em',
+    },
+    social: {
+        background: 'var(--bg-card)',
+        color: 'var(--ink)',
+        border: '1px solid var(--line-strong)',
+        borderRadius: 10,
+    },
+    outline: {
+        background: 'transparent',
+        color: 'var(--accent)',
+        border: '1px solid var(--accent)',
+        borderRadius: 10,
+    },
+    ghost: {
+        background: 'transparent',
+        color: 'var(--ink-50)',
+        border: '1px solid transparent',
+        borderRadius: 10,
+    },
 }
 
-const sizeStyles: Record<ButtonSize, string> = {
-    sm: 'h-8 px-3 text-xs gap-1.5',
-    md: 'h-10 px-4 text-sm gap-2',
-    lg: 'h-12 px-5 text-md gap-2',
+const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
+    sm: { padding: '8px 16px',  fontSize: 12.5, gap: 6 },
+    md: { padding: '12px 20px', fontSize: 13,   gap: 8 },
+    lg: { padding: '15px 24px', fontSize: 14,   gap: 8 },
 }
 
 export default function Button({
@@ -42,52 +53,42 @@ export default function Button({
     children,
     className = '',
     disabled,
+    style,
     ...props
 }: ButtonProps) {
+    const isDisabled = disabled || loading
+
+    const baseStyle: React.CSSProperties = {
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
+        fontWeight: 600,
+        cursor: loading ? 'wait' : disabled ? 'not-allowed' : 'pointer',
+        transition: 'all .25s',
+        outline: 'none',
+        opacity: disabled && !loading ? .5 : 1,
+        ...variantStyles[variant],
+        ...sizeStyles[size],
+        ...style,
+    }
+
     return (
         <button
-            className={`
-        relative inline-flex items-center justify-center
-        rounded-xl font-medium
-        transition-all duration-200
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${loading ? 'cursor-wait' : ''}
-        ${className}
-      `}
-            disabled={disabled || loading}
+            disabled={isDisabled}
+            className={`btn-social ${className}`}
+            style={baseStyle}
             {...props}
         >
-            {/* Spinner */}
-            {loading && (
-                <span
-                    className="absolute inset-0 flex items-center justify-center"
-                    aria-hidden="true"
-                >
-                    <svg
-                        className="animate-spin h-4 w-4"
-                        style={{ animation: 'spin 0.7s linear infinite' }}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                    >
-                        <circle
-                            className="opacity-25"
-                            cx="12" cy="12" r="10"
-                            stroke="currentColor" strokeWidth="3"
-                        />
-                        <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                        />
-                    </svg>
-                </span>
-            )}
-
-            {/* Content */}
-            <span className={`inline-flex items-center gap-2 transition-opacity ${loading ? 'opacity-0' : 'opacity-100'}`}>
-                {children}
-            </span>
+            {loading ? (
+                <div style={{
+                    width: 16, height: 16,
+                    border: '2px solid rgba(255,255,255,.3)',
+                    borderTopColor: variant === 'primary' ? 'white' : 'var(--ink)',
+                    borderRadius: '50%',
+                    animation: 'spin .7s linear infinite',
+                }} />
+            ) : children}
         </button>
     )
 }
