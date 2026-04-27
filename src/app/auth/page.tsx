@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
+import { useGoogleLogin } from '@react-oauth/google'
 
 type Panel = 'login' | 'register'
 
@@ -135,34 +136,56 @@ function GoogleIcon() {
     )
 }
 
-/* ── Apple SVG ───────────────────────────────────── */
-function AppleIcon() {
-    return (
-        <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 16, height: 16, flexShrink: 0 }}>
-            <path d="M17.06 10.74c-.02-2.32 1.88-3.43 1.97-3.48-1.08-1.57-2.75-1.79-3.34-1.81-1.43-.15-2.78.84-3.51.84s-1.84-.82-3.04-.79c-1.57.02-3.02.91-3.83 2.32-1.63 2.84-.42 7.04 1.16 9.31.77 1.11 1.69 2.36 2.89 2.31 1.15-.05 1.59-.75 2.99-.75s1.79.75 3.01.73c1.24-.02 2.03-1.12 2.8-2.24.89-1.3 1.25-2.55 1.27-2.62-.03-.01-2.44-.94-2.47-3.75zM15.42 5.37c.64-.78 1.07-1.86.96-2.94-.93.04-2.05.62-2.72 1.4-.6.69-1.12 1.79-.98 2.85 1.04.08 2.1-.53 2.74-1.31z" />
-        </svg>
-    )
-}
-
 /* ── Social buttons ──────────────────────────────── */
 function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
+    const [googleLoading, setGoogleLoading] = useState(false)
+    const [googleError, setGoogleError] = useState('')
+
+    const loginWithGoogle = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setGoogleLoading(true)
+            setGoogleError('')
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: tokenResponse.access_token }),
+                })
+                const data = await res.json()
+                if (!res.ok) { setGoogleError(data.message || 'Google login failed.'); return }
+                localStorage.setItem('token', data.token)
+                window.location.href = '/dashboard'
+            } catch {
+                setGoogleError('Something went wrong. Please try again.')
+            } finally {
+                setGoogleLoading(false)
+            }
+        },
+        onError: () => setGoogleError('Google sign-in was cancelled or failed.'),
+    })
+
     const btnStyle: React.CSSProperties = {
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
         padding: '12px 16px', border: '1px solid var(--line-strong)', borderRadius: 10,
         background: 'var(--bg-card)', fontSize: 12.5, fontWeight: 600, color: 'var(--ink)',
-        cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', textDecoration: 'none',
+        cursor: googleLoading ? 'wait' : 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
+        opacity: googleLoading ? .6 : 1,
     }
+
     return (
-        <div className="flex flex-col sm:flex-row" style={{ gap: 10, marginBottom: 4 }}>
-            <button type="button" className="btn-social" style={btnStyle}>
-                <GoogleIcon />
-                {variant === 'register' ? 'Sign up with Google' : 'Google'}
-            </button>
-            {variant === 'login' && (
-                <button type="button" className="btn-social" style={btnStyle}>
-                    <AppleIcon />
-                    Apple
+        <div>
+            <div className="flex flex-col sm:flex-row" style={{ gap: 10, marginBottom: 4 }}>
+                <button type="button" className="btn-social" style={btnStyle}
+                    disabled={googleLoading} onClick={() => loginWithGoogle()}>
+                    {googleLoading ? (
+                        <div style={{ width: 14, height: 14, border: '2px solid var(--line-strong)', borderTopColor: 'var(--ink)', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
+                    ) : <GoogleIcon />}
+                    {variant === 'register' ? 'Sign up with Google' : 'Google'}
                 </button>
+
+            </div>
+            {googleError && (
+                <p style={{ fontSize: 11.5, color: 'var(--error)', marginTop: 4, fontWeight: 500 }}>{googleError}</p>
             )}
         </div>
     )

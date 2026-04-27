@@ -102,7 +102,7 @@ export default function DashboardPage() {
                         </div>
                         <div>
                             <h1 style={{ fontSize: 18, fontWeight: 600, color: '#111110', marginBottom: 2 }}>
-                                Welcome back, {user.name.split(' ')[0]}!
+                                Welcome , {user.name.split(' ')[0]}!
                             </h1>
                             <p style={{ fontSize: 13, color: 'rgba(17,17,16,.45)' }}>{user.email}</p>
                         </div>
