@@ -506,14 +506,17 @@ function SuccessState() {
         <div style={{ textAlign: 'center', animation: 'fadeUp .5s ease both' }}>
             <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" style={{ width: 24, height: 24 }}>
-                    <path d="M20 6L9 17l-5-5" />
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
             </div>
             <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, letterSpacing: '-.03em', marginBottom: 8, color: 'var(--ink)' }}>
-                You&apos;re in! Welcome to Kurma.
+                Check your email!
             </h3>
-            <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65 }}>
-                Your account is ready. Redirecting you to the dashboard to start planning your first trip…
+            <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65, marginBottom: 12 }}>
+                We sent a verification link to your inbox. Click it to activate your account.
+            </p>
+            <p style={{ fontSize: 12, color: 'var(--ink-25)', lineHeight: 1.5 }}>
+                Redirecting to dashboard in a moment…
             </p>
         </div>
     )
@@ -526,7 +529,7 @@ export default function AuthPage() {
 
     useEffect(() => {
         if (!success) return
-        const t = setTimeout(() => { window.location.href = '/dashboard' }, 1500)
+        const t = setTimeout(() => { window.location.href = '/dashboard' }, 3500)
         return () => clearTimeout(t)
     }, [success])
 
