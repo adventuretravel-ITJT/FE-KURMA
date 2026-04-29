@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useUser } from '@/src/contexts/UserContext'
 
+/* ─── Types ─────────────────────────────────────────────── */
 interface Trip {
     id: number
     name: string
@@ -15,6 +16,7 @@ interface Trip {
     end_date?: string
 }
 
+/* ─── Helpers ───────────────────────────────────────────── */
 function greetingPrefix() {
     const h = new Date().getHours()
     if (h < 12) return 'Good morning'
@@ -22,16 +24,19 @@ function greetingPrefix() {
     return 'Good evening'
 }
 
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD PAGE
+══════════════════════════════════════════════════════════ */
 export default function DashboardPage() {
     const { user, onToggleSidebar } = useUser()
-    const [trips, setTrips] = useState<Trip[]>([])
+    const [trips, setTrips]     = useState<Trip[]>([])
     const [loading, setLoading] = useState(true)
 
     const firstName = user.name.split(' ')[0]
-    const hasTrips = trips.length > 0
-    const nextTrip = trips.find((t) => t.start_date && new Date(t.start_date) >= new Date())
+    const hasTrips  = trips.length > 0
+    const nextTrip  = trips.find((t) => t.start_date && new Date(t.start_date) >= new Date())
 
-    useEffect(() => {
+    const fetchTrips = useCallback(() => {
         const token = localStorage.getItem('token')
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/trips`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -42,9 +47,11 @@ export default function DashboardPage() {
             .finally(() => setLoading(false))
     }, [])
 
+    useEffect(() => { fetchTrips() }, [fetchTrips])
+
     return (
         <>
-            {/* Topbar */}
+            {/* ── Topbar ── */}
             <div className="dash-topbar">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <button
@@ -61,7 +68,7 @@ export default function DashboardPage() {
 
                 <Link
                     href="/dashboard/new-trip"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 18px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 12.5, fontWeight: 600, borderRadius: 100, border: 'none', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'none', whiteSpace: 'nowrap' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 18px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 12.5, fontWeight: 600, borderRadius: 100, border: 'none', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'none', whiteSpace: 'nowrap', transition: 'background .22s' }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent)')}
                     onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--ink)')}
                 >
@@ -72,60 +79,78 @@ export default function DashboardPage() {
                 </Link>
             </div>
 
-            {/* Page */}
-            <div className="dash-page" style={{ maxWidth: 720 }}>
+            {/* ── Page ── */}
+            <div className="dash-page">
+                <div className="dash-grid">
 
-                {/* Greeting */}
-                <div style={{ marginBottom: 28, animation: 'fadeUp .45s ease both' }}>
-                    <div style={{ fontSize: 10.5, fontWeight: 500, color: 'var(--ink-25)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 5 }}>
-                        {greetingPrefix()}
-                    </div>
-                    <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1, color: 'var(--ink)' }}>
-                        {hasTrips
-                            ? `${firstName}.`
-                            : <>Welcome, <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>{firstName}.</em></>}
-                    </div>
-                    <div style={{ fontSize: 13.5, color: 'var(--ink-50)', marginTop: 5, lineHeight: 1.6 }}>
-                        {hasTrips
-                            ? nextTrip
-                                ? `Your ${nextTrip.destination} trip is coming up. Everything looks on track.`
-                                : `You have ${trips.length} trip${trips.length > 1 ? 's' : ''} in your folder.`
-                            : "Your travel folder is ready. Let's fill it with your first adventure."}
-                    </div>
-                </div>
+                    {/* ── LEFT COLUMN ── */}
+                    <div>
+                        {/* Greeting */}
+                        <div style={{ marginBottom: 28, animation: 'fadeUp .45s ease both' }}>
+                            <div style={{ fontSize: 10.5, fontWeight: 500, color: 'var(--ink-25)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 5 }}>
+                                {greetingPrefix()}
+                            </div>
+                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1, color: 'var(--ink)' }}>
+                                {hasTrips
+                                    ? `${firstName}.`
+                                    : <>Welcome, <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>{firstName}.</em></>}
+                            </div>
+                            <div style={{ fontSize: 13.5, color: 'var(--ink-50)', marginTop: 5, lineHeight: 1.6 }}>
+                                {hasTrips
+                                    ? nextTrip
+                                        ? `Your ${nextTrip.destination} trip is coming up. Everything looks on track.`
+                                        : `You have ${trips.length} trip${trips.length > 1 ? 's' : ''} in your folder.`
+                                    : "Your travel folder is ready. Let's fill it with your first adventure."}
+                            </div>
+                        </div>
 
-                {/* Trips section */}
-                <div style={{ animation: 'fadeUp .45s ease .08s both' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                        <span style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>My trips</span>
-                        {hasTrips && (
-                            <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--accent)', cursor: 'pointer' }}>View all</span>
+                        {/* Trips section */}
+                        <div style={{ animation: 'fadeUp .45s ease .08s both' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                                <span style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>My trips</span>
+                                {hasTrips && (
+                                    <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--accent)', cursor: 'pointer' }}>View all</span>
+                                )}
+                            </div>
+
+                            {loading ? (
+                                <TripSkeleton />
+                            ) : !hasTrips ? (
+                                <EmptyState />
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                    {trips.map((trip) => <TripCard key={trip.id} trip={trip} />)}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Onboarding — empty state only */}
+                        {!hasTrips && !loading && (
+                            <div style={{ animation: 'fadeUp .45s ease .16s both' }}>
+                                <OnboardingCard />
+                            </div>
                         )}
                     </div>
 
-                    {loading ? (
-                        <TripSkeleton />
-                    ) : !hasTrips ? (
-                        <EmptyState />
-                    ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                            {trips.map((trip) => <TripCard key={trip.id} trip={trip} />)}
-                        </div>
-                    )}
-                </div>
+                    {/* ── RIGHT COLUMN ── */}
+                    <div className="dash-right" style={{ animation: 'fadeUp .45s ease .08s both' }}>
 
-                {/* Onboarding — empty state only */}
-                {!hasTrips && !loading && (
-                    <div style={{ animation: 'fadeUp .45s ease .16s both' }}>
-                        <OnboardingCard />
+                        {/* Upcoming card — shown when trips exist */}
+                        {hasTrips && <UpcomingWidget trips={trips} />}
+
+                        {/* Kurma tip — always visible */}
+                        <KurmaTipWidget destination={nextTrip?.destination} />
                     </div>
-                )}
+
+                </div>
             </div>
         </>
     )
 }
 
-/* ── Trip card ── */
+/* ══════════════════════════════════════════════════════════
+   TRIP CARD
+══════════════════════════════════════════════════════════ */
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
     active:    { bg: 'var(--accent-bg)', color: 'var(--accent)', label: 'Active' },
     draft:     { bg: 'var(--ink-05)',    color: 'var(--ink-50)', label: 'Planning' },
@@ -169,7 +194,7 @@ function TripCard({ trip }: { trip: Trip }) {
                         </span>
                     )}
                     {!hasDates && (
-                        <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 100, background: 'rgba(220,100,40,.07)', color: '#C4511A', cursor: 'pointer' }}>
+                        <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 100, background: 'rgba(220,100,40,.07)', color: '#C4511A' }}>
                             📅 Add dates
                         </span>
                     )}
@@ -184,7 +209,9 @@ function TripCard({ trip }: { trip: Trip }) {
     )
 }
 
-/* ── Empty state ── */
+/* ══════════════════════════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════════════════════════ */
 function EmptyState() {
     return (
         <div style={{ background: 'var(--bg-card)', border: '1.5px dashed var(--line-strong)', borderRadius: 16, padding: '56px 32px', textAlign: 'center' }}>
@@ -201,21 +228,22 @@ function EmptyState() {
                 <Link
                     href="/dashboard/new-trip"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 18px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 12.5, fontWeight: 600, borderRadius: 8, textDecoration: 'none' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--ink)')}
                 >
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 12, height: 12 }}>
                         <path d="M6 1v10M1 6h10" />
                     </svg>
                     Plan a new trip
                 </Link>
-                <button style={{ display: 'inline-flex', alignItems: 'center', padding: '8px 14px', background: 'transparent', color: 'var(--ink-50)', fontSize: 12, fontWeight: 500, borderRadius: 8, border: '1px solid var(--line-strong)', cursor: 'pointer', fontFamily: 'inherit' }}>
-                    Talk to a Kurma Guide
-                </button>
             </div>
         </div>
     )
 }
 
-/* ── Onboarding ── */
+/* ══════════════════════════════════════════════════════════
+   ONBOARDING CARD
+══════════════════════════════════════════════════════════ */
 function OnboardingCard() {
     const steps = [
         { done: true,  current: false, label: 'Create your account',           desc: '' },
@@ -244,7 +272,102 @@ function OnboardingCard() {
     )
 }
 
-/* ── Loading skeleton ── */
+/* ══════════════════════════════════════════════════════════
+   UPCOMING WIDGET
+══════════════════════════════════════════════════════════ */
+function UpcomingWidget({ trips }: { trips: Trip[] }) {
+    const upcoming = trips
+        .filter((t) => t.start_date && new Date(t.start_date) >= new Date())
+        .sort((a, b) => new Date(a.start_date!).getTime() - new Date(b.start_date!).getTime())
+        .slice(0, 2)
+
+    const noDateTrips = trips.filter((t) => !t.start_date)
+
+    return (
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 14, padding: '18px 18px 20px' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 14 }}>Upcoming</div>
+
+            {upcoming.length > 0 ? (
+                upcoming.map((trip, i) => {
+                    const d     = new Date(trip.start_date!)
+                    const month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase()
+                    const day   = d.getDate()
+                    return (
+                        <div key={trip.id}>
+                            {i > 0 && <div style={{ height: 1, background: 'var(--line)', margin: '12px 0' }} />}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                <div style={{ width: 36, height: 40, borderRadius: 8, background: i === 0 ? 'var(--accent-bg)' : 'var(--warm-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                    <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: i === 0 ? 'var(--accent)' : 'var(--warm)' }}>{month}</div>
+                                    <div style={{ fontFamily: 'Fraunces, serif', fontSize: 17, fontWeight: 500, color: i === 0 ? 'var(--accent)' : 'var(--warm)', lineHeight: 1.1 }}>{day}</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink)' }}>Departure — {trip.destination}</div>
+                                    <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 1 }}>{trip.name}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })
+            ) : (
+                <div>
+                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink)', marginBottom: 4 }}>No dates yet</div>
+                    <div style={{ fontSize: 11.5, color: 'var(--ink-50)', lineHeight: 1.55, marginBottom: noDateTrips.length > 0 ? 12 : 0 }}>
+                        Add travel dates to your trip{trips.length > 1 ? 's' : ''} to see what&apos;s coming up.
+                    </div>
+                    {noDateTrips.length > 0 && (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            {noDateTrips.slice(0, 2).map((t) => (
+                                <Link key={t.id} href={`/dashboard/trips/${t.id}`}
+                                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', background: 'var(--bg)', borderRadius: 8, textDecoration: 'none', border: '1px solid var(--line)', transition: 'border-color .18s' }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--line-strong)')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)')}
+                                >
+                                    <span style={{ fontSize: 14 }}>{t.destination_flag ?? '🗺️'}</span>
+                                    <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</span>
+                                    <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 100, background: 'rgba(220,100,40,.07)', color: '#C4511A', whiteSpace: 'nowrap' }}>📅 Add dates</span>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
+    )
+}
+
+/* ══════════════════════════════════════════════════════════
+   KURMA TIP WIDGET
+══════════════════════════════════════════════════════════ */
+const TIPS: Record<string, { dest: string; tip: string }> = {
+    Japan:          { dest: 'Japan',         tip: 'Shinkansen tickets sell out fast during peak season — book at least 2 weeks ahead for Golden Week or sakura season.' },
+    'South Korea':  { dest: 'Seoul',         tip: 'T-money card works on all transit in Seoul — top it up at any convenience store before your first subway ride.' },
+    Thailand:       { dest: 'Thailand',      tip: 'Visit temples early morning to beat the crowds and the heat. Most open from 8am and are quietest before 9am.' },
+    Indonesia:      { dest: 'Bali',          tip: "Rent a scooter only if you're comfortable in heavy traffic — Bali roads move fast and lane rules are loose." },
+    France:         { dest: 'Paris',         tip: "The Musee d'Orsay is far less crowded than the Louvre and houses some of the finest impressionist works in the world." },
+    Italy:          { dest: 'Italy',         tip: 'Book Colosseum and Vatican tickets online at least 3 days ahead — same-day queues can be 2+ hours.' },
+    Singapore:      { dest: 'Singapore',     tip: 'Hawker centres offer the best local food at unbeatable prices. Try Maxwell Food Centre or Lau Pa Sat.' },
+    __default:      { dest: 'Japan · Kyoto', tip: 'Arashiyama bamboo grove is best before 7am — most tour groups arrive after 9 and crowds get thick fast.' },
+}
+
+function KurmaTipWidget({ destination }: { destination?: string }) {
+    const entry = (destination && TIPS[destination]) ? TIPS[destination] : TIPS.__default
+    return (
+        <div style={{ background: 'var(--ink)', borderRadius: 14, padding: '18px 18px 20px' }}>
+            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,.22)', marginBottom: 10 }}>Kurma tip</div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 100, fontSize: 10, fontWeight: 500, color: 'rgba(255,255,255,.35)', letterSpacing: '.04em', marginBottom: 12 }}>
+                {entry.dest}
+            </div>
+            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 13.5, fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,.65)', lineHeight: 1.65 }}>
+                <span style={{ display: 'block', fontSize: 18, color: 'var(--accent-light)', lineHeight: 1, marginBottom: 3, fontStyle: 'normal' }}>&ldquo;</span>
+                {entry.tip}
+            </div>
+        </div>
+    )
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOADING SKELETON
+══════════════════════════════════════════════════════════ */
 function TripSkeleton() {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

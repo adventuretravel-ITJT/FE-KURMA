@@ -11,6 +11,7 @@ type Pace       = 'easy' | 'balanced' | 'packed' | ''
 type Budget     = 'backpacker' | 'smart' | 'comfort' | 'splurge' | ''
 
 interface Dest { flag: string; name: string; country: string; tag?: string }
+interface TripLink { url: string; title: string }
 
 interface FormState {
     // Step 1
@@ -30,14 +31,17 @@ interface FormState {
     pace: Pace
     budget: Budget
     specialNeeds: string[]
+    // Step 4
+    files: File[]
+    links: TripLink[]
 }
 
 /* ─── Destination list ──────────────────────────── */
 const DESTS: Dest[] = [
-    { flag: '🗾', name: 'Japan',          country: 'East Asia',     tag: 'Popular' },
-    { flag: '🇨🇳', name: 'China',          country: 'East Asia',     tag: 'Popular' },
+    { flag: '🗾', name: 'Japan',          country: 'East Asia',      tag: 'Popular' },
+    { flag: '🇨🇳', name: 'China',          country: 'East Asia',      tag: 'Popular' },
     { flag: '🇰🇷', name: 'South Korea',    country: 'East Asia' },
-    { flag: '🇹🇭', name: 'Thailand',       country: 'Southeast Asia',tag: 'Popular' },
+    { flag: '🇹🇭', name: 'Thailand',       country: 'Southeast Asia', tag: 'Popular' },
     { flag: '🇸🇬', name: 'Singapore',      country: 'Southeast Asia' },
     { flag: '🇮🇩', name: 'Indonesia',      country: 'Southeast Asia' },
     { flag: '🇮🇹', name: 'Italy',          country: 'Europe' },
@@ -66,14 +70,50 @@ const PACES = [
 ]
 const QUICK_PICKS = [5, 7, 10, 14, 21]
 
+const ACCEPTED_TYPES = '.pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.csv,.txt'
+const MAX_FILE_MB    = 10
+
+const LINK_CATEGORY_ICONS: Record<string, string> = {
+    flight:  '✈️',
+    hotel:   '🏨',
+    tour:    '🎟️',
+    map:     '🗺️',
+    other:   '🔗',
+}
+
+function detectCategory(url: string): string {
+    const u = url.toLowerCase()
+    if (u.includes('booking') || u.includes('agoda') || u.includes('airbnb') || u.includes('hotel')) return 'hotel'
+    if (u.includes('flight') || u.includes('airasia') || u.includes('garuda') || u.includes('skyscanner') || u.includes('google.com/travel')) return 'flight'
+    if (u.includes('tripadvisor') || u.includes('klook') || u.includes('viator') || u.includes('getyourguide')) return 'tour'
+    if (u.includes('maps.google') || u.includes('goo.gl/maps')) return 'map'
+    return 'other'
+}
+
+function formatBytes(b: number) {
+    if (b < 1024) return `${b} B`
+    if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`
+    return `${(b / (1024 * 1024)).toFixed(1)} MB`
+}
+
+function fileIcon(name: string) {
+    const ext = name.split('.').pop()?.toLowerCase()
+    if (ext === 'pdf') return '📄'
+    if (['jpg','jpeg','png','gif','webp'].includes(ext ?? '')) return '🖼️'
+    if (['doc','docx'].includes(ext ?? '')) return '📝'
+    if (['xls','xlsx','csv'].includes(ext ?? '')) return '📊'
+    return '📎'
+}
+
 /* ─── Page ──────────────────────────────────────── */
 export default function NewTripPage() {
     const router = useRouter()
     const { onToggleSidebar } = useUser()
 
-    const [step, setStep]     = useState(1)
+    const [step, setStep]         = useState(1)
     const [submitting, setSubmitting] = useState(false)
-    const [success, setSuccess] = useState(false)
+    const [success, setSuccess]   = useState(false)
+    const [createdId, setCreatedId]   = useState<number | null>(null)
     const [createdName, setCreatedName] = useState('')
 
     const [form, setForm] = useState<FormState>({
@@ -81,19 +121,30 @@ export default function NewTripPage() {
         travelType: '', adults: 2, kids: 0, littles: 0,
         startDate: '', endDate: '', datesSkipped: false,
         activities: [], pace: '', budget: '', specialNeeds: [],
+        files: [], links: [],
     })
 
     // Validation errors
-    const [destErr, setDestErr]   = useState(false)
-    const [dateErr, setDateErr]   = useState(false)
+    const [destErr, setDestErr] = useState(false)
+    const [dateErr, setDateErr] = useState(false)
 
     // Destination search
-    const [query, setQuery]       = useState('')
-    const [ddOpen, setDdOpen]     = useState(false)
-    const destWrapRef             = useRef<HTMLDivElement>(null)
+    const [query, setQuery]     = useState('')
+    const [ddOpen, setDdOpen]   = useState(false)
+    const destWrapRef           = useRef<HTMLDivElement>(null)
+
+    // Step 4 refs & state
+    const fileInputRef          = useRef<HTMLInputElement>(null)
+    const [dragOver, setDragOver] = useState(false)
+    const [linkInput, setLinkInput] = useState({ url: '', title: '' })
+    const [linkErr, setLinkErr] = useState('')
+    const [fileErr, setFileErr] = useState('')
 
     const filtered = query.trim()
-        ? DESTS.filter((d) => d.name.toLowerCase().includes(query.toLowerCase()) || d.country.toLowerCase().includes(query.toLowerCase())).slice(0, 6)
+        ? DESTS.filter((d) =>
+            d.name.toLowerCase().includes(query.toLowerCase()) ||
+            d.country.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 6)
         : []
 
     useEffect(() => {
@@ -104,12 +155,11 @@ export default function NewTripPage() {
         return () => document.removeEventListener('mousedown', onDown)
     }, [])
 
-    // Duration calc
     const nights = form.startDate && form.endDate
         ? Math.round((new Date(form.endDate).getTime() - new Date(form.startDate).getTime()) / 86400000)
         : null
 
-    /* helpers */
+    /* ── helpers ── */
     function pickDest(d: Dest) {
         setForm((f) => ({ ...f, destination: d.name, destinationFlag: d.flag, tripName: f.tripName || `${d.name} Trip` }))
         setQuery(''); setDdOpen(false); setDestErr(false)
@@ -124,9 +174,9 @@ export default function NewTripPage() {
     function toggleMulti(arr: string[], val: string): string[] {
         return arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]
     }
-    function applyQuickPick(nights: number) {
+    function applyQuickPick(n: number) {
         const from = new Date(); from.setDate(from.getDate() + 1)
-        const to   = new Date(from); to.setDate(to.getDate() + nights)
+        const to   = new Date(from); to.setDate(to.getDate() + n)
         const fmt  = (d: Date) => d.toISOString().split('T')[0]
         setForm((f) => ({ ...f, startDate: fmt(from), endDate: fmt(to), datesSkipped: false }))
         setDateErr(false)
@@ -135,20 +185,52 @@ export default function NewTripPage() {
         setForm((f) => ({ ...f, startDate: '', endDate: '', datesSkipped: true }))
         setDateErr(false)
     }
-    function undoSkip() {
-        setForm((f) => ({ ...f, datesSkipped: false }))
-    }
-
-    /* stepper */
+    function undoSkip() { setForm((f) => ({ ...f, datesSkipped: false })) }
     function stepperChange(field: 'adults' | 'kids' | 'littles', delta: number) {
         setForm((f) => {
             const min = field === 'adults' ? 1 : 0
-            const next = Math.max(min, f[field] + delta)
-            return { ...f, [field]: next }
+            return { ...f, [field]: Math.max(min, f[field] + delta) }
         })
     }
 
-    /* navigation */
+    /* ── file handling ── */
+    function addFiles(incoming: FileList | null) {
+        if (!incoming) return
+        setFileErr('')
+        const toAdd: File[] = []
+        Array.from(incoming).forEach((f) => {
+            if (f.size > MAX_FILE_MB * 1024 * 1024) {
+                setFileErr(`"${f.name}" exceeds ${MAX_FILE_MB} MB limit.`)
+                return
+            }
+            if (form.files.some((x) => x.name === f.name && x.size === f.size)) return
+            toAdd.push(f)
+        })
+        if (toAdd.length) setForm((prev) => ({ ...prev, files: [...prev.files, ...toAdd] }))
+    }
+    function removeFile(i: number) {
+        setForm((f) => ({ ...f, files: f.files.filter((_, idx) => idx !== i) }))
+    }
+    function handleDrop(e: React.DragEvent) {
+        e.preventDefault(); setDragOver(false)
+        addFiles(e.dataTransfer.files)
+    }
+
+    /* ── link handling ── */
+    function addLink() {
+        setLinkErr('')
+        const url = linkInput.url.trim()
+        if (!url) { setLinkErr('Please enter a URL.'); return }
+        try { new URL(url) } catch { setLinkErr('Please enter a valid URL (include https://).'); return }
+        if (form.links.some((l) => l.url === url)) { setLinkErr('This link was already added.'); return }
+        setForm((f) => ({ ...f, links: [...f.links, { url, title: linkInput.title.trim() }] }))
+        setLinkInput({ url: '', title: '' })
+    }
+    function removeLink(i: number) {
+        setForm((f) => ({ ...f, links: f.links.filter((_, idx) => idx !== i) }))
+    }
+
+    /* ── navigation ── */
     function goNext() {
         if (step === 1) {
             if (!form.destination) { setDestErr(true); return }
@@ -156,13 +238,13 @@ export default function NewTripPage() {
         } else if (step === 2) {
             if (form.startDate && form.endDate && new Date(form.endDate) < new Date(form.startDate)) { setDateErr(true); return }
             setStep(3)
+        } else if (step === 3) {
+            setStep(4)
         } else {
             submitTrip()
         }
     }
-    function goBack() {
-        if (step > 1) setStep((s) => s - 1)
-    }
+    function goBack() { if (step > 1) setStep((s) => s - 1) }
 
     async function submitTrip() {
         const name = form.tripName.trim() || `${form.destination} Trip`
@@ -177,12 +259,15 @@ export default function NewTripPage() {
                     destination:      form.destination,
                     destination_flag: form.destinationFlag,
                     travel_type:      form.travelType || 'solo',
-                    status:           form.datesSkipped ? 'draft' : 'draft',
+                    status:           'draft',
                     start_date:       form.datesSkipped ? null : (form.startDate || null),
                     end_date:         form.datesSkipped ? null : (form.endDate || null),
+                    links:            form.links.length > 0 ? form.links : undefined,
                 }),
             })
             if (res.ok) {
+                const data = await res.json()
+                setCreatedId(data.data?.id ?? data.id ?? null)
                 setCreatedName(name)
                 setSuccess(true)
             }
@@ -191,9 +276,9 @@ export default function NewTripPage() {
         }
     }
 
-    const showStepper = form.travelType === 'family' || form.travelType === 'group'
-
-    const STEP_LABELS = ['Destination', 'Dates', 'Preferences']
+    const showStepper  = form.travelType === 'family' || form.travelType === 'group'
+    const STEP_LABELS  = ['Destination', 'Dates', 'Preferences', 'Documents']
+    const TOTAL_STEPS  = 4
 
     /* ── Render ── */
     return (
@@ -229,7 +314,7 @@ export default function NewTripPage() {
                                         </div>
                                         <span style={{ fontSize: 11.5, fontWeight: active ? 600 : 400, color: active ? 'var(--ink)' : 'var(--ink-25)', display: 'none' }} className="steps-label">{label}</span>
                                     </div>
-                                    {i < 2 && <div style={{ width: 16, height: 1.5, borderRadius: 2, background: done ? 'var(--accent)' : 'var(--line-strong)', transition: 'background .3s' }} />}
+                                    {i < TOTAL_STEPS - 1 && <div style={{ width: 16, height: 1.5, borderRadius: 2, background: done ? 'var(--accent)' : 'var(--line-strong)', transition: 'background .3s' }} />}
                                 </div>
                             )
                         })}
@@ -249,26 +334,52 @@ export default function NewTripPage() {
                             <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--accent-bg)', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" style={{ width: 24, height: 24 }}><path d="M20 6L9 17l-5-5" /></svg>
                             </div>
-                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.025em', color: 'var(--ink)', marginBottom: 8 }}>"{createdName}" is ready!</div>
-                            <div style={{ fontSize: 13.5, color: 'var(--ink-50)', maxWidth: 300, margin: '0 auto 28px', lineHeight: 1.65 }}>Your trip is saved. You can start building your itinerary anytime.</div>
-                            <button
-                                onClick={() => router.push('/dashboard')}
-                                style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 13.5, fontWeight: 600, borderRadius: 100, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
-                            >
-                                Back to dashboard
-                                <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M4 2l4 4-4 4" /></svg>
-                            </button>
+                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.025em', color: 'var(--ink)', marginBottom: 8 }}>
+                                &ldquo;{createdName}&rdquo; is ready!
+                            </div>
+                            <div style={{ fontSize: 13.5, color: 'var(--ink-50)', maxWidth: 300, margin: '0 auto 8px', lineHeight: 1.65 }}>
+                                Your trip is saved. You can start building your itinerary anytime.
+                            </div>
+                            {form.files.length > 0 && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--bg-warm)', borderRadius: 10, margin: '16px 0', textAlign: 'left', maxWidth: 360, marginLeft: 'auto', marginRight: 'auto' }}>
+                                    <svg viewBox="0 0 16 16" fill="none" stroke="var(--warm)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 14, height: 14, flexShrink: 0 }}>
+                                        <circle cx="8" cy="8" r="6" /><path d="M8 5v4M8 11v.5" />
+                                    </svg>
+                                    <span style={{ fontSize: 12, color: 'var(--ink-50)', lineHeight: 1.4 }}>
+                                        {form.files.length} file{form.files.length > 1 ? 's' : ''} noted — file storage will be available in the trip detail page.
+                                    </span>
+                                </div>
+                            )}
+                            <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: 24 }}>
+                                {createdId && (
+                                    <button
+                                        onClick={() => router.push(`/dashboard/trips/${createdId}`)}
+                                        style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 24px', background: 'var(--accent)', color: '#fff', fontSize: 13.5, fontWeight: 600, borderRadius: 100, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                                    >
+                                        View trip
+                                        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M4 2l4 4-4 4" /></svg>
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => router.push('/dashboard')}
+                                    style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 24px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 13.5, fontWeight: 600, borderRadius: 100, border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent)')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--ink)')}
+                                >
+                                    Back to dashboard
+                                </button>
+                            </div>
                         </div>
                     )}
 
                     {/* ───── STEP 1: Destination & Party ───── */}
                     {!success && step === 1 && (
                         <div>
-                            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6 }}>Step 1 of 3</div>
-                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: 4 }}>
-                                Where are you <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>headed?</em>
+                            <div style={eyebrowStyle}>Step 1 of {TOTAL_STEPS}</div>
+                            <div style={titleStyle}>
+                                Where are you <em style={accentItalic}>headed?</em>
                             </div>
-                            <div style={{ fontSize: 13.5, color: 'var(--ink-50)', marginBottom: 28, lineHeight: 1.6 }}>Pick a destination and tell us who's coming along.</div>
+                            <div style={subStyle}>Pick a destination and tell us who&apos;s coming along.</div>
 
                             {/* Destination */}
                             <Field label="Destination">
@@ -320,17 +431,17 @@ export default function NewTripPage() {
                             {/* Trip name */}
                             <Field label="Trip name">
                                 <input type="text" value={form.tripName} onChange={(e) => setField('tripName', e.target.value)} placeholder="e.g. Japan Spring 2025" maxLength={60} style={inputStyle} />
-                                <FieldHint>Or we'll name it after your destination.</FieldHint>
+                                <FieldHint>Or we&apos;ll name it after your destination.</FieldHint>
                             </Field>
 
                             {/* Who's coming */}
                             <Field label="Who's coming?">
                                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                                     {[
-                                        { key: 'solo',   label: 'Just me',   icon: '👤' },
-                                        { key: 'couple', label: 'Us two',    icon: '👫' },
-                                        { key: 'family', label: 'Family',    icon: '👨‍👩‍👧' },
-                                        { key: 'group',  label: 'Group',     icon: '👥' },
+                                        { key: 'solo',   label: 'Just me',  icon: '👤' },
+                                        { key: 'couple', label: 'Us two',   icon: '👫' },
+                                        { key: 'family', label: 'Family',   icon: '👨‍👩‍👧' },
+                                        { key: 'group',  label: 'Group',    icon: '👥' },
                                     ].map((t) => (
                                         <button key={t.key} onClick={() => setField('travelType', t.key as TravelType)}
                                             style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 100, fontFamily: 'inherit', fontSize: 13, fontWeight: 500, cursor: 'pointer', transition: 'all .18s', border: `1.5px solid ${form.travelType === t.key ? 'var(--accent)' : 'var(--line-strong)'}`, background: form.travelType === t.key ? 'var(--accent-bg)' : 'transparent', color: form.travelType === t.key ? 'var(--accent)' : 'var(--ink-50)' }}>
@@ -373,11 +484,11 @@ export default function NewTripPage() {
                     {/* ───── STEP 2: Dates ───── */}
                     {!success && step === 2 && (
                         <div>
-                            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6 }}>Step 2 of 3</div>
-                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: 4 }}>
-                                When are you <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>going?</em>
+                            <div style={eyebrowStyle}>Step 2 of {TOTAL_STEPS}</div>
+                            <div style={titleStyle}>
+                                When are you <em style={accentItalic}>going?</em>
                             </div>
-                            <div style={{ fontSize: 13.5, color: 'var(--ink-50)', marginBottom: 20, lineHeight: 1.6 }}>
+                            <div style={subStyle}>
                                 Set your travel dates to {form.destination}, or skip and decide later.
                             </div>
 
@@ -421,7 +532,7 @@ export default function NewTripPage() {
                                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                                             {QUICK_PICKS.map((d) => (
                                                 <button key={d} onClick={() => applyQuickPick(d)}
-                                                    style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 100, fontFamily: 'inherit', fontSize: 12, fontWeight: 500, border: '1px solid var(--line-strong)', background: 'transparent', color: d === 7 ? 'var(--accent)' : 'var(--ink-50)', borderColor: d === 7 ? 'var(--accent)' : undefined, cursor: 'pointer', transition: 'all .18s' }}
+                                                    style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 100, fontFamily: 'inherit', fontSize: 12, fontWeight: 500, border: `1px solid ${d === 7 ? 'var(--accent)' : 'var(--line-strong)'}`, background: d === 7 ? 'var(--accent-bg)' : 'transparent', color: d === 7 ? 'var(--accent)' : 'var(--ink-50)', cursor: 'pointer', transition: 'all .18s' }}
                                                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)' }}
                                                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = d === 7 ? 'var(--accent)' : 'var(--line-strong)'; e.currentTarget.style.color = d === 7 ? 'var(--accent)' : 'var(--ink-50)' }}
                                                 >
@@ -430,10 +541,10 @@ export default function NewTripPage() {
                                                 </button>
                                             ))}
                                         </div>
-                                        <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 6 }}>Sets departure from tomorrow and calculates return automatically.</div>
+                                        <FieldHint>Sets departure from tomorrow and calculates return automatically.</FieldHint>
                                     </Field>
 
-                                    {/* Skip link */}
+                                    {/* Skip */}
                                     <div style={{ textAlign: 'center', marginTop: 8 }}>
                                         <button onClick={skipDates} style={{ fontSize: 12, color: 'var(--ink-25)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'inherit', padding: '4px 8px', transition: 'color .18s' }}
                                             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
@@ -443,7 +554,6 @@ export default function NewTripPage() {
                                     </div>
                                 </>
                             ) : (
-                                /* Skipped state */
                                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px', background: 'var(--bg-warm)', borderRadius: 10, marginBottom: 12 }}>
                                     <svg viewBox="0 0 16 16" fill="none" stroke="var(--warm)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 15, height: 15, flexShrink: 0, marginTop: 1 }}><circle cx="8" cy="8" r="6" /><path d="M8 5v4M8 11v.5" /></svg>
                                     <span style={{ fontSize: 12.5, color: 'var(--ink-50)', lineHeight: 1.5 }}>
@@ -469,11 +579,11 @@ export default function NewTripPage() {
                     {/* ───── STEP 3: Preferences ───── */}
                     {!success && step === 3 && (
                         <div>
-                            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6 }}>Step 3 of 3</div>
-                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: 4 }}>
-                                Help AI plan <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>your trip.</em>
+                            <div style={eyebrowStyle}>Step 3 of {TOTAL_STEPS}</div>
+                            <div style={titleStyle}>
+                                Help AI plan <em style={accentItalic}>your trip.</em>
                             </div>
-                            <div style={{ fontSize: 13.5, color: 'var(--ink-50)', marginBottom: 24, lineHeight: 1.6 }}>A few quick picks. AI uses these to build your itinerary just right.</div>
+                            <div style={subStyle}>A few quick picks. AI uses these to build your itinerary just right.</div>
 
                             {/* AI auto-fill bar */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: 'linear-gradient(135deg,rgba(44,95,78,.06),rgba(184,149,106,.04))', border: '1px solid var(--accent-10)', borderRadius: 10, marginBottom: 24 }}>
@@ -488,9 +598,7 @@ export default function NewTripPage() {
                                     <div style={{ fontSize: 11, color: 'var(--ink-50)', marginTop: 1 }}>Kurma picks based on your trip details</div>
                                 </div>
                                 <button
-                                    onClick={() => {
-                                        setForm((f) => ({ ...f, activities: ['🏯 Culture & History','🍜 Local Food'], pace: 'balanced', budget: 'smart', specialNeeds: [] }))
-                                    }}
+                                    onClick={() => setForm((f) => ({ ...f, activities: ['🏯 Culture & History','🍜 Local Food'], pace: 'balanced', budget: 'smart', specialNeeds: [] }))}
                                     style={{ padding: '6px 14px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 100, fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
                                 >
                                     Auto-fill
@@ -506,7 +614,7 @@ export default function NewTripPage() {
                                 </div>
                             </PrefBlock>
 
-                            {/* Q2 + Q3 side by side on desktop */}
+                            {/* Q2 + Q3 */}
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
                                 <PrefBlock num={2} label="Trip pace" noMargin>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -533,15 +641,197 @@ export default function NewTripPage() {
                                 </PrefBlock>
                             </div>
 
-                            {/* Q4: Special needs */}
+                            {/* Q4: Special */}
                             <PrefBlock num={4} label="Anything we should know?" hint="optional">
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                                     {SPECIAL.map((s) => (
                                         <QChip key={s} on={form.specialNeeds.includes(s)} onClick={() => setField('specialNeeds', toggleMulti(form.specialNeeds, s))}>{s}</QChip>
                                     ))}
                                 </div>
-                                <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 8 }}>Nothing fits? That's totally fine — AI will still do its thing.</div>
+                                <FieldHint>Nothing fits? That&apos;s totally fine — AI will still do its thing.</FieldHint>
                             </PrefBlock>
+                        </div>
+                    )}
+
+                    {/* ───── STEP 4: Files & Links ───── */}
+                    {!success && step === 4 && (
+                        <div>
+                            <div style={eyebrowStyle}>Step 4 of {TOTAL_STEPS}</div>
+                            <div style={titleStyle}>
+                                Add your <em style={accentItalic}>references.</em>
+                            </div>
+                            <div style={subStyle}>
+                                Upload travel documents and save useful links — all in one place for your trip.
+                            </div>
+
+                            {/* ── File upload ── */}
+                            <Field label="Travel documents">
+                                {/* Drop zone */}
+                                <div
+                                    onClick={() => fileInputRef.current?.click()}
+                                    onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                                    onDragLeave={() => setDragOver(false)}
+                                    onDrop={handleDrop}
+                                    style={{
+                                        border: `2px dashed ${dragOver ? 'var(--accent)' : 'var(--line-strong)'}`,
+                                        borderRadius: 12,
+                                        padding: '28px 20px',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
+                                        background: dragOver ? 'var(--accent-bg)' : 'var(--bg)',
+                                        transition: 'all .18s',
+                                    }}
+                                >
+                                    <div style={{ width: 40, height: 40, borderRadius: 10, background: dragOver ? 'var(--accent-bg)' : 'var(--ink-05)', margin: '0 auto 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke={dragOver ? 'var(--accent)' : 'var(--ink-25)'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 20, height: 20 }}>
+                                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                                            <polyline points="17 8 12 3 7 8" />
+                                            <line x1="12" y1="3" x2="12" y2="15" />
+                                        </svg>
+                                    </div>
+                                    <div style={{ fontSize: 13, fontWeight: 600, color: dragOver ? 'var(--accent)' : 'var(--ink)', marginBottom: 4 }}>
+                                        {dragOver ? 'Drop files here' : 'Click to upload or drag & drop'}
+                                    </div>
+                                    <div style={{ fontSize: 11.5, color: 'var(--ink-25)' }}>
+                                        PDF, JPG, PNG, DOC, DOCX, XLSX · Max {MAX_FILE_MB} MB each
+                                    </div>
+                                </div>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    multiple
+                                    accept={ACCEPTED_TYPES}
+                                    style={{ display: 'none' }}
+                                    onChange={(e) => addFiles(e.target.files)}
+                                />
+
+                                {fileErr && <FieldErr>{fileErr}</FieldErr>}
+
+                                {/* File list */}
+                                {form.files.length > 0 && (
+                                    <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                        {form.files.map((file, i) => (
+                                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 10 }}>
+                                                <span style={{ fontSize: 18, flexShrink: 0 }}>{fileIcon(file.name)}</span>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</div>
+                                                    <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 1 }}>{formatBytes(file.size)}</div>
+                                                </div>
+                                                <button onClick={() => removeFile(i)}
+                                                    style={{ width: 24, height: 24, borderRadius: '50%', border: '1px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-25)', flexShrink: 0, transition: 'all .15s' }}
+                                                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--error)'; e.currentTarget.style.color = 'var(--error)' }}
+                                                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-25)' }}
+                                                >
+                                                    <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 9, height: 9 }}><path d="M2 2l6 6M8 2l-6 6" /></svg>
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </Field>
+
+                            {/* ── Links ── */}
+                            <Field label="Useful links">
+                                <FieldHint>Save booking confirmations, maps, tour pages, or any travel link.</FieldHint>
+
+                                {/* Link input row */}
+                                <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    <input
+                                        type="url"
+                                        value={linkInput.url}
+                                        onChange={(e) => { setLinkInput((p) => ({ ...p, url: e.target.value })); setLinkErr('') }}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addLink() } }}
+                                        placeholder="https://booking.com/your-hotel"
+                                        style={inputStyle}
+                                    />
+                                    <div style={{ display: 'flex', gap: 8 }}>
+                                        <input
+                                            type="text"
+                                            value={linkInput.title}
+                                            onChange={(e) => setLinkInput((p) => ({ ...p, title: e.target.value }))}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addLink() } }}
+                                            placeholder="Label (e.g. Hotel booking, Flight ticket)"
+                                            style={{ ...inputStyle, flex: 1 }}
+                                        />
+                                        <button
+                                            onClick={addLink}
+                                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0 18px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0, transition: 'background .18s' }}
+                                            onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent)')}
+                                            onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--ink)')}
+                                        >
+                                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" style={{ width: 11, height: 11 }}><path d="M6 1v10M1 6h10" /></svg>
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {linkErr && <FieldErr>{linkErr}</FieldErr>}
+
+                                {/* Link list */}
+                                {form.links.length > 0 && (
+                                    <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                        {form.links.map((link, i) => {
+                                            const cat  = detectCategory(link.url)
+                                            const icon = LINK_CATEGORY_ICONS[cat]
+                                            const displayTitle = link.title || (() => {
+                                                try { return new URL(link.url).hostname.replace('www.', '') }
+                                                catch { return link.url }
+                                            })()
+                                            return (
+                                                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 10 }}>
+                                                    <span style={{ fontSize: 16, flexShrink: 0 }}>{icon}</span>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayTitle}</div>
+                                                        <a
+                                                            href={link.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            style={{ fontSize: 11, color: 'var(--accent)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', textDecoration: 'none' }}
+                                                        >
+                                                            {link.url}
+                                                        </a>
+                                                    </div>
+                                                    <button onClick={() => removeLink(i)}
+                                                        style={{ width: 24, height: 24, borderRadius: '50%', border: '1px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-25)', flexShrink: 0, transition: 'all .15s' }}
+                                                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--error)'; e.currentTarget.style.color = 'var(--error)' }}
+                                                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-25)' }}
+                                                    >
+                                                        <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 9, height: 9 }}><path d="M2 2l6 6M8 2l-6 6" /></svg>
+                                                    </button>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )}
+
+                                {form.links.length === 0 && form.files.length === 0 && (
+                                    <div style={{ marginTop: 16, padding: '14px 16px', background: 'var(--bg-warm)', borderRadius: 10, display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                                        <span style={{ fontSize: 16, flexShrink: 0 }}>💡</span>
+                                        <div>
+                                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)', marginBottom: 3 }}>Pro tip</div>
+                                            <div style={{ fontSize: 11.5, color: 'var(--ink-50)', lineHeight: 1.55 }}>
+                                                Save your hotel confirmation, flight booking, and Google Maps links here so everything is in one place when you travel.
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </Field>
+
+                            {/* Summary badges */}
+                            {(form.files.length > 0 || form.links.length > 0) && (
+                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
+                                    {form.files.length > 0 && (
+                                        <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 100, background: 'var(--accent-bg)', color: 'var(--accent)' }}>
+                                            📎 {form.files.length} file{form.files.length > 1 ? 's' : ''}
+                                        </span>
+                                    )}
+                                    {form.links.length > 0 && (
+                                        <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 100, background: 'var(--accent-bg)', color: 'var(--accent)' }}>
+                                            🔗 {form.links.length} link{form.links.length > 1 ? 's' : ''}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -565,8 +855,13 @@ export default function NewTripPage() {
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                 {step === 3 && (
-                                    <button onClick={() => submitTrip()} style={{ fontSize: 12.5, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: '4px 8px' }}>
+                                    <button onClick={() => setStep(4)} style={{ fontSize: 12.5, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: '4px 8px' }}>
                                         Skip preferences
+                                    </button>
+                                )}
+                                {step === 4 && (
+                                    <button onClick={() => submitTrip()} style={{ fontSize: 12.5, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: '4px 8px' }}>
+                                        Skip this step
                                     </button>
                                 )}
                                 <button
@@ -580,7 +875,7 @@ export default function NewTripPage() {
                                         <span style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid rgba(255,255,255,.3)', borderTopColor: '#fff', animation: 'spin .7s linear infinite', display: 'block' }} />
                                     ) : (
                                         <>
-                                            {step < 3 ? 'Continue' : 'Create trip'}
+                                            {step < TOTAL_STEPS ? 'Continue' : 'Create trip'}
                                             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M4 2l4 4-4 4" /></svg>
                                         </>
                                     )}
@@ -605,8 +900,21 @@ export default function NewTripPage() {
     )
 }
 
-/* ─── Shared sub-components ─────────────────────── */
-
+/* ─── Shared styles ─────────────────────────────── */
+const eyebrowStyle: React.CSSProperties = {
+    fontSize: 10, fontWeight: 600, letterSpacing: '.1em',
+    textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6,
+}
+const titleStyle: React.CSSProperties = {
+    fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500,
+    letterSpacing: '-.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: 4,
+}
+const subStyle: React.CSSProperties = {
+    fontSize: 13.5, color: 'var(--ink-50)', marginBottom: 28, lineHeight: 1.6,
+}
+const accentItalic: React.CSSProperties = {
+    fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)',
+}
 const inputStyle: React.CSSProperties = {
     width: '100%', height: 46, padding: '0 14px',
     background: 'var(--bg)', border: '1px solid var(--line-strong)',
@@ -615,6 +923,7 @@ const inputStyle: React.CSSProperties = {
     transition: 'border-color .18s, background .18s',
 }
 
+/* ─── Shared sub-components ─────────────────────── */
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <div style={{ marginBottom: 20 }}>
@@ -625,15 +934,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
         </div>
     )
 }
-
 function FieldHint({ children }: { children: React.ReactNode }) {
     return <div style={{ fontSize: 11.5, color: 'var(--ink-25)', marginTop: 5, lineHeight: 1.5 }}>{children}</div>
 }
-
 function FieldErr({ children }: { children: React.ReactNode }) {
     return <div style={{ fontSize: 11.5, color: 'var(--error)', marginTop: 5 }}>{children}</div>
 }
-
 function PrefBlock({ num, label, hint, children, noMargin }: { num: number; label: string; hint?: string; children: React.ReactNode; noMargin?: boolean }) {
     return (
         <div style={{ marginBottom: noMargin ? 0 : 24 }}>
@@ -646,13 +952,10 @@ function PrefBlock({ num, label, hint, children, noMargin }: { num: number; labe
         </div>
     )
 }
-
 function QChip({ on, onClick, children, fullWidth }: { on: boolean; onClick: () => void; children: React.ReactNode; fullWidth?: boolean }) {
     return (
         <button onClick={onClick}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 12px', borderRadius: 100, fontFamily: 'inherit', fontSize: 12.5, fontWeight: on ? 600 : 500, cursor: 'pointer', transition: 'all .18s', border: `1.5px solid ${on ? 'var(--accent)' : 'var(--line-strong)'}`, background: on ? 'var(--accent-bg)' : 'transparent', color: on ? 'var(--accent)' : 'var(--ink-50)', whiteSpace: 'nowrap', width: fullWidth ? '100%' : undefined, justifyContent: fullWidth ? 'flex-start' : undefined }}
-        >
-            {children}
-        </button>
+        >{children}</button>
     )
 }
