@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useUser } from '@/src/contexts/UserContext'
 
+const SETTINGS_HREF = '/dashboard/settings'
+
 const NAV = [
     {
         section: 'Plan',
@@ -114,23 +116,46 @@ export default function Sidebar() {
 
             {/* User row */}
             <div style={{ padding: '14px 10px 24px', borderTop: '1px solid var(--line)', flexShrink: 0 }}>
-                <div
-                    style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '9px 10px', borderRadius: 8, cursor: 'pointer', transition: 'background .18s' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-warm)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                    onClick={onLogout}
-                    title="Sign out"
-                >
-                    <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--warm-10)', border: '1.5px solid rgba(184,149,106,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--warm)', flexShrink: 0 }}>
-                        {initials}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.name}</div>
-                        <div style={{ fontSize: 10.5, color: 'var(--ink-25)' }}>{user.role?.name ?? 'Free plan'}</div>
-                    </div>
-                    <svg viewBox="0 0 12 12" fill="none" stroke="var(--ink-25)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 12, height: 12, flexShrink: 0 }}>
-                        <path d="M3 5l3 3 3-3" />
-                    </svg>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {/* Avatar + name → Settings */}
+                    <Link
+                        href={SETTINGS_HREF}
+                        onClick={onCloseSidebar}
+                        style={{
+                            flex: 1, minWidth: 0,
+                            display: 'flex', alignItems: 'center', gap: 9,
+                            padding: '9px 10px', borderRadius: 8,
+                            textDecoration: 'none', transition: 'background .18s',
+                            background: pathname === SETTINGS_HREF ? 'var(--accent-bg)' : 'transparent',
+                        }}
+                        onMouseEnter={(e) => {
+                            if (pathname !== SETTINGS_HREF) e.currentTarget.style.background = 'var(--bg-warm)'
+                        }}
+                        onMouseLeave={(e) => {
+                            if (pathname !== SETTINGS_HREF) e.currentTarget.style.background = 'transparent'
+                        }}
+                    >
+                        <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--warm-10)', border: '1.5px solid rgba(184,149,106,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--warm)', flexShrink: 0 }}>
+                            {initials}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.name}</div>
+                            <div style={{ fontSize: 10.5, color: 'var(--ink-25)' }}>{user.role?.name ?? 'Free plan'}</div>
+                        </div>
+                    </Link>
+
+                    {/* Logout icon button */}
+                    <button
+                        onClick={onLogout}
+                        title="Sign out"
+                        style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-25)', flexShrink: 0, transition: 'all .18s' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(192,57,43,.3)'; e.currentTarget.style.color = 'var(--error)'; e.currentTarget.style.background = 'rgba(192,57,43,.04)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-25)'; e.currentTarget.style.background = 'transparent' }}
+                    >
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{ width: 14, height: 14 }}>
+                            <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10.5 11l3-3-3-3M13.5 8H6" />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </aside>

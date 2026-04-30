@@ -61,6 +61,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             }
 
             const data = await res.json()
+
+            if (!data.email_verified_at) {
+                router.replace('/auth/verify-email')
+                return
+            }
+
             setUser(data)
             setLoading(false)
 

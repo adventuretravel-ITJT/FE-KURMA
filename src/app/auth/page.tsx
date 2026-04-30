@@ -329,7 +329,7 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
                         <label htmlFor="login-pw" style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-80)', letterSpacing: '.01em' }}>
                             Password
                         </label>
-                        <Link href="/forgot-password" style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-50)', textDecoration: 'none', transition: 'color .25s' }}
+                        <Link href="/auth/forgot-password" style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-50)', textDecoration: 'none', transition: 'color .25s' }}
                             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent)')}
                             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
                             Forgot password?
@@ -516,7 +516,7 @@ function SuccessState() {
                 We sent a verification link to your inbox. Click it to activate your account.
             </p>
             <p style={{ fontSize: 12, color: 'var(--ink-25)', lineHeight: 1.5 }}>
-                Redirecting to dashboard in a moment…
+                Redirecting to email verification…
             </p>
         </div>
     )
@@ -529,7 +529,7 @@ export default function AuthPage() {
 
     useEffect(() => {
         if (!success) return
-        const t = setTimeout(() => { window.location.href = '/dashboard' }, 3500)
+        const t = setTimeout(() => { window.location.href = '/auth/verify-email' }, 3500)
         return () => clearTimeout(t)
     }, [success])
 
