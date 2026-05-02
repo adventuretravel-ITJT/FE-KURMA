@@ -273,6 +273,16 @@ export default function NewTripPage() {
                     start_date:       form.datesSkipped ? null : (form.startDate || null),
                     end_date:         form.datesSkipped ? null : (form.endDate || null),
                     links:            form.links.length > 0 ? form.links : undefined,
+                    quiz_data: {
+                        activities:    form.activities,
+                        pace:          form.pace || null,
+                        budget:        form.budget || null,
+                        special_needs: form.specialNeeds,
+                        adults:        form.adults,
+                        kids:          form.kids,
+                        littles:       form.littles,
+                        links:         form.links,
+                    },
                 }),
             })
             if (res.ok) {
