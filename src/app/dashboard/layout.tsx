@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { UserContext, User } from '@/src/contexts/UserContext'
 import Sidebar from '@/src/components/dashboard/Sidebar'
 
@@ -27,6 +27,8 @@ async function tryRefreshToken(): Promise<string | null> {
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const router = useRouter()
+    const pathname = usePathname()
+    const isTripPage = /^\/dashboard\/trips\/[^/]+(\/.*)?$/.test(pathname ?? '')
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -114,15 +116,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             onCloseSidebar: () => setSidebarOpen(false),
         }}>
             <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)' }}>
-                {/* Mobile overlay */}
-                <div
-                    className={`dash-overlay${sidebarOpen ? ' is-open' : ''}`}
-                    onClick={() => setSidebarOpen(false)}
-                />
+                {!isTripPage && (
+                    <>
+                        <div
+                            className={`dash-overlay${sidebarOpen ? ' is-open' : ''}`}
+                            onClick={() => setSidebarOpen(false)}
+                        />
+                        <Sidebar />
+                    </>
+                )}
 
-                <Sidebar />
-
-                <div className="dash-main">
+                <div className="dash-main" style={isTripPage ? { marginLeft: 0 } : undefined}>
                     {children}
                 </div>
             </div>

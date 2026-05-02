@@ -97,8 +97,8 @@ function FieldInput({
 
 function ResetPasswordContent() {
     const params = useSearchParams()
-    const [email, setEmail] = useState(params.get('email') ?? '')
-    const [token, setToken] = useState(params.get('token') ?? '')
+    const [email, setEmail] = useState(params?.get('email') ?? '')
+    const [token, setToken] = useState(params?.get('token') ?? '')
     const [password, setPassword] = useState('')
     const [confirmPw, setConfirmPw] = useState('')
     const [errors, setErrors] = useState<{ email?: string; token?: string; password?: string; confirm?: string }>({})

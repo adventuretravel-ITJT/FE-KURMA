@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --sidebar: 220px;
@@ -214,6 +212,15 @@ body {
   .dash-main { margin-left: var(--sidebar); }
   .dash-page { padding: 32px 28px 60px; }
   .dash-topbar { height: 60px; padding: 0 28px; }
+}
+
+/* ── Hide scrollbar (keep scrollable) ── */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* ── lg breakpoint: 1024px ── */

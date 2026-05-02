@@ -22,10 +22,11 @@ export default function TOCSidebar({ days, activeDayId, onDayClick, totalActs }:
   }
 
   return (
-    <aside style={{
+    <aside className="scrollbar-hide" style={{
       borderRight: '1px solid var(--line)',
       background: 'var(--bg-card)',
       overflowY: 'auto',
+      height: '100%',
       padding: '20px 0 40px',
     }}>
       {/* Scrollbar style injected globally for this element */}

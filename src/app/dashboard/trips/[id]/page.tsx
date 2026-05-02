@@ -579,7 +579,7 @@ export default function TripItineraryPage() {
         paddingTop: 60,
       }}>
         {/* LEFT: TOC */}
-        <div className="itin-toc">
+        <div className="itin-toc" style={{ overflow: 'hidden' }}>
           <TOCSidebar
             days={days}
             activeDayId={activeDayId}
@@ -589,7 +589,7 @@ export default function TripItineraryPage() {
         </div>
 
         {/* CENTER: Main scroll */}
-        <main style={{
+        <main className="scrollbar-hide" style={{
           overflowY: 'auto', overflowX: 'hidden',
           padding: '28px 28px 120px',
           height: 'calc(100vh - 60px)',
@@ -649,7 +649,7 @@ export default function TripItineraryPage() {
         </main>
 
         {/* RIGHT: City guide */}
-        <div className="itin-guide">
+        <div className="itin-guide" style={{ overflow: 'hidden' }}>
           <CityGuideSidebar cities={uniqCities} tripMonth={tripMonth} />
         </div>
       </div>

@@ -142,6 +142,7 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
     const [googleError, setGoogleError] = useState('')
 
     const loginWithGoogle = useGoogleLogin({
+        scope: 'openid email profile',
         onSuccess: async (tokenResponse) => {
             setGoogleLoading(true)
             setGoogleError('')

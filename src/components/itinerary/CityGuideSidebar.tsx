@@ -102,11 +102,12 @@ export default function CityGuideSidebar({ cities, tripMonth }: Props) {
   const displayName = cityInfo?.name ?? activeCity
 
   return (
-    <aside style={{
+    <aside className="scrollbar-hide" style={{
       borderLeft: '1px solid var(--line)',
       background: 'var(--bg-card)',
       overflowY: 'auto',
       overflowX: 'hidden',
+      height: '100%',
       padding: '20px 14px 40px 16px',
     }}>
       <span style={{ fontSize: '9.5px', fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 12, display: 'block' }}>

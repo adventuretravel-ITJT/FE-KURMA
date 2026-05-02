@@ -8,7 +8,7 @@ type Status = 'pending' | 'loading' | 'success' | 'already' | 'error'
 
 function VerifyEmailContent() {
     const params = useSearchParams()
-    const token = params.get('token')
+    const token = params?.get('token') ?? null
 
     const [status, setStatus] = useState<Status>(token ? 'loading' : 'pending')
     const [userEmail, setUserEmail] = useState('')

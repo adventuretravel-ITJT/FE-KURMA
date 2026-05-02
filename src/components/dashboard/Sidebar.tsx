@@ -41,7 +41,7 @@ const NAV = [
 ]
 
 export default function Sidebar() {
-    const pathname = usePathname()
+    const pathname = usePathname() ?? ''
     const { user, onLogout, sidebarOpen, onCloseSidebar } = useUser()
     const initials = user.name.slice(0, 2).toUpperCase()
 
