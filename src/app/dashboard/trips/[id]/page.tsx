@@ -905,7 +905,6 @@ export default function TripItineraryPage() {
             onAddDay={addDay}
             onDeleteDay={requestDeleteDay}
             onOpenCityModal={handleOpenCityModal}
-            totalActs={totalActs}
           />
         </div>
 

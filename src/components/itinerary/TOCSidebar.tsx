@@ -11,7 +11,6 @@ interface Props {
   onAddDay: () => void
   onDeleteDay: (id: string) => void
   onOpenCityModal: (id: string) => void
-  totalActs: number
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -24,10 +23,11 @@ function fmtDate(dateStr?: string) {
 }
 
 export default function TOCSidebar({
-  days, activeDayId, todayDayId, onDayClick, onAddDay, onDeleteDay, onOpenCityModal, totalActs,
+  days, activeDayId, todayDayId, onDayClick, onAddDay, onDeleteDay, onOpenCityModal,
 }: Props) {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const pct = Math.min(100, Math.round((totalActs / Math.max(1, days.length * 3)) * 100))
+  const activeIdx = days.findIndex((d) => d.id === activeDayId)
+  const pct = activeIdx >= 0 ? Math.round(((activeIdx + 1) / days.length) * 100) : 0
 
   return (
     <aside className="scrollbar-hide" style={{
@@ -157,8 +157,8 @@ export default function TOCSidebar({
       {/* Progress */}
       <div style={{ padding: '0 16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--ink-25)', marginBottom: 5 }}>
-          <span>Activities</span>
-          <span>{totalActs}</span>
+          <span>Progress</span>
+          <span>{pct}%</span>
         </div>
         <div style={{ height: 3, background: 'var(--line)', borderRadius: 2, overflow: 'hidden' }}>
           <div style={{
