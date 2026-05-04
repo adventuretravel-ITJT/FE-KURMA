@@ -110,7 +110,7 @@ export default function TOCSidebar({
                   title="Change city"
                   onClick={() => onOpenCityModal(day.id)}
                 >
-                  🏙
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:10,height:10}}><path d="M1 11V5l4-3 4 3v6M5 11V8h2v3"/><path d="M8 2h3v9"/></svg>
                 </TocActionBtn>
                 {days.length > 1 && (
                   <TocActionBtn

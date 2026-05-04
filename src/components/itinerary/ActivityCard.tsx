@@ -190,7 +190,7 @@ function PlaceCard({ act, place, convertedCost, currSymbol, onDelete, onEdit, on
           <StarRating rating={place.rating} />
 
           <div style={{ display: 'flex', gap: 5, marginTop: 5, flexWrap: 'wrap', alignItems: 'center' }}>
-            <span style={{ fontSize: 10, color: 'var(--ink-25)' }}>⏱ {place.visitTime}</span>
+            <span style={{ fontSize: 10, color: 'var(--ink-25)', display:'inline-flex', alignItems:'center', gap:3 }}><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:10,height:10}}><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 1"/></svg>{place.visitTime}</span>
             <span style={{ fontSize: 10, color: 'var(--ink-25)' }}>·</span>
             <span style={{ fontSize: 10, color: place.price === 'Free' ? 'var(--accent-light, #38795f)' : 'var(--ink-50)' }}>
               {convertedCost != null && convertedCost > 0 ? `${currSymbol}${convertedCost.toLocaleString()}` : place.price}
@@ -265,7 +265,7 @@ function PlaceCard({ act, place, convertedCost, currSymbol, onDelete, onEdit, on
 
           {/* Tip */}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '9px 12px', background: 'var(--accent-bg)', borderRadius: 8, marginBottom: 12 }}>
-            <span style={{ fontSize: 14, flexShrink: 0, lineHeight: 1.4 }}>💡</span>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:14,height:14,flexShrink:0,marginTop:1}}><path d="M8 2a4 4 0 011 7.9V11H7v-1.1A4 4 0 018 2z"/><path d="M7 13h2"/></svg>
             <span style={{ fontSize: 12, color: 'var(--ink-50)', fontStyle: 'italic', lineHeight: 1.55 }}>{place.tip}</span>
           </div>
 
@@ -404,9 +404,11 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onDelete, onEd
           {act.departs ?? '—'}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 6 }}>
-            {act.mode === 'flight' ? '✈️' : act.mode === 'train' ? '🚆' : act.mode === 'bus' ? '🚌' : '🚗'}{' '}
-            {act.name || `${act.fromName ?? act.from} → ${act.toName ?? act.to}`}
+          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 6, display:'flex', alignItems:'center', gap:5 }}>
+            <span style={{ fontSize: 15 }}>
+              {act.mode === 'flight' ? '✈️' : act.mode === 'train' ? '🚆' : act.mode === 'bus' ? '🚌' : '🚗'}
+            </span>
+            {act.mode === 'flight' ? 'Flight' : act.mode === 'train' ? 'Train' : act.mode === 'bus' ? 'Bus' : 'Car'}
           </div>
           {act.from && act.to && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
@@ -481,7 +483,7 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onDelete, onEd
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)', marginBottom: 2 }}>{act.name}</div>
         {act.note && <div style={{ fontSize: '11.5px', color: 'var(--ink-50)', lineHeight: 1.5 }}>{act.note}</div>}
-        {act.tip && <div style={{ fontSize: 11, color: 'var(--ink-25)', fontStyle: 'italic', marginTop: 3 }}>💡 {act.tip}</div>}
+        {act.tip && <div style={{ fontSize: 11, color: 'var(--ink-25)', fontStyle: 'italic', marginTop: 3, display:'flex', alignItems:'flex-start', gap:4 }}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:11,height:11,flexShrink:0,marginTop:1}}><path d="M8 2a4 4 0 011 7.9V11H7v-1.1A4 4 0 018 2z"/><path d="M7 13h2"/></svg>{act.tip}</div>}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
           {convertedCost != null && (
             <span style={{ fontSize: '11.5px', color: convertedCost === 0 ? 'var(--accent-light, #38795f)' : 'var(--accent)', fontFamily: 'Fraunces, serif' }}>

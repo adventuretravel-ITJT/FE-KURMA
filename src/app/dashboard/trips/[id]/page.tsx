@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useUser } from '@/src/contexts/UserContext'
@@ -55,20 +55,20 @@ interface PanelState {
   initialData?: Activity
 }
 
-const CAT_OPTIONS = [
-  { key: 'culture',  label: 'Culture',  icon: '🏛️' },
-  { key: 'food',     label: 'Food',     icon: '🍜' },
-  { key: 'nature',   label: 'Nature',   icon: '🌿' },
-  { key: 'shopping', label: 'Shopping', icon: '🛍️' },
-  { key: 'activity', label: 'Activity', icon: '🎯' },
-  { key: 'stay',     label: 'Stay',     icon: '🏨' },
+const CAT_OPTIONS: { key: string; label: string; icon: React.ReactNode }[] = [
+  { key: 'culture',  label: 'Culture',  icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{width:15,height:15}}><path d="M2 14h12M3 6v8M6 6v8M10 6v8M13 6v8M1 6h14M8 2l7 4H1z"/></svg> },
+  { key: 'food',     label: 'Food',     icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{width:15,height:15}}><path d="M5 2v4a2 2 0 004 0V2M7 8v6M12 2v12"/></svg> },
+  { key: 'nature',   label: 'Nature',   icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{width:15,height:15}}><path d="M3 13c1-4 4-7 9-7-1 4-4 7-9 7zM3 13l4-4"/></svg> },
+  { key: 'shopping', label: 'Shopping', icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{width:15,height:15}}><path d="M3 4h10l1 9H2L3 4zM6 4a2 2 0 014 0"/></svg> },
+  { key: 'activity', label: 'Activity', icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{width:15,height:15}}><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.5"/></svg> },
+  { key: 'stay',     label: 'Stay',     icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" style={{width:15,height:15}}><path d="M2 12V6a1 1 0 011-1h10a1 1 0 011 1v6M1 14h14M2 12h12v1a1 1 0 01-1 1H3a1 1 0 01-1-1v-1z"/><circle cx="5.5" cy="9" r="1"/></svg> },
 ]
 
 const TRANSPORT_MODES = [
-  { key: 'train',  label: '🚆 Train'  },
-  { key: 'flight', label: '✈️ Flight' },
-  { key: 'bus',    label: '🚌 Bus'    },
-  { key: 'car',    label: '🚗 Car'    },
+  { key: 'train',  label: 'Train'  },
+  { key: 'flight', label: 'Flight' },
+  { key: 'bus',    label: 'Bus'    },
+  { key: 'car',    label: 'Car'    },
 ]
 
 /* ── Add Panel ────────────────────────────────────── */
@@ -105,7 +105,7 @@ function AddPanel({ panel, onSave, onClose }: {
   const [dur, setDur]         = useState(initialData?.dur ?? '')
 
   // 'hotel' type
-  const [hotelName, setHotelName] = useState(initialData?.type === 'hotel' || initialData?.cat === 'stay' ? initialData?.name?.replace('🏨 ', '') ?? '' : '')
+  const [hotelName, setHotelName] = useState(initialData?.type === 'hotel' || initialData?.cat === 'stay' ? initialData?.name ?? '' : '')
   const [checkin, setCheckin]     = useState(initialData?.time ?? '')
 
   function onPlaceSearchChange(val: string) {
@@ -164,7 +164,7 @@ function AddPanel({ panel, onSave, onClose }: {
     } else if (panelType === 'hotel') {
       onSave(panel.dayId, {
         id: baseId, type: 'activity',
-        name: `🏨 ${hotelName.trim()}`,
+        name: hotelName.trim(),
         time: checkin,
         cost: costNum, costCurr, costFmt: fmt,
         cat: 'stay', note, bookingRef: bookRef, files: initialData?.files ?? [],
@@ -307,8 +307,9 @@ function AddPanel({ panel, onSave, onClose }: {
                         ))}
                       </div>
                       {selectedPlace.tip && (
-                        <div style={{ fontSize: 11, color: 'var(--ink-50)', fontStyle: 'italic', marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--line)' }}>
-                          💡 {selectedPlace.tip}
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, fontSize: 11, color: 'var(--ink-50)', fontStyle: 'italic', marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--line)' }}>
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:12,height:12,flexShrink:0,marginTop:1}}><path d="M8 2a4 4 0 011 7.9V11H7v-1.1A4 4 0 018 2z"/><path d="M7 13h2"/></svg>
+                          {selectedPlace.tip}
                         </div>
                       )}
                       <button
@@ -916,7 +917,11 @@ export default function TripItineraryPage() {
         }}>
           {/* Trip header */}
           <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid var(--line)' }}>
-            <div style={{ fontSize: 26, marginBottom: 8 }}>{trip?.destination_flag ?? '🗺️'}</div>
+            <div style={{ fontSize: 26, marginBottom: 8, lineHeight: 1 }}>
+              {trip?.destination_flag ?? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-25)" strokeWidth="1.4" strokeLinecap="round" style={{width:26,height:26}}><path d="M3 20V5l6 3 6-3 6 3v15l-6-3-6 3-6-3z"/><path d="M9 8v10M15 5v10"/></svg>
+              )}
+            </div>
             <div style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1 }}>
               {trip?.name ?? 'Your Trip'} —{' '}
               <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>
@@ -1093,7 +1098,7 @@ export default function TripItineraryPage() {
             <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetDays(false)} />
             <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
               <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Jump to day</span>
-              <button onClick={() => setSheetDays(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+              <button onClick={() => setSheetDays(false)} style={{ color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1, display:'flex' }}><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:14,height:14}}><path d="M1 1l10 10M11 1L1 11"/></svg></button>
             </div>
             {days.map((d) => (
               <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 18px', cursor: 'pointer', borderBottom: '1px solid var(--line)', background: d.id === activeDayId ? 'var(--accent-bg)' : 'transparent' }}>
@@ -1173,7 +1178,7 @@ export default function TripItineraryPage() {
               </>
             ) : (
               <div style={{ padding: '32px 18px', textAlign: 'center' }}>
-                <div style={{ fontSize: 36, marginBottom: 12 }}>📅</div>
+                <div style={{ marginBottom: 12, display:'flex', justifyContent:'center' }}><svg viewBox="0 0 40 40" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round" style={{width:40,height:40}}><rect x="5" y="8" width="30" height="26" rx="3"/><path d="M5 16h30M14 5v6M26 5v6"/></svg></div>
                 <div style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 500, color: 'var(--ink)', marginBottom: 8 }}>
                   {trip?.start_date && new Date(trip.start_date + 'T00:00:00') > new Date()
                     ? "Trip hasn't started yet"
@@ -1308,12 +1313,12 @@ export default function TripItineraryPage() {
             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 8 }}>Coba ini</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {[
-                { label: '🍜 Halal food nearby', prompt: 'Rekomendasikan halal food di sekitar tujuan kami' },
-                { label: '⏰ Kita telat 2 jam', prompt: 'Kami terlambat 2 jam hari ini, apa yang harus kami skip atau sesuaikan?' },
-                { label: '🌧️ Skip outdoor', prompt: 'Hujan deras hari ini, rekomendasikan aktivitas indoor' },
-                { label: '🈯 Translate teks', prompt: 'Tolong bantu terjemahkan teks ini: ' },
-                { label: '😴 Hari santai', prompt: 'Rekomendasikan aktivitas santai dan rileks untuk hari ini' },
-                { label: '💰 Tips hemat', prompt: 'Berikan tips menghemat biaya selama perjalanan ini' },
+                { label: 'Halal food nearby', prompt: 'Rekomendasikan halal food di sekitar tujuan kami' },
+                { label: 'Kita telat 2 jam', prompt: 'Kami terlambat 2 jam hari ini, apa yang harus kami skip atau sesuaikan?' },
+                { label: 'Skip outdoor', prompt: 'Hujan deras hari ini, rekomendasikan aktivitas indoor' },
+                { label: 'Translate teks', prompt: 'Tolong bantu terjemahkan teks ini: ' },
+                { label: 'Hari santai', prompt: 'Rekomendasikan aktivitas santai dan rileks untuk hari ini' },
+                { label: 'Tips hemat', prompt: 'Berikan tips menghemat biaya selama perjalanan ini' },
               ].map((chip) => (
                 <button
                   key={chip.label}
@@ -1339,7 +1344,7 @@ export default function TripItineraryPage() {
             <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetShare(false)} />
             <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
               <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Share itinerary</span>
-              <button onClick={() => setSheetShare(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+              <button onClick={() => setSheetShare(false)} style={{ color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1, display:'flex' }}><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:14,height:14}}><path d="M1 1l10 10M11 1L1 11"/></svg></button>
             </div>
             <div style={{ padding: '16px 18px 32px', display: 'flex', flexDirection: 'column', gap: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', background: 'var(--bg-warm)', borderRadius: 8 }}>
@@ -1355,13 +1360,19 @@ export default function TripItineraryPage() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {[
-                  { icon: '💬', label: 'WhatsApp', bg: '#e8f5e9' },
-                  { icon: '✉️', label: 'Email', bg: '#e3f2fd' },
+                  {
+                    label: 'WhatsApp', bg: '#e8f5e9', color: '#2e7d32',
+                    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{width:14,height:14}}><path d="M20 11.5a8 8 0 01-11.3 7.3L4 21l2.2-4.7A8 8 0 1120 11.5z"/></svg>,
+                  },
+                  {
+                    label: 'Email', bg: '#e3f2fd', color: '#1565c0',
+                    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{width:14,height:14}}><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 8l9 6 9-6"/></svg>,
+                  },
                 ].map((opt) => (
                   <button key={opt.label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', border: '1px solid var(--line-strong)', borderRadius: 8, cursor: 'pointer', background: 'transparent', fontFamily: 'inherit', transition: 'all .18s', width: '100%' }}
                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink-25)'; e.currentTarget.style.background = 'var(--bg-warm)' }}
                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.background = 'transparent' }}>
-                    <div style={{ width: 26, height: 26, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, background: opt.bg }}>{opt.icon}</div>
+                    <div style={{ width: 26, height: 26, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', background: opt.bg, color: opt.color }}>{opt.icon}</div>
                     <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink)' }}>{opt.label}</span>
                   </button>
                 ))}
@@ -1456,7 +1467,7 @@ function ItinerarySkeleton() {
 function NotFoundState() {
   return (
     <div style={{ textAlign: 'center', padding: '120px 24px 0' }}>
-      <div style={{ fontSize: 40, marginBottom: 16 }}>🗺️</div>
+      <div style={{ marginBottom: 16, display:'flex', justifyContent:'center' }}><svg viewBox="0 0 40 40" fill="none" stroke="var(--ink-25)" strokeWidth="1.4" strokeLinecap="round" style={{width:40,height:40}}><path d="M4 33V8l11 5 10-5 11 5v25l-11-5-10 5-11-5z"/><path d="M15 13v20M25 8v20"/></svg></div>
       <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, color: 'var(--ink)', marginBottom: 8 }}>Trip not found</div>
       <div style={{ fontSize: 13.5, color: 'var(--ink-50)', marginBottom: 24 }}>This trip doesn&apos;t exist or you don&apos;t have access.</div>
       <Link href="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 13, fontWeight: 600, borderRadius: 100, textDecoration: 'none' }}>

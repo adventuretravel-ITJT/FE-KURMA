@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Day, Activity, ActivityFile, CurrencyCode } from './types'
 import ActivityCard from './ActivityCard'
 import { CITY_DATA } from './cityData'
@@ -42,10 +42,10 @@ const DAY_SUGGESTIONS: Record<string, string[]> = {
 }
 const ALL_SUGGESTIONS = Object.values(DAY_SUGGESTIONS).flat()
 
-const SD_ITEMS = [
-  { type: 'transport', label: 'Transport', icon: '🚆', bg: '#5b21b6' },
-  { type: 'hotel',     label: 'Hotel',     icon: '🏨', bg: '#7a5e36' },
-  { type: 'add',       label: '➕ Add',    icon: '➕', bg: 'var(--ink)' },
+const SD_ITEMS: { type: string; label: string; icon: React.ReactNode; bg: string }[] = [
+  { type: 'transport', label: 'Transport', bg: '#5b21b6', icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:14,height:14}}><rect x="3" y="2" width="10" height="9" rx="2"/><path d="M3 8h10M6 11l-2 3M10 11l2 3"/><circle cx="5.5" cy="5.5" r="1" fill="currentColor" stroke="none"/><circle cx="10.5" cy="5.5" r="1" fill="currentColor" stroke="none"/></svg> },
+  { type: 'hotel',     label: 'Hotel',     bg: '#7a5e36', icon: <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:14,height:14}}><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M8 3v11M5 7h1.5M9.5 7H11M5 10h1.5M9.5 10H11"/></svg> },
+  { type: 'add',       label: 'Add',       bg: 'var(--ink)', icon: <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:12,height:12}}><path d="M6 1v10M1 6h10"/></svg> },
 ]
 
 export default function DaySection({
@@ -251,7 +251,8 @@ export default function DaySection({
             onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.color = '#fff' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--accent-bg)'; e.currentTarget.style.color = 'var(--accent)' }}
           >
-            {cityInfo?.icon ?? '📍'} {cityInfo?.name ?? day.city}
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:11,height:11,flexShrink:0}}><path d="M7 1a4 4 0 014 4c0 3-4 8-4 8S3 8 3 5a4 4 0 014-4z"/><circle cx="7" cy="5" r="1.5"/></svg>
+            {cityInfo?.name ?? day.city}
             <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{ width: 9, height: 9, opacity: .7 }}>
               <path d="M7 1.5l1.5 1.5L3 8.5H1.5V7L7 1.5z" />
             </svg>
