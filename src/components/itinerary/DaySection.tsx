@@ -143,16 +143,6 @@ export default function DaySection({
           color: 'var(--ink-25)', lineHeight: 1, minWidth: 36, flexShrink: 0,
           position: 'relative', paddingTop: isToday ? 10 : 0,
         }}>
-          {isToday && (
-            <span style={{
-              position: 'absolute', top: -2, left: 0,
-              fontSize: 8, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase',
-              color: 'var(--accent)', background: 'var(--accent-bg)',
-              padding: '1px 5px', borderRadius: 3, whiteSpace: 'nowrap', lineHeight: 1.4,
-            }}>
-              TODAY
-            </span>
-          )}
           {String(day.num).padStart(2, '0')}
         </div>
 
