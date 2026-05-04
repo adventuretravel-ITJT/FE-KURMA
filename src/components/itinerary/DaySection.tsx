@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Day, Activity, CurrencyCode } from './types'
+import { Day, Activity, ActivityFile, CurrencyCode } from './types'
 import ActivityCard from './ActivityCard'
 import { CITY_DATA } from './cityData'
 
@@ -13,6 +13,9 @@ interface Props {
   isToday?: boolean
   onAddActivity: (dayId: string, type: string) => void
   onDeleteActivity: (dayId: string, actId: string) => void
+  onEditActivity: (dayId: string, act: Activity) => void
+  onFileAdd: (dayId: string, actId: string, file: ActivityFile) => void
+  onFileRemove: (dayId: string, actId: string, idx: number) => void
   onDeleteDay: (dayId: string) => void
   onLabelChange: (dayId: string, label: string) => void
   onOpenCityModal: (dayId: string) => void
@@ -47,8 +50,9 @@ const SD_ITEMS = [
 
 export default function DaySection({
   day, baseCurr, currSymbol, isFirst, isToday,
-  onAddActivity, onDeleteActivity, onDeleteDay,
-  onLabelChange, onOpenCityModal, onOpenOptimizer,
+  onAddActivity, onDeleteActivity, onEditActivity,
+  onFileAdd, onFileRemove,
+  onDeleteDay, onLabelChange, onOpenCityModal, onOpenOptimizer,
 }: Props) {
   const cityInfo = CITY_DATA[day.city]
   const fabRef   = useRef<HTMLButtonElement>(null)
@@ -400,6 +404,9 @@ export default function DaySection({
               baseCurr={baseCurr}
               currSymbol={currSymbol}
               onDelete={(id) => onDeleteActivity(day.id, id)}
+              onEdit={(act) => onEditActivity(day.id, act)}
+              onFileAdd={(actId, file) => onFileAdd(day.id, actId, file)}
+              onFileRemove={(actId, idx) => onFileRemove(day.id, actId, idx)}
             />
           ))}
         </div>

@@ -5,9 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useUser } from '@/src/contexts/UserContext'
 import {
-  Trip, Day, Activity, ItineraryData, CurrencyCode, CURRENCIES,
+  Trip, Day, Activity, ActivityFile, ItineraryData, CurrencyCode, CURRENCIES,
 } from '@/src/components/itinerary/types'
 import { DESTINATION_TO_CITY, CITY_DATA } from '@/src/components/itinerary/cityData'
+import { PLACES, searchPlaces, getPlace, PlaceData } from '@/src/components/itinerary/placesData'
 import TOCSidebar from '@/src/components/itinerary/TOCSidebar'
 import DaySection from '@/src/components/itinerary/DaySection'
 import BudgetSection from '@/src/components/itinerary/BudgetSection'
@@ -50,6 +51,8 @@ type PanelType = 'add' | 'transport' | 'hotel'
 interface PanelState {
   dayId: string
   panelType: PanelType
+  editId?: string       // if set → edit mode, replace existing activity
+  initialData?: Activity
 }
 
 const CAT_OPTIONS = [
@@ -74,36 +77,71 @@ function AddPanel({ panel, onSave, onClose }: {
   onSave: (dayId: string, act: Activity) => void
   onClose: () => void
 }) {
-  const { panelType } = panel
+  const { panelType, initialData } = panel
+  const isEdit = !!panel.editId
 
   // Shared
-  const [cost, setCost]         = useState('')
-  const [costCurr, setCostCurr] = useState<CurrencyCode>('IDR')
-  const [note, setNote]         = useState('')
-  const [bookRef, setRef]       = useState('')
+  const [cost, setCost]         = useState(initialData?.cost?.toString() ?? '')
+  const [costCurr, setCostCurr] = useState<CurrencyCode>((initialData?.costCurr as CurrencyCode) ?? 'IDR')
+  const [note, setNote]         = useState(initialData?.note ?? '')
+  const [bookRef, setRef]       = useState(initialData?.bookingRef ?? '')
 
-  // 'add' type
-  const [name, setName] = useState('')
-  const [time, setTime] = useState('')
-  const [cat, setCat]   = useState('culture')
+  // 'add' / place type
+  const [name, setName]               = useState(initialData?.type !== 'transport' ? (initialData?.name ?? '') : '')
+  const [time, setTime]               = useState(initialData?.time ?? '')
+  const [cat, setCat]                 = useState(initialData?.cat ?? 'culture')
+  const [placeSearch, setPlaceSearch] = useState('')
+  const [placeResults, setPlaceResults] = useState<PlaceData[]>([])
+  const [selectedPlace, setSelectedPlace] = useState<PlaceData | null>(
+    initialData?.placeId ? (getPlace(initialData.placeId) ?? null) : null
+  )
+  const [manualMode, setManualMode] = useState(!initialData?.placeId && !!initialData?.name && initialData?.type !== 'transport' && initialData?.type !== 'hotel')
 
   // 'transport' type
-  const [mode, setMode]       = useState('train')
-  const [from, setFrom]       = useState('')
-  const [to, setTo]           = useState('')
-  const [departs, setDeparts] = useState('')
-  const [dur, setDur]         = useState('')
+  const [mode, setMode]       = useState(initialData?.mode ?? 'train')
+  const [from, setFrom]       = useState(initialData?.from ?? '')
+  const [to, setTo]           = useState(initialData?.to ?? '')
+  const [departs, setDeparts] = useState(initialData?.departs ?? '')
+  const [dur, setDur]         = useState(initialData?.dur ?? '')
 
   // 'hotel' type
-  const [hotelName, setHotelName] = useState('')
-  const [checkin, setCheckin]     = useState('')
+  const [hotelName, setHotelName] = useState(initialData?.type === 'hotel' || initialData?.cat === 'stay' ? initialData?.name?.replace('🏨 ', '') ?? '' : '')
+  const [checkin, setCheckin]     = useState(initialData?.time ?? '')
 
-  const title = panelType === 'transport' ? 'Add transport' : panelType === 'hotel' ? 'Add hotel / stay' : 'Add place or activity'
+  function onPlaceSearchChange(val: string) {
+    setPlaceSearch(val)
+    setSelectedPlace(null)
+    if (val.trim()) {
+      setPlaceResults(searchPlaces(val, 5))
+    } else {
+      setPlaceResults([])
+    }
+  }
+
+  function selectPlace(p: PlaceData) {
+    setSelectedPlace(p)
+    setPlaceSearch(p.name)
+    setPlaceResults([])
+    setManualMode(false)
+  }
+
+  function useManual() {
+    setManualMode(true)
+    setName(placeSearch)
+    setSelectedPlace(null)
+    setPlaceResults([])
+  }
+
+  const title = panelType === 'transport'
+    ? (isEdit ? 'Edit transport' : 'Add transport')
+    : panelType === 'hotel'
+      ? (isEdit ? 'Edit hotel / stay' : 'Add hotel / stay')
+      : (isEdit ? 'Edit activity' : 'Add place or activity')
 
   function canSave() {
     if (panelType === 'transport') return !!from.trim()
     if (panelType === 'hotel')     return !!hotelName.trim()
-    return !!name.trim()
+    return !!(selectedPlace || manualMode ? name.trim() : false) || !!selectedPlace
   }
 
   function handleSave() {
@@ -111,31 +149,41 @@ function AddPanel({ panel, onSave, onClose }: {
     const costNum = parseFloat(cost) || 0
     const curr = CURRENCIES.find((c) => c.code === costCurr) ?? CURRENCIES[0]
     const fmt = costNum === 0 ? 'Free' : `${curr.symbol}${costNum.toLocaleString()}`
+    const baseId = panel.editId ?? genId()
 
     if (panelType === 'transport') {
       onSave(panel.dayId, {
-        id: genId(), type: 'transport',
+        id: baseId, type: 'transport',
         name: name.trim() || `${from.trim()} → ${to.trim()}`,
         mode, from: from.trim(), fromName: from.trim(),
         to: to.trim(), toName: to.trim(),
         departs, dur,
         cost: costNum, costCurr, costFmt: fmt,
-        note, bookingRef: bookRef, files: [],
+        note, bookingRef: bookRef, files: initialData?.files ?? [],
       })
     } else if (panelType === 'hotel') {
       onSave(panel.dayId, {
-        id: genId(), type: 'activity',
+        id: baseId, type: 'activity',
         name: `🏨 ${hotelName.trim()}`,
         time: checkin,
         cost: costNum, costCurr, costFmt: fmt,
-        cat: 'stay', note, bookingRef: bookRef, files: [],
+        cat: 'stay', note, bookingRef: bookRef, files: initialData?.files ?? [],
+      })
+    } else if (selectedPlace) {
+      onSave(panel.dayId, {
+        id: baseId, type: 'place',
+        name: selectedPlace.name, time,
+        placeId: selectedPlace.id,
+        cat: selectedPlace.cat,
+        cost: costNum, costCurr, costFmt: fmt,
+        note, bookingRef: bookRef, files: initialData?.files ?? [],
       })
     } else {
       onSave(panel.dayId, {
-        id: genId(), type: 'activity',
+        id: baseId, type: 'activity',
         name: name.trim(), time, cat,
         cost: costNum, costCurr, costFmt: fmt,
-        note, bookingRef: bookRef, files: [],
+        note, bookingRef: bookRef, files: initialData?.files ?? [],
       })
     }
     onClose()
@@ -163,34 +211,127 @@ function AddPanel({ panel, onSave, onClose }: {
 
           {panelType === 'add' && (
             <>
-              {/* Place search / name input */}
+              {/* Place search */}
               <SpField label="Place or activity">
                 <div style={{ position: 'relative' }}>
                   <svg viewBox="0 0 16 16" fill="none" stroke="var(--ink-25)" strokeWidth="1.5" strokeLinecap="round"
-                    style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, pointerEvents: 'none' }}>
+                    style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, pointerEvents: 'none', zIndex: 1 }}>
                     <circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5l3 3" />
                   </svg>
                   <input
                     autoFocus
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={selectedPlace ? selectedPlace.name : placeSearch}
+                    onChange={(e) => { setSelectedPlace(null); setManualMode(false); onPlaceSearchChange(e.target.value) }}
                     placeholder="Search a place or type name…"
                     style={{
                       width: '100%', height: 40, padding: '0 12px 0 34px',
-                      background: 'var(--bg)', border: '1px solid var(--line-strong)',
+                      background: selectedPlace ? 'var(--accent-bg)' : 'var(--bg)',
+                      border: `1px solid ${selectedPlace ? 'var(--accent-10, rgba(44,95,78,.1))' : 'var(--line-strong)'}`,
                       borderRadius: 8, fontSize: 13, color: 'var(--ink)', fontFamily: 'inherit',
                       outline: 'none', transition: 'border-color .18s',
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = 'var(--bg-card)' }}
-                    onBlur={(e) => { e.target.style.borderColor = 'var(--line-strong)'; e.target.style.background = 'var(--bg)' }}
+                    onFocus={(e) => { if (!selectedPlace) { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = 'var(--bg-card)' } }}
+                    onBlur={(e) => { if (!selectedPlace) { e.target.style.borderColor = 'var(--line-strong)'; e.target.style.background = 'var(--bg)' } }}
                   />
+                  {/* Dropdown results */}
+                  {placeResults.length > 0 && (
+                    <div style={{
+                      position: 'absolute', top: 'calc(100% + 5px)', left: 0, right: 0,
+                      background: 'var(--bg-card)', border: '1px solid var(--line-strong)',
+                      borderRadius: 10, overflow: 'hidden', zIndex: 20,
+                      boxShadow: '0 8px 24px rgba(17,17,16,.08)',
+                    }}>
+                      {placeResults.map((p) => (
+                        <div
+                          key={p.id}
+                          onMouseDown={(e) => { e.preventDefault(); selectPlace(p) }}
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', cursor: 'pointer', borderBottom: '1px solid var(--line)', transition: 'background .15s' }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-warm)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          <img src={p.photo} alt={p.name} style={{ width: 36, height: 36, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }} />
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{p.name}</div>
+                            <div style={{ fontSize: 11, color: 'var(--ink-25)' }}>{p.city.charAt(0).toUpperCase() + p.city.slice(1)} · {p.cat}</div>
+                          </div>
+                        </div>
+                      ))}
+                      <div
+                        onMouseDown={(e) => { e.preventDefault(); useManual() }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', cursor: 'pointer', fontSize: 12, color: 'var(--ink-50)', transition: 'background .15s' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-warm)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 10, height: 10 }}><path d="M6 1v10M1 6h10" /></svg>
+                        Add &ldquo;{placeSearch}&rdquo; manually
+                      </div>
+                    </div>
+                  )}
+                  {/* No results hint */}
+                  {placeSearch && placeResults.length === 0 && !selectedPlace && (
+                    <div style={{
+                      position: 'absolute', top: 'calc(100% + 5px)', left: 0, right: 0,
+                      background: 'var(--bg-card)', border: '1px solid var(--line-strong)',
+                      borderRadius: 10, overflow: 'hidden', zIndex: 20,
+                    }}>
+                      <div
+                        onMouseDown={(e) => { e.preventDefault(); useManual() }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', cursor: 'pointer', fontSize: 12, color: 'var(--ink-50)', transition: 'background .15s' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-warm)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 10, height: 10 }}><path d="M6 1v10M1 6h10" /></svg>
+                        Add &ldquo;{placeSearch}&rdquo; manually
+                      </div>
+                    </div>
+                  )}
                 </div>
+                {/* Place preview card */}
+                {selectedPlace && (
+                  <div style={{ marginTop: 10, background: 'var(--bg-warm)', borderRadius: 10, overflow: 'hidden' }}>
+                    <img src={selectedPlace.photo} alt={selectedPlace.name} style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
+                    <div style={{ padding: '10px 12px' }}>
+                      <div style={{ fontFamily: 'Fraunces, serif', fontSize: 14, fontWeight: 500, color: 'var(--ink)', marginBottom: 3 }}>{selectedPlace.name}</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }}>
+                        {[
+                          { label: 'Hours', val: selectedPlace.open },
+                          { label: 'Entry', val: selectedPlace.price },
+                          { label: 'Visit', val: selectedPlace.visitTime },
+                          { label: 'Crowd', val: selectedPlace.crowd },
+                        ].map(({ label, val }) => (
+                          <div key={label}>
+                            <div style={{ fontSize: '9.5px', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>{label}</div>
+                            <div style={{ fontSize: 11.5, color: 'var(--ink)' }}>{val}</div>
+                          </div>
+                        ))}
+                      </div>
+                      {selectedPlace.tip && (
+                        <div style={{ fontSize: 11, color: 'var(--ink-50)', fontStyle: 'italic', marginTop: 8, paddingTop: 8, borderTop: '1px solid var(--line)' }}>
+                          💡 {selectedPlace.tip}
+                        </div>
+                      )}
+                      <button
+                        onClick={() => { setSelectedPlace(null); setPlaceSearch('') }}
+                        style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}
+                      >
+                        ✕ Clear selection
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {/* Manual name input */}
+                {manualMode && !selectedPlace && (
+                  <div style={{ marginTop: 8 }}>
+                    <SpInput value={name} onChange={setName} placeholder="Activity name…" autoFocus />
+                  </div>
+                )}
               </SpField>
               <SpField label="Time">
                 <SpInput value={time} onChange={setTime} placeholder="09:00" />
               </SpField>
-              <SpField label="Category">
+              {/* Category — only for manual mode */}
+              {!selectedPlace && <SpField label="Category">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 5 }}>
                   {CAT_OPTIONS.map((c) => {
                     const on = cat === c.key
@@ -207,7 +348,7 @@ function AddPanel({ panel, onSave, onClose }: {
                     )
                   })}
                 </div>
-              </SpField>
+              </SpField>}
             </>
           )}
 
@@ -303,7 +444,7 @@ function AddPanel({ panel, onSave, onClose }: {
             onMouseEnter={(e) => { if (canSave()) e.currentTarget.style.background = 'var(--accent)' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)' }}
           >
-            Add
+            {isEdit ? 'Save changes' : 'Add'}
           </button>
         </div>
       </aside>
@@ -493,16 +634,27 @@ export default function TripItineraryPage() {
     setPanel({ dayId, panelType: panelType as PanelType })
   }
 
+  function handleEditActivity(dayId: string, act: Activity) {
+    const panelType: PanelType =
+      act.type === 'transport' ? 'transport'
+      : act.cat === 'stay' ? 'hotel'
+      : 'add'
+    setPanel({ dayId, panelType, editId: act.id, initialData: act })
+  }
+
   function handleSaveActivity(dayId: string, act: Activity) {
     setDays((prev) => {
       const next = prev.map((d) => {
         if (d.id !== dayId) return d
+        if (panel?.editId) {
+          return { ...d, acts: d.acts.map((a) => a.id === panel.editId ? act : a) }
+        }
         return { ...d, acts: [...d.acts, act] }
       })
       saveItinerary(next, currency)
       return next
     })
-    showToast('Activity added')
+    showToast(panel?.editId ? 'Updated' : 'Activity added')
   }
 
   function handleDeleteActivity(dayId: string, actId: string) {
@@ -514,6 +666,28 @@ export default function TripItineraryPage() {
       return next
     })
     showToast('Deleted')
+  }
+
+  function handleFileAdd(dayId: string, actId: string, file: ActivityFile) {
+    setDays((prev) => {
+      const next = prev.map((d) => {
+        if (d.id !== dayId) return d
+        return { ...d, acts: d.acts.map((a) => a.id === actId ? { ...a, files: [...(a.files ?? []), file] } : a) }
+      })
+      saveItinerary(next, currency)
+      return next
+    })
+  }
+
+  function handleFileRemove(dayId: string, actId: string, idx: number) {
+    setDays((prev) => {
+      const next = prev.map((d) => {
+        if (d.id !== dayId) return d
+        return { ...d, acts: d.acts.map((a) => a.id === actId ? { ...a, files: (a.files ?? []).filter((_, i) => i !== idx) } : a) }
+      })
+      saveItinerary(next, currency)
+      return next
+    })
   }
 
   function handleLabelChange(dayId: string, label: string) {
@@ -796,6 +970,9 @@ export default function TripItineraryPage() {
               isToday={day.date === todayStr}
               onAddActivity={handleAddActivity}
               onDeleteActivity={requestDeleteActivity}
+              onEditActivity={handleEditActivity}
+              onFileAdd={handleFileAdd}
+              onFileRemove={handleFileRemove}
               onDeleteDay={requestDeleteDay}
               onLabelChange={handleLabelChange}
               onOpenCityModal={handleOpenCityModal}
@@ -1124,7 +1301,7 @@ export default function TripItineraryPage() {
               <button
                 onClick={() => sendKurma()}
                 disabled={!kurmaInput.trim() || kurmaLoading}
-                style={{ position: 'absolute', bottom: 10, right: 10, width: 30, height: 30, borderRadius: 8, background: kurmaInput.trim() ? 'var(--ink)' : 'var(--line-strong)', border: 'none', cursor: kurmaInput.trim() ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .18s' }}
+                style={{ position: 'absolute', bottom: 27, right: 10, width: 30, height: 30, borderRadius: 8, background: kurmaInput.trim() ? 'var(--ink)' : 'var(--line-strong)', border: 'none', cursor: kurmaInput.trim() ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .18s' }}
               >
                 <svg viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M12 7L2 2l2 5-2 5z" /></svg>
               </button>
