@@ -20,7 +20,7 @@ export const HOTELS: Record<string, HotelData> = {
   },
   hakone: {
     name: 'Ryokan Tensui',
-    photo: 'https://images.unsplash.com/photo-1540541338537-1220205f5f9e?w=600&q=75',
+    photo: 'https://imgs.search.brave.com/ZXEccnp79VqsOTjH1TofjbXZIsa0z3kQpIjXucOZrm8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90ZW5z/dWktc2FyeW8uaG90/ZWxzaGFrb25lLmNv/bS9kYXRhL1BpY3Mv/MTkyMHgxMDgwdy8x/MTE4Mi8xMTE4MjM4/LzExMTgyMzgyNzMv/dGVuc3VpLXNhcnlv/LWhha29uZS1waWMt/MjUuSlBFRw',
     stars: 4,
     brief: 'Traditional ryokan perched above Hakone-Yumoto hot spring valley. Includes kaiseki dinner and private onsen bath. Book 3 weeks in advance.',
     location: 'Hakone-Yumoto, Kanagawa',
