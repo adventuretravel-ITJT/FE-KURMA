@@ -39,9 +39,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             let token = localStorage.getItem('token')
             if (!token) { router.replace('/auth'); return }
 
+            const ctrl = new AbortController()
+            const t1 = setTimeout(() => ctrl.abort(), 10000)
             let res = await fetch(`${API}/api/me`, {
                 headers: { Authorization: `Bearer ${token}` },
+                signal: ctrl.signal,
             }).catch(() => null)
+            clearTimeout(t1)
 
             // Token expired — try to refresh once
             if (!res || res.status === 401) {
@@ -51,9 +55,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     router.replace('/auth')
                     return
                 }
+                const ctrl2 = new AbortController()
+                const t2 = setTimeout(() => ctrl2.abort(), 10000)
                 res = await fetch(`${API}/api/me`, {
                     headers: { Authorization: `Bearer ${token}` },
+                    signal: ctrl2.signal,
                 }).catch(() => null)
+                clearTimeout(t2)
             }
 
             if (!res || !res.ok) {

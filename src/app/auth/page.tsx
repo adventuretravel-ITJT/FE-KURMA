@@ -144,26 +144,45 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
     const loginWithGoogle = useGoogleLogin({
         scope: 'openid email profile',
         onSuccess: async (tokenResponse) => {
-            setGoogleLoading(true)
             setGoogleError('')
             try {
+                const controller = new AbortController()
+                const tid = setTimeout(() => controller.abort(), 15000)
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ access_token: tokenResponse.access_token }),
+                    signal: controller.signal,
                 })
+                clearTimeout(tid)
                 const data = await res.json()
                 if (!res.ok) { setGoogleError(data.message || 'Google login failed.'); return }
                 localStorage.setItem('token', data.token)
                 window.location.href = '/dashboard'
-            } catch {
-                setGoogleError('Something went wrong. Please try again.')
+            } catch (err) {
+                if (err instanceof Error && err.name === 'AbortError') {
+                    setGoogleError('Request timed out. Please try again.')
+                } else {
+                    setGoogleError('Something went wrong. Please try again.')
+                }
             } finally {
                 setGoogleLoading(false)
             }
         },
-        onError: () => setGoogleError('Google sign-in was cancelled or failed.'),
+        onError: () => {
+            setGoogleError('Google sign-in was cancelled or failed.')
+            setGoogleLoading(false)
+        },
+        onNonOAuthError: () => {
+            setGoogleLoading(false)
+        },
     })
+
+    const handleGoogleClick = () => {
+        setGoogleLoading(true)
+        setGoogleError('')
+        loginWithGoogle()
+    }
 
     const btnStyle: React.CSSProperties = {
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -177,7 +196,7 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
         <div>
             <div className="flex flex-col sm:flex-row" style={{ gap: 10, marginBottom: 4 }}>
                 <button type="button" className="btn-social" style={btnStyle}
-                    disabled={googleLoading} onClick={() => loginWithGoogle()}>
+                    disabled={googleLoading} onClick={handleGoogleClick}>
                     {googleLoading ? (
                         <div style={{ width: 14, height: 14, border: '2px solid var(--line-strong)', borderTopColor: 'var(--ink)', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
                     ) : <GoogleIcon />}

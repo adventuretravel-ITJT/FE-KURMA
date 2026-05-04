@@ -246,7 +246,7 @@ function EmptyState() {
 ══════════════════════════════════════════════════════════ */
 function OnboardingCard() {
     const steps = [
-        { done: true,  current: false, label: 'Create your account',           desc: '' },
+        { done: true,  current: false, label: 'Create your account',            desc: '' },
         { done: false, current: true,  label: 'Plan your first trip',           desc: 'Add a destination and let AI draft your itinerary.' },
         { done: false, current: false, label: 'Activate eSIM for connectivity', desc: 'Stay connected the moment you land — no SIM swapping.' },
     ]
@@ -254,7 +254,7 @@ function OnboardingCard() {
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 16, padding: '24px 28px', marginTop: 16 }}>
             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 16 }}>Getting started</div>
             {steps.map((s, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '13px 0', borderBottom: i < steps.length - 1 ? '1px solid var(--line)' : 'none', paddingTop: i === 0 ? 0 : undefined, paddingBottom: i === steps.length - 1 ? 0 : undefined }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 14, padding: '13px 0', borderBottom: i < steps.length - 1 ? '1px solid var(--line)' : 'none', paddingTop: i === 0 ? 0 : 10, paddingBottom: i === steps.length - 1 ? 0 : 10 }}>
                     <div style={{ width: 22, height: 22, borderRadius: '50%', border: `1.5px solid ${s.done ? 'var(--accent)' : s.current ? 'var(--accent)' : 'var(--line-strong)'}`, background: s.done ? 'var(--accent)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 10, fontWeight: 600, color: s.done ? '#fff' : s.current ? 'var(--accent)' : 'var(--ink-25)', marginTop: 1 }}>
                         {s.done ? (
                             <svg viewBox="0 0 10 10" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" style={{ width: 10, height: 10 }}>

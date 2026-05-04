@@ -60,7 +60,7 @@ const TRAVEL_TYPES = [
 ] as const
 
 const ACTIVITIES = [
-    { key: 'culture',   label: 'Culture & History', icon: IconCultureHistory },
+    { key: 'culture',   label: 'Culture & History',  icon: IconCultureHistory },
     { key: 'food',      label: 'Local Food',         icon: IconLocalFood },
     { key: 'nature',    label: 'Nature',             icon: IconNature },
     { key: 'shopping',  label: 'City & Shopping',    icon: IconShopping },
@@ -69,20 +69,20 @@ const ACTIVITIES = [
 ]
 
 const PACES = [
-    { key: 'easy',     label: 'Easy',     description: '2 – 3 spots a day', icon: IconPaceEasy },
-    { key: 'balanced', label: 'Balanced', description: '4 – 5 spots a day', icon: IconPaceBalanced },
+    { key: 'easy',     label: 'Easy',     description: '2 – 3 spots a day',   icon: IconPaceEasy },
+    { key: 'balanced', label: 'Balanced', description: '4 – 5 spots a day',   icon: IconPaceBalanced },
     { key: 'packed',   label: 'Packed',   description: 'Maximise every hour', icon: IconPacePacked },
 ]
 
 const BUDGETS = [
-    { key: 'backpacker', label: 'Backpacker', description: 'Stretch every rupiah',    icon: IconBudgetBackpacker },
+    { key: 'backpacker', label: 'Backpacker',  description: 'Stretch every rupiah',     icon: IconBudgetBackpacker },
     { key: 'smart',      label: 'Smart',       description: 'Comfort without guilt',   icon: IconBudgetSmart },
     { key: 'comfort',    label: 'Comfort',     description: 'Mid-range done right',    icon: IconBudgetComfort },
     { key: 'splurge',    label: 'Splurge',     description: 'Treat yourself',          icon: IconBudgetSplurge },
 ]
 
 const SPECIAL_NEEDS = [
-    { key: 'halal',         label: 'Halal food',          icon: IconHalal },
+    { key: 'halal',         label: 'Halal food',           icon: IconHalal },
     { key: 'accessibility', label: 'Accessibility',        icon: IconAccessibility },
     { key: 'stroller',      label: 'Stroller-friendly',    icon: IconStroller },
     { key: 'vegetarian',    label: 'Vegetarian / Vegan',   icon: IconVegetarian },
@@ -516,9 +516,6 @@ export default function NewTripPage() {
                                                         onChange={(e) => { setField(k as 'startDate'|'endDate', e.target.value); setDateErr(false) }}
                                                         style={ss.input}
                                                     />
-                                                    <svg viewBox="0 0 14 14" fill="none" stroke="var(--ink-25)" strokeWidth="1.5" strokeLinecap="round" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, pointerEvents: 'none' }}>
-                                                        <rect x="1" y="2" width="12" height="11" rx="2" /><path d="M4 1v2M10 1v2M1 6h12" />
-                                                    </svg>
                                                 </div>
                                             ))}
                                         </div>
