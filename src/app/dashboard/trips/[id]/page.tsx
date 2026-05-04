@@ -11,6 +11,7 @@ import { DESTINATION_TO_CITY, CITY_DATA } from '@/src/components/itinerary/cityD
 import { PLACES, searchPlaces, getPlace, PlaceData } from '@/src/components/itinerary/placesData'
 import TOCSidebar from '@/src/components/itinerary/TOCSidebar'
 import DaySection from '@/src/components/itinerary/DaySection'
+import SuggestedStay from '@/src/components/itinerary/SuggestedStay'
 import BudgetSection from '@/src/components/itinerary/BudgetSection'
 import CityGuideSidebar from '@/src/components/itinerary/CityGuideSidebar'
 import ConfirmModal from '@/src/components/itinerary/ConfirmModal'
@@ -964,25 +965,39 @@ export default function TripItineraryPage() {
           <BudgetSection days={days} baseCurr={currency} onCurrChange={handleCurrChange} />
 
           {/* Days */}
-          {days.map((day, i) => (
-            <DaySection
-              key={day.id}
-              day={day}
-              baseCurr={currency}
-              currSymbol={currObj.symbol}
-              isFirst={i === 0}
-              isToday={day.date === todayStr}
-              onAddActivity={handleAddActivity}
-              onDeleteActivity={requestDeleteActivity}
-              onEditActivity={handleEditActivity}
-              onFileAdd={handleFileAdd}
-              onFileRemove={handleFileRemove}
-              onDeleteDay={requestDeleteDay}
-              onLabelChange={handleLabelChange}
-              onOpenCityModal={handleOpenCityModal}
-              onOpenOptimizer={() => setSheetOptimizer(true)}
-            />
-          ))}
+          {days.map((day, i) => {
+            const nextDay = days[i + 1]
+            const hasStay = day.acts.some((a) => a.cat === 'stay')
+            const showSuggest = !hasStay && nextDay && day.city !== nextDay.city
+            return (
+              <React.Fragment key={day.id}>
+                <DaySection
+                  day={day}
+                  baseCurr={currency}
+                  currSymbol={currObj.symbol}
+                  isFirst={i === 0}
+                  isToday={day.date === todayStr}
+                  onAddActivity={handleAddActivity}
+                  onDeleteActivity={requestDeleteActivity}
+                  onEditActivity={handleEditActivity}
+                  onFileAdd={handleFileAdd}
+                  onFileRemove={handleFileRemove}
+                  onDeleteDay={requestDeleteDay}
+                  onLabelChange={handleLabelChange}
+                  onOpenCityModal={handleOpenCityModal}
+                  onOpenOptimizer={() => setSheetOptimizer(true)}
+                />
+                {showSuggest && (
+                  <SuggestedStay
+                    cityA={day.city}
+                    cityB={nextDay.city}
+                    baseCurr={currency}
+                    currSymbol={currObj.symbol}
+                  />
+                )}
+              </React.Fragment>
+            )
+          })}
 
           {/* Add day button */}
           <button
