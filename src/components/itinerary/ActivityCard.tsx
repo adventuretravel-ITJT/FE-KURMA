@@ -6,7 +6,6 @@ interface Props {
   act: Activity
   baseCurr: CurrencyCode
   currSymbol: string
-  onEdit?: (id: string) => void
   onDelete?: (id: string) => void
 }
 
@@ -33,7 +32,7 @@ function Badge({ label, cat }: { label: string; cat?: string }) {
   )
 }
 
-export default function ActivityCard({ act, baseCurr, currSymbol, onEdit, onDelete }: Props) {
+export default function ActivityCard({ act, baseCurr, currSymbol, onDelete }: Props) {
   const isTransport = act.type === 'transport'
 
   const convertedCost = act.cost != null && act.costCurr
@@ -60,7 +59,7 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onEdit, onDele
         if (actions) actions.style.opacity = '1'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = isTransport ? 'var(--line)' : 'var(--line)'
+        e.currentTarget.style.borderColor = 'var(--line)'
         e.currentTarget.style.boxShadow = 'none'
         const actions = e.currentTarget.querySelector<HTMLElement>('.act-actions')
         if (actions) actions.style.opacity = '0'
@@ -134,21 +133,8 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onEdit, onDele
         </div>
       </div>
 
-      {/* Actions */}
+      {/* Actions — only delete */}
       <div className="act-actions" style={{ display: 'flex', gap: 3, opacity: 0, transition: 'opacity .18s', flexShrink: 0 }}>
-        {onEdit && (
-          <button
-            onClick={() => onEdit(act.id)}
-            style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-25)', transition: 'all .15s' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-warm)'; e.currentTarget.style.color = 'var(--ink)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-25)' }}
-            title="Edit"
-          >
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 12, height: 12 }}>
-              <path d="M8.5 2.5l2 2L4 11H2v-2l6.5-6.5z" />
-            </svg>
-          </button>
-        )}
         {onDelete && (
           <button
             onClick={() => onDelete(act.id)}
@@ -157,7 +143,7 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onEdit, onDele
             onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-25)' }}
             title="Delete"
           >
-            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 12, height: 12 }}>
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 13, height: 13 }}>
               <path d="M2 3h9M5 3V2h3v1M10 3l-.6 8a1 1 0 01-1 .9H4.6a1 1 0 01-1-.9L3 3" />
             </svg>
           </button>

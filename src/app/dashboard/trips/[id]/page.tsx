@@ -12,6 +12,8 @@ import TOCSidebar from '@/src/components/itinerary/TOCSidebar'
 import DaySection from '@/src/components/itinerary/DaySection'
 import BudgetSection from '@/src/components/itinerary/BudgetSection'
 import CityGuideSidebar from '@/src/components/itinerary/CityGuideSidebar'
+import ConfirmModal from '@/src/components/itinerary/ConfirmModal'
+import CityPickerModal from '@/src/components/itinerary/CityPickerModal'
 
 /* ── Helpers ─────────────────────────────────────── */
 function genId() { return 'a' + Date.now() + Math.floor(Math.random() * 9999) }
@@ -19,7 +21,7 @@ function genId() { return 'a' + Date.now() + Math.floor(Math.random() * 9999) }
 function buildInitialDays(trip: Trip): Day[] {
   const defaultCity = DESTINATION_TO_CITY[trip.destination] ?? Object.keys(CITY_DATA)[0]
   const start = trip.start_date ? new Date(trip.start_date + 'T00:00:00') : new Date()
-  const end   = trip.end_date   ? new Date(trip.end_date   + 'T00:00:00') : null
+  const end = trip.end_date ? new Date(trip.end_date + 'T00:00:00') : null
 
   const numDays = end
     ? Math.max(1, Math.round((end.getTime() - start.getTime()) / 86400000) + 1)
@@ -42,88 +44,110 @@ function buildInitialDays(trip: Trip): Day[] {
   })
 }
 
-/* ── Add / Edit Panel ─────────────────────────────── */
+/* ── Panel types ──────────────────────────────────── */
+type PanelType = 'add' | 'transport' | 'hotel'
+
 interface PanelState {
   dayId: string
-  actType: Activity['type']
-  existing?: Activity
+  panelType: PanelType
 }
 
 const CAT_OPTIONS = [
-  { key: 'culture',  label: 'Culture', icon: '🏛️' },
-  { key: 'food',     label: 'Food',    icon: '🍜' },
-  { key: 'nature',   label: 'Nature',  icon: '🌿' },
-  { key: 'shopping', label: 'Shopping',icon: '🛍️' },
-  { key: 'activity', label: 'Activity',icon: '🎯' },
-  { key: 'stay',     label: 'Stay',    icon: '🏨' },
+  { key: 'culture',  label: 'Culture',  icon: '🏛️' },
+  { key: 'food',     label: 'Food',     icon: '🍜' },
+  { key: 'nature',   label: 'Nature',   icon: '🌿' },
+  { key: 'shopping', label: 'Shopping', icon: '🛍️' },
+  { key: 'activity', label: 'Activity', icon: '🎯' },
+  { key: 'stay',     label: 'Stay',     icon: '🏨' },
 ]
 
-const TRANSPORT_MODES = ['flight', 'train', 'bus', 'car', 'ferry', 'other']
+const TRANSPORT_MODES = [
+  { key: 'train',  label: '🚆 Train'  },
+  { key: 'flight', label: '✈️ Flight' },
+  { key: 'bus',    label: '🚌 Bus'    },
+  { key: 'car',    label: '🚗 Car'    },
+]
 
+/* ── Add Panel ────────────────────────────────────── */
 function AddPanel({ panel, onSave, onClose }: {
   panel: PanelState
   onSave: (dayId: string, act: Activity) => void
   onClose: () => void
 }) {
-  const isTransport = panel.actType === 'transport'
-  const ex = panel.existing
+  const { panelType } = panel
 
-  const [name, setName]           = useState(ex?.name ?? '')
-  const [time, setTime]           = useState(ex?.time ?? '')
-  const [cat, setCat]             = useState(ex?.cat ?? 'activity')
-  const [cost, setCost]           = useState(ex?.cost != null ? String(ex.cost) : '')
-  const [costCurr, setCostCurr]   = useState<CurrencyCode>((ex?.costCurr as CurrencyCode) ?? 'IDR')
-  const [note, setNote]           = useState(ex?.note ?? '')
-  const [bookingRef, setRef]      = useState(ex?.bookingRef ?? '')
-  // transport
-  const [mode, setMode]           = useState(ex?.mode ?? 'flight')
-  const [from, setFrom]           = useState(ex?.from ?? '')
-  const [fromName, setFromName]   = useState(ex?.fromName ?? '')
-  const [to, setTo]               = useState(ex?.to ?? '')
-  const [toName, setToName]       = useState(ex?.toName ?? '')
-  const [departs, setDeparts]     = useState(ex?.departs ?? '')
-  const [dur, setDur]             = useState(ex?.dur ?? '')
+  // Shared
+  const [cost, setCost]         = useState('')
+  const [costCurr, setCostCurr] = useState<CurrencyCode>('IDR')
+  const [note, setNote]         = useState('')
+  const [bookRef, setRef]       = useState('')
+
+  // 'add' type
+  const [name, setName] = useState('')
+  const [time, setTime] = useState('')
+  const [cat, setCat]   = useState('culture')
+
+  // 'transport' type
+  const [mode, setMode]       = useState('train')
+  const [from, setFrom]       = useState('')
+  const [to, setTo]           = useState('')
+  const [departs, setDeparts] = useState('')
+  const [dur, setDur]         = useState('')
+
+  // 'hotel' type
+  const [hotelName, setHotelName] = useState('')
+  const [checkin, setCheckin]     = useState('')
+
+  const title = panelType === 'transport' ? 'Add transport' : panelType === 'hotel' ? 'Add hotel / stay' : 'Add place or activity'
+
+  function canSave() {
+    if (panelType === 'transport') return !!from.trim()
+    if (panelType === 'hotel')     return !!hotelName.trim()
+    return !!name.trim()
+  }
 
   function handleSave() {
+    if (!canSave()) return
     const costNum = parseFloat(cost) || 0
     const curr = CURRENCIES.find((c) => c.code === costCurr) ?? CURRENCIES[0]
     const fmt = costNum === 0 ? 'Free' : `${curr.symbol}${costNum.toLocaleString()}`
 
-    if (isTransport) {
+    if (panelType === 'transport') {
       onSave(panel.dayId, {
-        id: ex?.id ?? genId(),
-        type: 'transport',
-        name: name || `${fromName || from} → ${toName || to}`,
-        mode, from, fromName, to, toName, departs, dur,
+        id: genId(), type: 'transport',
+        name: name.trim() || `${from.trim()} → ${to.trim()}`,
+        mode, from: from.trim(), fromName: from.trim(),
+        to: to.trim(), toName: to.trim(),
+        departs, dur,
         cost: costNum, costCurr, costFmt: fmt,
-        note, bookingRef, files: ex?.files ?? [],
+        note, bookingRef: bookRef, files: [],
+      })
+    } else if (panelType === 'hotel') {
+      onSave(panel.dayId, {
+        id: genId(), type: 'activity',
+        name: `🏨 ${hotelName.trim()}`,
+        time: checkin,
+        cost: costNum, costCurr, costFmt: fmt,
+        cat: 'stay', note, bookingRef: bookRef, files: [],
       })
     } else {
       onSave(panel.dayId, {
-        id: ex?.id ?? genId(),
-        type: panel.actType,
-        name, time, cat, cost: costNum, costCurr, costFmt: fmt,
-        note, bookingRef, files: ex?.files ?? [],
+        id: genId(), type: 'activity',
+        name: name.trim(), time, cat,
+        cost: costNum, costCurr, costFmt: fmt,
+        note, bookingRef: bookRef, files: [],
       })
     }
     onClose()
   }
 
-  const title = ex ? 'Edit' : isTransport ? 'Add Transport' : panel.actType === 'place' ? 'Add Place' : 'Add Activity'
-
   return (
     <>
-      {/* Overlay */}
-      <div
-        onClick={onClose}
-        style={{ position: 'fixed', inset: 0, zIndex: 295, background: 'rgba(17,17,16,.18)' }}
-      />
-      {/* Panel */}
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 295, background: 'rgba(17,17,16,.18)' }} />
       <aside style={{
         position: 'fixed', top: 60, right: 0, bottom: 0, width: 360,
         background: 'var(--bg-card)', borderLeft: '1px solid var(--line)',
         zIndex: 300, display: 'flex', flexDirection: 'column',
-        transform: 'translateX(0)', transition: 'transform .28s cubic-bezier(.22,1,.36,1)',
         overflowY: 'auto',
       }}>
         {/* Head */}
@@ -136,41 +160,32 @@ function AddPanel({ panel, onSave, onClose }: {
 
         {/* Body */}
         <div style={{ padding: '16px 18px', flex: 1 }}>
-          {isTransport ? (
+
+          {panelType === 'add' && (
             <>
-              <SpField label="Mode">
-                <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-                  {TRANSPORT_MODES.map((m) => {
-                    const on = mode === m
-                    return (
-                      <button key={m} onClick={() => setMode(m)} style={{
-                        padding: '6px 11px', border: `1px solid ${on ? 'rgba(139,92,246,.4)' : 'var(--line-strong)'}`,
-                        borderRadius: 7, fontSize: 11, fontWeight: on ? 600 : 500,
-                        color: on ? 'rgba(109,62,216,1)' : 'var(--ink-50)',
-                        background: on ? 'rgba(139,92,246,.07)' : 'transparent',
-                        cursor: 'pointer', fontFamily: 'inherit', textTransform: 'capitalize',
-                      }}>
-                        {m}
-                      </button>
-                    )
-                  })}
+              {/* Place search / name input */}
+              <SpField label="Place or activity">
+                <div style={{ position: 'relative' }}>
+                  <svg viewBox="0 0 16 16" fill="none" stroke="var(--ink-25)" strokeWidth="1.5" strokeLinecap="round"
+                    style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, pointerEvents: 'none' }}>
+                    <circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5l3 3" />
+                  </svg>
+                  <input
+                    autoFocus
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Search a place or type name…"
+                    style={{
+                      width: '100%', height: 40, padding: '0 12px 0 34px',
+                      background: 'var(--bg)', border: '1px solid var(--line-strong)',
+                      borderRadius: 8, fontSize: 13, color: 'var(--ink)', fontFamily: 'inherit',
+                      outline: 'none', transition: 'border-color .18s',
+                    }}
+                    onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = 'var(--bg-card)' }}
+                    onBlur={(e) => { e.target.style.borderColor = 'var(--line-strong)'; e.target.style.background = 'var(--bg)' }}
+                  />
                 </div>
-              </SpField>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <SpField label="From Code"><SpInput value={from} onChange={setFrom} placeholder="CGK" /></SpField>
-                <SpField label="From City"><SpInput value={fromName} onChange={setFromName} placeholder="Jakarta" /></SpField>
-                <SpField label="To Code"><SpInput value={to} onChange={setTo} placeholder="NRT" /></SpField>
-                <SpField label="To City"><SpInput value={toName} onChange={setToName} placeholder="Narita" /></SpField>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <SpField label="Departs"><SpInput value={departs} onChange={setDeparts} placeholder="06:40" /></SpField>
-                <SpField label="Duration"><SpInput value={dur} onChange={setDur} placeholder="7h 30m" /></SpField>
-              </div>
-            </>
-          ) : (
-            <>
-              <SpField label="Activity name">
-                <SpInput value={name} onChange={setName} placeholder="e.g. Senso-ji Temple" autoFocus />
               </SpField>
               <SpField label="Time">
                 <SpInput value={time} onChange={setTime} placeholder="09:00" />
@@ -196,8 +211,57 @@ function AddPanel({ panel, onSave, onClose }: {
             </>
           )}
 
+          {panelType === 'transport' && (
+            <>
+              <SpField label="Mode">
+                <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap', marginBottom: 4 }}>
+                  {TRANSPORT_MODES.map((m) => {
+                    const on = mode === m.key
+                    return (
+                      <button key={m.key} onClick={() => setMode(m.key)} style={{
+                        flex: 1, minWidth: 60, padding: '7px 5px',
+                        border: `1px solid ${on ? 'rgba(139,92,246,.4)' : 'var(--line-strong)'}`,
+                        borderRadius: 7, fontSize: 11, fontWeight: on ? 600 : 500,
+                        color: on ? 'rgba(109,62,216,1)' : 'var(--ink-50)',
+                        background: on ? 'rgba(139,92,246,.07)' : 'transparent',
+                        cursor: 'pointer', fontFamily: 'inherit', textAlign: 'center',
+                      }}>
+                        {m.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </SpField>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <SpField label="From">
+                  <SpInput value={from} onChange={setFrom} placeholder="Tokyo / CGK" autoFocus />
+                </SpField>
+                <SpField label="To">
+                  <SpInput value={to} onChange={setTo} placeholder="Kyoto / NRT" />
+                </SpField>
+                <SpField label="Departs">
+                  <SpInput value={departs} onChange={setDeparts} placeholder="08:20" />
+                </SpField>
+                <SpField label="Duration">
+                  <SpInput value={dur} onChange={setDur} placeholder="2h 15m" />
+                </SpField>
+              </div>
+            </>
+          )}
+
+          {panelType === 'hotel' && (
+            <>
+              <SpField label="Hotel name">
+                <SpInput value={hotelName} onChange={setHotelName} placeholder="e.g. Shinjuku Granbell Hotel" autoFocus />
+              </SpField>
+              <SpField label="Check-in time">
+                <SpInput value={checkin} onChange={setCheckin} placeholder="15:00" />
+              </SpField>
+            </>
+          )}
+
           {/* Cost */}
-          <SpField label="Cost">
+          <SpField label={panelType === 'hotel' ? 'Cost / night' : 'Cost'}>
             <div style={{ display: 'flex', gap: 8 }}>
               <select
                 value={costCurr}
@@ -210,12 +274,12 @@ function AddPanel({ panel, onSave, onClose }: {
             </div>
           </SpField>
 
-          {/* Note */}
-          <SpField label="Note">
+          {/* Notes */}
+          <SpField label="Notes">
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Any tips or reminders…"
+              placeholder="Tips, reminders, details…"
               rows={3}
               style={{ width: '100%', minHeight: 68, padding: '9px 12px', resize: 'vertical', background: 'var(--bg)', border: '1px solid var(--line-strong)', borderRadius: 8, fontSize: 13, color: 'var(--ink)', fontFamily: 'inherit', outline: 'none', lineHeight: 1.6 }}
             />
@@ -223,7 +287,7 @@ function AddPanel({ panel, onSave, onClose }: {
 
           {/* Booking ref */}
           <SpField label="Booking reference">
-            <SpInput value={bookingRef} onChange={setRef} placeholder="e.g. GA-884-2025" />
+            <SpInput value={bookRef} onChange={setRef} placeholder="e.g. GA-884-2025" />
           </SpField>
         </div>
 
@@ -234,12 +298,12 @@ function AddPanel({ panel, onSave, onClose }: {
           </button>
           <button
             onClick={handleSave}
-            disabled={!isTransport && !name.trim()}
-            style={{ flex: 1, padding: 10, background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', transition: 'background .18s', opacity: (!isTransport && !name.trim()) ? .4 : 1 }}
-            onMouseEnter={(e) => { if (isTransport || name.trim()) e.currentTarget.style.background = 'var(--accent)' }}
+            disabled={!canSave()}
+            style={{ flex: 1, padding: 10, background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', transition: 'background .18s', opacity: canSave() ? 1 : .4 }}
+            onMouseEnter={(e) => { if (canSave()) e.currentTarget.style.background = 'var(--accent)' }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)' }}
           >
-            {ex ? 'Save changes' : 'Add'}
+            Add
           </button>
         </div>
       </aside>
@@ -250,7 +314,7 @@ function AddPanel({ panel, onSave, onClose }: {
 function SpField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 14 }}>
-      <label style={{ display: 'block', fontSize: 10, fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 6 }}>{label}</label>
+      {label && <label style={{ display: 'block', fontSize: 10, fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 6 }}>{label}</label>}
       {children}
     </div>
   )
@@ -275,7 +339,7 @@ function SpInput({ value, onChange, placeholder, autoFocus, style }: {
         ...style,
       }}
       onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; e.target.style.background = 'var(--bg-card)' }}
-      onBlur={(e)  => { e.target.style.borderColor = 'var(--line-strong)'; e.target.style.background = 'var(--bg)' }}
+      onBlur={(e) => { e.target.style.borderColor = 'var(--line-strong)'; e.target.style.background = 'var(--bg)' }}
     />
   )
 }
@@ -284,21 +348,37 @@ function SpInput({ value, onChange, placeholder, autoFocus, style }: {
 export default function TripItineraryPage() {
   const params = useParams<{ id: string }>()
   const id = params?.id ?? ''
-  const router  = useRouter()
+  const router = useRouter()
   const { onToggleSidebar } = useUser()
 
-  const [trip, setTrip]       = useState<Trip | null>(null)
-  const [days, setDays]       = useState<Day[]>([])
-  const [currency, setCurrency] = useState<CurrencyCode>('IDR')
-  const [loading, setLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
-  const [panel, setPanel]       = useState<PanelState | null>(null)
+  const [trip, setTrip]           = useState<Trip | null>(null)
+  const [days, setDays]           = useState<Day[]>([])
+  const [currency, setCurrency]   = useState<CurrencyCode>('IDR')
+  const [loading, setLoading]     = useState(true)
+  const [notFound, setNotFound]   = useState(false)
+  const [panel, setPanel]         = useState<PanelState | null>(null)
   const [activeDayId, setActiveDayId] = useState<string | null>(null)
-  const [toast, setToast]       = useState('')
+  const [toast, setToast]         = useState('')
   const [showMobileToc, setShowMobileToc] = useState(false)
-  const toastRef              = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const saveTimer             = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const initialized           = useRef(false)
+  const [confirmState, setConfirmState] = useState<{
+    type: 'activity' | 'day'; title: string; sub: string; dayId: string; actId?: string
+  } | null>(null)
+  const [cityPickerState, setCityPickerState] = useState<{ dayId: string; currentCity: string } | null>(null)
+  const [sheetDays, setSheetDays]       = useState(false)
+  const [sheetToday, setSheetToday]     = useState(false)
+  const [sheetCity, setSheetCity]       = useState(false)
+  const [sheetKurma, setSheetKurma]     = useState(false)
+  const [sheetShare, setSheetShare]     = useState(false)
+  const [sheetOptimizer, setSheetOptimizer] = useState(false)
+  const [kurmaMessages, setKurmaMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>([])
+  const [kurmaInput, setKurmaInput]     = useState('')
+  const [kurmaLoading, setKurmaLoading] = useState(false)
+  const [shareCopied, setShareCopied]   = useState(false)
+  const [mobileActive, setMobileActive] = useState<'days' | 'today' | 'guide' | 'share' | null>(null)
+  const kurmaEndRef = useRef<HTMLDivElement | null>(null)
+  const toastRef    = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const initialized = useRef(false)
 
   /* ── Load trip ── */
   useEffect(() => {
@@ -342,7 +422,7 @@ export default function TripItineraryPage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ itinerary_data: payload }),
-      }).catch(() => {})
+      }).catch(() => { })
     }, 1200)
   }, [id, trip])
 
@@ -350,6 +430,45 @@ export default function TripItineraryPage() {
     setToast(msg)
     if (toastRef.current) clearTimeout(toastRef.current)
     toastRef.current = setTimeout(() => setToast(''), 2600)
+  }
+
+  async function sendKurma(overrideText?: string) {
+    const text = (overrideText ?? kurmaInput).trim()
+    if (!text || kurmaLoading) return
+    setKurmaInput('')
+    setKurmaMessages((prev) => [...prev, { role: 'user', text }])
+    setKurmaLoading(true)
+    setTimeout(() => kurmaEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+    try {
+      const ctx = trip
+        ? `Trip: "${trip.name}". Destination: ${trip.destination}. Dates: ${trip.start_date ?? '?'} to ${trip.end_date ?? '?'}. Days planned: ${days.length}.`
+        : ''
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are Kurma, a friendly and concise AI travel assistant built into KurmaGo. ${ctx} Answer travel questions helpfully and briefly. Use bullet points for lists. Respond in the same language the user writes in.`,
+          messages: [{ role: 'user', content: text }],
+        }),
+      })
+      const data = await resp.json()
+      const aiText = data.content?.[0]?.text ?? 'Maaf, ada masalah. Coba lagi ya.'
+      setKurmaMessages((prev) => [...prev, { role: 'ai', text: aiText }])
+    } catch {
+      setKurmaMessages((prev) => [...prev, { role: 'ai', text: 'Koneksi bermasalah. Coba lagi.' }])
+    }
+    setKurmaLoading(false)
+    setTimeout(() => kurmaEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
+  }
+
+  function copyShareLink() {
+    const url = typeof window !== 'undefined' ? window.location.href : ''
+    navigator.clipboard?.writeText(url).then(() => {
+      setShareCopied(true)
+      setTimeout(() => setShareCopied(false), 2000)
+    })
   }
 
   /* ── TOC scroll spy ── */
@@ -370,30 +489,20 @@ export default function TripItineraryPage() {
     setActiveDayId(dayId)
   }
 
-  function handleAddActivity(dayId: string, type: Activity['type']) {
-    setPanel({ dayId, actType: type })
-  }
-
-  function handleEditActivity(dayId: string, actId: string) {
-    const day = days.find((d) => d.id === dayId)
-    const act = day?.acts.find((a) => a.id === actId)
-    if (act) setPanel({ dayId, actType: act.type, existing: act })
+  function handleAddActivity(dayId: string, panelType: string) {
+    setPanel({ dayId, panelType: panelType as PanelType })
   }
 
   function handleSaveActivity(dayId: string, act: Activity) {
     setDays((prev) => {
       const next = prev.map((d) => {
         if (d.id !== dayId) return d
-        const idx = d.acts.findIndex((a) => a.id === act.id)
-        const acts = idx >= 0
-          ? d.acts.map((a) => a.id === act.id ? act : a)
-          : [...d.acts, act]
-        return { ...d, acts }
+        return { ...d, acts: [...d.acts, act] }
       })
       saveItinerary(next, currency)
       return next
     })
-    showToast(panel?.existing ? 'Activity updated' : 'Activity added')
+    showToast('Activity added')
   }
 
   function handleDeleteActivity(dayId: string, actId: string) {
@@ -407,7 +516,20 @@ export default function TripItineraryPage() {
     showToast('Deleted')
   }
 
-  function handleCityChange(dayId: string, city: string) {
+  function handleLabelChange(dayId: string, label: string) {
+    setDays((prev) => {
+      const next = prev.map((d) => d.id === dayId ? { ...d, label } : d)
+      saveItinerary(next, currency)
+      return next
+    })
+  }
+
+  function handleOpenCityModal(dayId: string) {
+    const day = days.find((d) => d.id === dayId)
+    if (day) setCityPickerState({ dayId, currentCity: day.city })
+  }
+
+  function handleCitySelect(dayId: string, city: string) {
     setDays((prev) => {
       const next = prev.map((d) => d.id === dayId ? { ...d, city } : d)
       saveItinerary(next, currency)
@@ -440,6 +562,7 @@ export default function TripItineraryPage() {
       saveItinerary(next, currency)
       return next
     })
+    showToast('Day added')
   }
 
   function removeDay(dayId: string) {
@@ -451,7 +574,39 @@ export default function TripItineraryPage() {
     showToast('Day removed')
   }
 
-  const currObj  = CURRENCIES.find((c) => c.code === currency) ?? CURRENCIES[0]
+  function requestDeleteActivity(dayId: string, actId: string) {
+    const act = days.find((d) => d.id === dayId)?.acts.find((a) => a.id === actId)
+    setConfirmState({
+      type: 'activity', dayId, actId,
+      title: 'Delete activity',
+      sub: act?.name ? `Remove "${act.name}"? This cannot be undone.` : 'This action cannot be undone.',
+    })
+  }
+
+  function requestDeleteDay(dayId: string) {
+    if (days.length <= 1) { showToast('At least 1 day is required'); return }
+    const d = days.find((day) => day.id === dayId)
+    setConfirmState({
+      type: 'day', dayId,
+      title: 'Remove day',
+      sub: `Day ${d?.num ?? ''}${d?.label ? ` · ${d.label}` : ''} and all its activities will be lost.`,
+    })
+  }
+
+  function handleConfirmDelete() {
+    if (!confirmState) return
+    if (confirmState.type === 'activity' && confirmState.actId) {
+      handleDeleteActivity(confirmState.dayId, confirmState.actId)
+    } else if (confirmState.type === 'day') {
+      removeDay(confirmState.dayId)
+    }
+    setConfirmState(null)
+  }
+
+  const todayStr = new Date().toISOString().split('T')[0]
+  const todayDay = days.find((d) => d.date === todayStr)
+
+  const currObj = CURRENCIES.find((c) => c.code === currency) ?? CURRENCIES[0]
   const totalActs = days.reduce((s, d) => s + d.acts.length, 0)
   const uniqCities = [...new Set(days.map((d) => d.city))]
   const tripMonth = trip?.start_date ? new Date(trip.start_date + 'T00:00:00').getMonth() : undefined
@@ -509,22 +664,21 @@ export default function TripItineraryPage() {
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M1 3h12M1 7h8M1 11h6" /></svg>
           </button>
           <button
-            onClick={addDay}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', background: 'transparent', color: 'var(--ink-50)', fontSize: 12, fontWeight: 500, border: '1px solid var(--line-strong)', borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .18s' }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink)'; e.currentTarget.style.color = 'var(--ink)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-50)' }}
-          >
-            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 11, height: 11 }}><path d="M6 1v10M1 6h10" /></svg>
-            <span className="nav-day-label">Day</span>
-          </button>
-          <Link
-            href={`/dashboard/trips/${id}/settings`}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 16px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 12, fontWeight: 600, borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'background .18s', textDecoration: 'none' }}
+            onClick={() => setSheetShare(true)}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 16px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 12, fontWeight: 600, borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'background .18s' }}
             onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent)')}
             onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--ink)')}
           >
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 13, height: 13 }}><circle cx="10.5" cy="2.5" r="1.5" /><circle cx="3.5" cy="7" r="1.5" /><circle cx="10.5" cy="11.5" r="1.5" /><path d="M5 6.2l4-2.6M5 7.8l4 2.6" /></svg>
+            <span className="nav-settings-label">Share</span>
+          </button>
+          <Link
+            href={`/dashboard/trips/${id}/settings`}
+            style={{ display: 'inline-flex', alignItems: 'center', padding: '7px 10px', background: 'transparent', color: 'var(--ink-50)', fontSize: 12, fontWeight: 500, borderRadius: 8, border: '1px solid var(--line-strong)', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .18s', textDecoration: 'none' }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink)'; e.currentTarget.style.color = 'var(--ink)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-50)' }}
+          >
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 13, height: 13 }}><circle cx="7" cy="7" r="2.5" /><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.9 2.9l1 1M10.1 10.1l1 1M10.1 2.9l-1 1M3.9 10.1l-1 1" /></svg>
-            <span className="nav-settings-label">Settings</span>
           </Link>
         </div>
       </nav>
@@ -532,15 +686,8 @@ export default function TripItineraryPage() {
       {/* Mobile TOC sheet */}
       {showMobileToc && (
         <>
-          <div
-            onClick={() => setShowMobileToc(false)}
-            style={{ position: 'fixed', inset: 0, zIndex: 490, background: 'rgba(17,17,16,.4)' }}
-          />
-          <div style={{
-            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 500,
-            background: 'var(--bg-card)', borderRadius: '18px 18px 0 0',
-            maxHeight: '70vh', overflowY: 'auto',
-          }}>
+          <div onClick={() => setShowMobileToc(false)} style={{ position: 'fixed', inset: 0, zIndex: 490, background: 'rgba(17,17,16,.4)' }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 500, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '70vh', overflowY: 'auto' }}>
             <div style={{ padding: '14px 18px 10px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500 }}>Days</span>
               <button onClick={() => setShowMobileToc(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-25)', fontSize: 22, lineHeight: 1 }}>×</button>
@@ -551,11 +698,7 @@ export default function TripItineraryPage() {
                 <div
                   key={day.id}
                   onClick={() => { handleTocClick(day.id); setShowMobileToc(false) }}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 18px',
-                    borderBottom: '1px solid var(--line)', cursor: 'pointer',
-                    background: on ? 'var(--accent-bg)' : 'transparent',
-                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 18px', borderBottom: '1px solid var(--line)', cursor: 'pointer', background: on ? 'var(--accent-bg)' : 'transparent' }}
                 >
                   <span style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 300, color: on ? 'var(--accent)' : 'var(--ink-25)', minWidth: 28 }}>{day.num}</span>
                   <div style={{ flex: 1 }}>
@@ -583,7 +726,11 @@ export default function TripItineraryPage() {
           <TOCSidebar
             days={days}
             activeDayId={activeDayId}
+            todayDayId={todayDay?.id}
             onDayClick={handleTocClick}
+            onAddDay={addDay}
+            onDeleteDay={requestDeleteDay}
+            onOpenCityModal={handleOpenCityModal}
             totalActs={totalActs}
           />
         </div>
@@ -612,6 +759,29 @@ export default function TripItineraryPage() {
             </div>
           </div>
 
+          {/* From-scratch banner */}
+          {days.length === 0 || totalActs === 0 ? (
+            <div style={{ background: 'var(--bg-card)', border: '1.5px dashed var(--line-strong)', borderRadius: 14, padding: '32px 24px', textAlign: 'center', marginBottom: 20 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--accent-bg)', margin: '0 auto 14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 20, height: 20 }}><path d="M12 5v14M5 12h14" /></svg>
+              </div>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 6 }}>Itinerary masih kosong</div>
+              <div style={{ fontSize: 12.5, color: 'var(--ink-50)', lineHeight: 1.6, marginBottom: 16, maxWidth: 300, margin: '0 auto 16px' }}>Tambahkan hari dan aktivitas secara manual, atau gunakan Kurma AI untuk membantu merencanakan perjalananmu.</div>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={addDay} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: 'transparent', color: 'var(--ink-50)', fontSize: 12, fontWeight: 500, borderRadius: 100, border: '1px solid var(--line-strong)', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .18s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink)'; e.currentTarget.style.color = 'var(--ink)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-50)' }}>
+                  + Tambah hari
+                </button>
+                <button onClick={() => setSheetKurma(true)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 18px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 12.5, fontWeight: 600, borderRadius: 100, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .22s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)' }}>
+                  ✦ Ask Kurma
+                </button>
+              </div>
+            </div>
+          ) : null}
+
           {/* Budget */}
           <BudgetSection days={days} baseCurr={currency} onCurrChange={handleCurrChange} />
 
@@ -623,10 +793,13 @@ export default function TripItineraryPage() {
               baseCurr={currency}
               currSymbol={currObj.symbol}
               isFirst={i === 0}
+              isToday={day.date === todayStr}
               onAddActivity={handleAddActivity}
-              onEditActivity={handleEditActivity}
-              onDeleteActivity={handleDeleteActivity}
-              onCityChange={handleCityChange}
+              onDeleteActivity={requestDeleteActivity}
+              onDeleteDay={requestDeleteDay}
+              onLabelChange={handleLabelChange}
+              onOpenCityModal={handleOpenCityModal}
+              onOpenOptimizer={() => setSheetOptimizer(true)}
             />
           ))}
 
@@ -665,7 +838,7 @@ export default function TripItineraryPage() {
 
       {/* Toast */}
       <div style={{
-        position: 'fixed', bottom: 36, left: '50%',
+        position: 'fixed', bottom: 'calc(58px + 16px)', left: '50%',
         transform: `translateX(-50%) translateY(${toast ? 0 : 6}px)`,
         background: 'rgba(17,17,16,.9)', backdropFilter: 'blur(12px)',
         border: '1px solid rgba(255,255,255,.1)', color: 'rgba(255,255,255,.85)',
@@ -677,20 +850,408 @@ export default function TripItineraryPage() {
         {toast}
       </div>
 
+      {/* ── MOBILE NAV ── */}
+      <nav className="itin-mobile-nav" style={{
+        display: 'none', position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 390,
+        height: 58, background: 'rgba(251,250,248,.96)', backdropFilter: 'blur(20px)',
+        borderTop: '1px solid var(--line)', alignItems: 'center', padding: 0,
+      }}>
+        <button
+          onClick={() => { setSheetDays(true); setMobileActive('days') }}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 4px', cursor: 'pointer', border: 'none', background: 'none', fontFamily: 'inherit' }}
+        >
+          <svg viewBox="0 0 20 20" fill="none" stroke={mobileActive === 'days' ? 'var(--accent)' : 'var(--ink-25)'} strokeWidth="1.5" strokeLinecap="round" style={{ width: 20, height: 20 }}>
+            <path d="M4 6h12M4 10h8M4 14h10" />
+          </svg>
+          <span style={{ fontSize: '9.5px', color: mobileActive === 'days' ? 'var(--accent)' : 'var(--ink-25)', fontWeight: mobileActive === 'days' ? 600 : 500 }}>Days</span>
+        </button>
+        <button
+          onClick={() => { setSheetToday(true); setMobileActive('today') }}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 4px', cursor: 'pointer', border: 'none', background: 'none', fontFamily: 'inherit' }}
+        >
+          <svg viewBox="0 0 20 20" fill="none" stroke={mobileActive === 'today' ? 'var(--accent)' : 'var(--ink-25)'} strokeWidth="1.5" strokeLinecap="round" style={{ width: 20, height: 20 }}>
+            <circle cx="10" cy="10" r="7" /><path d="M10 6v4l2.5 2.5" />
+          </svg>
+          <span style={{ fontSize: '9.5px', color: mobileActive === 'today' ? 'var(--accent)' : 'var(--ink-25)', fontWeight: mobileActive === 'today' ? 600 : 500 }}>Today</span>
+        </button>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, paddingBottom: 4 }}>
+          <button
+            onClick={() => setSheetKurma(true)}
+            style={{ width: 50, height: 50, borderRadius: '50%', background: 'var(--ink)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(17,17,16,.25)', transition: 'background .22s', marginBottom: 2 }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)' }}
+          >
+            <svg viewBox="0 0 22 22" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" style={{ width: 20, height: 20 }}>
+              <path d="M11 4C8 4 6 6 6 8.5c0 2 1.2 3.7 3 4.5v1.5l1.5-.5 1.5.5V13c1.8-.8 3-2.5 3-4.5C15 6 13 4 11 4z" />
+              <path d="M8 18h6M9 20h4" />
+            </svg>
+          </button>
+          <span style={{ fontSize: 9, color: 'var(--ink-25)', fontWeight: 600, letterSpacing: '.02em', marginTop: -2 }}>Kurma</span>
+        </div>
+        <button
+          onClick={() => { setSheetCity(true); setMobileActive('guide') }}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 4px', cursor: 'pointer', border: 'none', background: 'none', fontFamily: 'inherit' }}
+        >
+          <svg viewBox="0 0 20 20" fill="none" stroke={mobileActive === 'guide' ? 'var(--accent)' : 'var(--ink-25)'} strokeWidth="1.5" strokeLinecap="round" style={{ width: 20, height: 20 }}>
+            <path d="M10 2C6.7 2 4 4.7 4 8c0 4.4 6 10 6 10s6-5.6 6-10c0-3.3-2.7-6-6-6z" /><circle cx="10" cy="8" r="2" />
+          </svg>
+          <span style={{ fontSize: '9.5px', color: mobileActive === 'guide' ? 'var(--accent)' : 'var(--ink-25)', fontWeight: mobileActive === 'guide' ? 600 : 500 }}>City Guide</span>
+        </button>
+        <button
+          onClick={() => { setSheetShare(true); setMobileActive('share') }}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 4px', cursor: 'pointer', border: 'none', background: 'none', fontFamily: 'inherit' }}
+        >
+          <svg viewBox="0 0 20 20" fill="none" stroke={mobileActive === 'share' ? 'var(--accent)' : 'var(--ink-25)'} strokeWidth="1.5" strokeLinecap="round" style={{ width: 20, height: 20 }}>
+            <circle cx="14" cy="4" r="2" /><circle cx="5" cy="10" r="2" /><circle cx="14" cy="16" r="2" />
+            <path d="M7 9l5-3.5M7 11l5 3.5" />
+          </svg>
+          <span style={{ fontSize: '9.5px', color: mobileActive === 'share' ? 'var(--accent)' : 'var(--ink-25)', fontWeight: mobileActive === 'share' ? 600 : 500 }}>Share</span>
+        </button>
+      </nav>
+
+      {/* ── DAYS BOTTOM SHEET ── */}
+      {sheetDays && (
+        <>
+          <div onClick={() => setSheetDays(false)} style={{ position: 'fixed', inset: 0, zIndex: 400, background: 'rgba(17,17,16,.4)' }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '80vh', overflowY: 'auto' }}>
+            <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetDays(false)} />
+            <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
+              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Jump to day</span>
+              <button onClick={() => setSheetDays(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+            </div>
+            {days.map((d) => (
+              <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 18px', cursor: 'pointer', borderBottom: '1px solid var(--line)', background: d.id === activeDayId ? 'var(--accent-bg)' : 'transparent' }}>
+                <span style={{ fontFamily: 'Fraunces, serif', fontSize: 15, color: d.id === activeDayId ? 'var(--accent)' : 'var(--ink-25)', minWidth: 26, flexShrink: 0 }}
+                  onClick={() => { handleTocClick(d.id); setSheetDays(false) }}>
+                  {d.num}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }} onClick={() => { handleTocClick(d.id); setSheetDays(false) }}>
+                  <div style={{ fontSize: '13.5px', fontWeight: 500, color: d.id === activeDayId ? 'var(--accent)' : 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.label}</div>
+                  {d.date && <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 1 }}>{d.date}</div>}
+                </div>
+                <span style={{ fontSize: 11, color: 'var(--ink-25)', flexShrink: 0 }} onClick={() => { handleTocClick(d.id); setSheetDays(false) }}>
+                  {d.acts.length > 0 ? `${d.acts.length}` : ''}
+                </span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); requestDeleteDay(d.id) }}
+                  style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-25)', transition: 'all .15s', flexShrink: 0 }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#e53e3e'; e.currentTarget.style.color = '#e53e3e'; e.currentTarget.style.background = 'rgba(229,62,62,.06)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-25)'; e.currentTarget.style.background = 'transparent' }}
+                >
+                  <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 12, height: 12 }}>
+                    <path d="M2 3h8M4 3V2h4v1M3 3l.7 7.5a.5.5 0 00.5.5h4.6a.5.5 0 00.5-.5L10 3" />
+                  </svg>
+                </button>
+              </div>
+            ))}
+            <div style={{ height: 20 }} />
+          </div>
+        </>
+      )}
+
+      {/* ── TODAY BOTTOM SHEET ── */}
+      {sheetToday && (
+        <>
+          <div onClick={() => setSheetToday(false)} style={{ position: 'fixed', inset: 0, zIndex: 400, background: 'rgba(17,17,16,.4)' }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '88vh', overflowY: 'auto' }}>
+            <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetToday(false)} />
+            <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Today</span>
+              <button onClick={() => setSheetToday(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+            </div>
+            {todayDay ? (
+              <>
+                <div style={{ padding: '16px 18px 12px', borderBottom: '1px solid var(--line)', marginBottom: 16 }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4 }}>TODAY</div>
+                  <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)' }}>
+                    {CITY_DATA[todayDay.city]?.name ?? todayDay.city}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--ink-25)', marginTop: 2 }}>{todayDay.date}</div>
+                </div>
+                {todayDay.acts.length === 0 ? (
+                  <div style={{ padding: '32px 18px', textAlign: 'center', color: 'var(--ink-50)', fontSize: 13 }}>
+                    No activities planned for today.
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-25)', padding: '0 18px', marginBottom: 10 }}>Your schedule</div>
+                    {todayDay.acts.map((act, i) => (
+                      <div key={act.id} style={{ display: 'flex', gap: 0, padding: '0 18px 16px' }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink-50)', minWidth: 48, paddingTop: 2, flexShrink: 0 }}>
+                          {act.departs ?? act.time ?? '—'}
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 20, flexShrink: 0, margin: '0 10px' }}>
+                          <div style={{ width: 10, height: 10, borderRadius: '50%', border: `2px solid ${i === 0 ? 'var(--accent)' : 'var(--line-strong)'}`, background: i === 0 ? 'var(--accent)' : 'var(--bg-card)', flexShrink: 0, marginTop: 3 }} />
+                          {i < todayDay.acts.length - 1 && (
+                            <div style={{ flex: 1, width: 2, background: 'var(--line)', marginTop: 4, minHeight: 20 }} />
+                          )}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '13.5px', fontWeight: 500, color: 'var(--ink)', marginBottom: 3 }}>{act.name}</div>
+                          {act.note && <div style={{ fontSize: '11.5px', color: 'var(--ink-50)', lineHeight: 1.5 }}>{act.note}</div>}
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </>
+            ) : (
+              <div style={{ padding: '32px 18px', textAlign: 'center' }}>
+                <div style={{ fontSize: 36, marginBottom: 12 }}>📅</div>
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 500, color: 'var(--ink)', marginBottom: 8 }}>
+                  {trip?.start_date && new Date(trip.start_date + 'T00:00:00') > new Date()
+                    ? "Trip hasn't started yet"
+                    : "Today isn't on your itinerary"}
+                </div>
+                <div style={{ fontSize: 13, color: 'var(--ink-50)', lineHeight: 1.6 }}>
+                  {trip?.start_date && new Date(trip.start_date + 'T00:00:00') > new Date()
+                    ? `Your trip starts ${trip.start_date}`
+                    : 'Add a date to a day to see it here'}
+                </div>
+              </div>
+            )}
+            <div style={{ height: 20 }} />
+          </div>
+        </>
+      )}
+
+      {/* ── CITY GUIDE BOTTOM SHEET ── */}
+      {sheetCity && (
+        <>
+          <div onClick={() => setSheetCity(false)} style={{ position: 'fixed', inset: 0, zIndex: 400, background: 'rgba(17,17,16,.4)' }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '88vh', overflowY: 'auto' }}>
+            <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetCity(false)} />
+            <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)', marginBottom: 4 }}>
+              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>City Guide</span>
+              <button onClick={() => setSheetCity(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+            </div>
+            <div style={{ padding: '0 4px 24px' }}>
+              <CityGuideSidebar cities={uniqCities} tripMonth={tripMonth} />
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── CONFIRM MODAL ── */}
+      {confirmState && (
+        <ConfirmModal
+          title={confirmState.title}
+          sub={confirmState.sub}
+          confirmLabel={confirmState.type === 'day' ? 'Remove' : 'Delete'}
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setConfirmState(null)}
+        />
+      )}
+
+      {/* ── CITY PICKER MODAL ── */}
+      {cityPickerState && (
+        <CityPickerModal
+          dayId={cityPickerState.dayId}
+          currentCity={cityPickerState.currentCity}
+          onSelect={handleCitySelect}
+          onClose={() => setCityPickerState(null)}
+        />
+      )}
+
+      {/* ── ASK KURMA BOTTOM SHEET ── */}
+      <>
+        <div
+          onClick={() => setSheetKurma(false)}
+          style={{
+            display: sheetKurma ? 'block' : 'none',
+            position: 'fixed', inset: 0, zIndex: 400,
+            background: sheetKurma ? 'rgba(17,17,16,.4)' : 'rgba(17,17,16,0)',
+            transition: 'background .25s',
+          }}
+        />
+        <div style={{
+          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401,
+          background: 'var(--bg-card)', borderRadius: '18px 18px 0 0',
+          maxHeight: '85vh', overflowY: 'auto',
+          transform: sheetKurma ? 'translateY(0)' : 'translateY(100%)',
+          transition: 'transform .32s cubic-bezier(.32,.72,0,1)',
+        }}>
+          <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetKurma(false)} />
+          <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)', paddingBottom: 14 }}>
+            <div>
+              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Ask Kurma</span>
+              <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 2 }}>AI travel assistant</div>
+            </div>
+            <button onClick={() => setSheetKurma(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+          </div>
+          <div style={{ padding: '16px 18px 24px' }}>
+            {kurmaMessages.length > 0 && (
+              <div style={{ marginBottom: 14 }}>
+                {kurmaMessages.map((msg, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', marginBottom: 10 }}>
+                    <div style={{
+                      maxWidth: '82%', padding: '10px 13px',
+                      borderRadius: msg.role === 'user' ? '12px 12px 3px 12px' : '12px 12px 12px 3px',
+                      background: msg.role === 'user' ? 'var(--ink)' : 'var(--accent-bg)',
+                      border: msg.role === 'ai' ? '1px solid var(--accent-10)' : 'none',
+                      fontSize: 13, lineHeight: 1.6,
+                      color: msg.role === 'user' ? '#fff' : 'var(--ink)',
+                      whiteSpace: 'pre-wrap',
+                    }}>
+                      {msg.role === 'ai' && (
+                        <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6 }}>Kurma</div>
+                      )}
+                      {msg.text}
+                    </div>
+                  </div>
+                ))}
+                {kurmaLoading && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', color: 'var(--ink-25)', fontSize: 12.5 }}>
+                    {[0, 1, 2].map((j) => (
+                      <div key={j} style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', animation: `kpulse 1.2s ${j * 0.2}s ease-in-out infinite` }} />
+                    ))}
+                  </div>
+                )}
+                <div ref={kurmaEndRef} />
+              </div>
+            )}
+            <div style={{ position: 'relative', marginBottom: 14 }}>
+              <textarea
+                value={kurmaInput}
+                onChange={(e) => setKurmaInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendKurma() } }}
+                placeholder="Tanya Kurma apa saja… cari halal food, translate, tips…"
+                rows={2}
+                style={{ width: '100%', padding: '12px 44px 12px 14px', background: 'var(--bg)', border: '1.5px solid var(--line-strong)', borderRadius: 12, fontSize: 14, color: 'var(--ink)', fontFamily: 'inherit', outline: 'none', resize: 'none', lineHeight: 1.5, minHeight: 52, transition: 'border-color .18s' }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--accent)' }}
+                onBlur={(e) => { e.target.style.borderColor = 'var(--line-strong)' }}
+              />
+              <button
+                onClick={() => sendKurma()}
+                disabled={!kurmaInput.trim() || kurmaLoading}
+                style={{ position: 'absolute', bottom: 10, right: 10, width: 30, height: 30, borderRadius: 8, background: kurmaInput.trim() ? 'var(--ink)' : 'var(--line-strong)', border: 'none', cursor: kurmaInput.trim() ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .18s' }}
+              >
+                <svg viewBox="0 0 14 14" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M12 7L2 2l2 5-2 5z" /></svg>
+              </button>
+            </div>
+            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 8 }}>Coba ini</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {[
+                { label: '🍜 Halal food nearby', prompt: 'Rekomendasikan halal food di sekitar tujuan kami' },
+                { label: '⏰ Kita telat 2 jam', prompt: 'Kami terlambat 2 jam hari ini, apa yang harus kami skip atau sesuaikan?' },
+                { label: '🌧️ Skip outdoor', prompt: 'Hujan deras hari ini, rekomendasikan aktivitas indoor' },
+                { label: '🈯 Translate teks', prompt: 'Tolong bantu terjemahkan teks ini: ' },
+                { label: '😴 Hari santai', prompt: 'Rekomendasikan aktivitas santai dan rileks untuk hari ini' },
+                { label: '💰 Tips hemat', prompt: 'Berikan tips menghemat biaya selama perjalanan ini' },
+              ].map((chip) => (
+                <button
+                  key={chip.label}
+                  onClick={() => sendKurma(chip.prompt)}
+                  style={{ padding: '7px 12px', border: '1px solid var(--line-strong)', borderRadius: 100, fontSize: 12, fontWeight: 500, color: 'var(--ink-50)', background: 'transparent', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .18s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-bg)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-50)'; e.currentTarget.style.background = 'transparent' }}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <style>{`@keyframes kpulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}`}</style>
+      </>
+
+      {/* ── SHARE MODAL ── */}
+      {sheetShare && (
+        <>
+          <div onClick={() => { setSheetShare(false); setMobileActive(null) }} style={{ position: 'fixed', inset: 0, zIndex: 400, background: 'rgba(17,17,16,.4)' }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '60vh', overflowY: 'auto' }}>
+            <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetShare(false)} />
+            <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
+              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Share itinerary</span>
+              <button onClick={() => setSheetShare(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+            </div>
+            <div style={{ padding: '16px 18px 32px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', background: 'var(--bg-warm)', borderRadius: 8 }}>
+                <span style={{ fontSize: 11.5, color: 'var(--ink-50)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+                  {typeof window !== 'undefined' ? window.location.href : ''}
+                </span>
+                <button
+                  onClick={copyShareLink}
+                  style={{ padding: '5px 12px', background: shareCopied ? 'var(--accent)' : 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', transition: 'background .18s', whiteSpace: 'nowrap' }}
+                >
+                  {shareCopied ? '✓ Copied' : 'Copy'}
+                </button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                {[
+                  { icon: '💬', label: 'WhatsApp', bg: '#e8f5e9' },
+                  { icon: '✉️', label: 'Email', bg: '#e3f2fd' },
+                ].map((opt) => (
+                  <button key={opt.label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', border: '1px solid var(--line-strong)', borderRadius: 8, cursor: 'pointer', background: 'transparent', fontFamily: 'inherit', transition: 'all .18s', width: '100%' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink-25)'; e.currentTarget.style.background = 'var(--bg-warm)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.background = 'transparent' }}>
+                    <div style={{ width: 26, height: 26, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, background: opt.bg }}>{opt.icon}</div>
+                    <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink)' }}>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: 'var(--bg-warm)', borderRadius: 8 }}>
+                <div>
+                  <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink)' }}>Anyone with the link</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-25)' }}>Can view · Cannot edit</div>
+                </div>
+                <div style={{ width: 36, height: 20, borderRadius: 100, background: 'var(--accent)', position: 'relative', cursor: 'pointer' }}>
+                  <div style={{ position: 'absolute', right: 2, top: 2, width: 16, height: 16, borderRadius: '50%', background: '#fff' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── OPTIMIZER SHEET ── */}
+      {sheetOptimizer && (
+        <>
+          <div onClick={() => setSheetOptimizer(false)} style={{ position: 'fixed', inset: 0, zIndex: 400, background: 'rgba(17,17,16,.4)' }} />
+          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '60vh', overflowY: 'auto' }}>
+            <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetOptimizer(false)} />
+            <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
+              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Adjust plan</span>
+              <button onClick={() => setSheetOptimizer(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
+            </div>
+            <div style={{ padding: '14px 18px 32px' }}>
+              {[
+                { label: 'Ask Kurma AI', meta: 'Get AI-powered suggestions for your plan', action: () => { setSheetOptimizer(false); setSheetKurma(true) } },
+                { label: 'Reorganize days', meta: 'Reorder your days for a better flow', action: () => setSheetOptimizer(false) },
+                { label: 'Add a rest day', meta: 'Insert a free day with no activities', action: () => { addDay(); setSheetOptimizer(false); showToast('Rest day added') } },
+              ].map((opt) => (
+                <div key={opt.label} onClick={opt.action} style={{ padding: '12px 14px', background: 'var(--bg-card)', border: '1px solid var(--line-strong)', borderRadius: 10, cursor: 'pointer', marginBottom: 8, transition: 'all .18s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-bg)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.background = 'var(--bg-card)' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{opt.label}</div>
+                  <div style={{ fontSize: 11.5, color: 'var(--ink-50)', marginTop: 2 }}>{opt.meta}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Responsive styles */}
       <style>{`
         @media (max-width: 900px) {
           .day-header-inline-btns { display: none !important; }
-          .itin-grid { grid-template-columns: 1fr !important; }
-          .itin-toc  { display: none !important; }
-          .itin-guide { display: none !important; }
-          .mobile-toc-btn { display: inline-flex !important; }
-          .nav-day-label { display: none; }
-          .nav-settings-label { display: none; }
+          .day-add-fab-wrap       { display: inline-flex !important; }
+          .itin-grid              { grid-template-columns: 1fr !important; }
+          .itin-toc               { display: none !important; }
+          .itin-guide             { display: none !important; }
+          .itin-mobile-nav        { display: flex !important; }
+          .mobile-toc-btn         { display: inline-flex !important; }
+          .nav-settings-label     { display: none; }
+          .act-actions            { opacity: 1 !important; }
+        }
+        @media (min-width: 901px) {
+          .itin-mobile-nav { display: none !important; }
         }
         @media (max-width: 600px) {
-          main { padding: 16px 16px 100px !important; }
+          main { padding: 16px 16px 80px !important; }
         }
+        @keyframes kpulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
       `}</style>
     </>
   )

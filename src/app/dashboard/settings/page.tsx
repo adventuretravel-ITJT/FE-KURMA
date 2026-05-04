@@ -180,7 +180,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Content */}
-            <div className="dash-content" style={{ maxWidth: 560 }}>
+            <div className="dash-content" style={{ maxWidth: 560, padding: '24px 10px'}}>
 
                 {/* Profile card */}
                 <div style={cardStyle}>
