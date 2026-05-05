@@ -18,11 +18,11 @@ function getPasswordStrength(password: string) {
     if (/[0-9]/.test(password)) score++
     if (/[^A-Za-z0-9]/.test(password)) score++
     const levels = [
-        { label: 'Too short', barClass: 'weak',   color: '#E74C3C' },
-        { label: 'Weak',      barClass: 'weak',   color: '#E74C3C' },
-        { label: 'Fair',      barClass: 'fair',   color: '#E67E22' },
-        { label: 'Good',      barClass: 'good',   color: '#B8956A' },
-        { label: 'Strong',    barClass: 'strong', color: 'var(--accent)' },
+        { label: 'Too short', barClass: 'weak',   color: 'var(--kg-coral)' },
+        { label: 'Weak',      barClass: 'weak',   color: 'var(--kg-coral)' },
+        { label: 'Fair',      barClass: 'fair',   color: 'var(--kg-primary-bright)' },
+        { label: 'Good',      barClass: 'good',   color: 'var(--kg-primary)' },
+        { label: 'Strong',    barClass: 'strong', color: 'var(--kg-primary)' },
     ]
     return { score, ...levels[score] }
 }
@@ -236,7 +236,7 @@ function AuthLeft() {
     return (
         <div className="auth-left hidden lg:flex flex-col justify-between" style={{
             position: 'sticky', top: 0, height: '100vh', overflow: 'hidden',
-            background: 'var(--ink)', padding: '48px 56px',
+            background: 'var(--kg-primary-deep)', padding: '48px 56px',
         }}>
             <div style={{
                 position: 'absolute', inset: 0, pointerEvents: 'none',
@@ -245,29 +245,28 @@ function AuthLeft() {
             }} />
             <div style={{
                 position: 'absolute', width: 640, height: 640, borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(44,95,78,.35) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(46,134,171,.30) 0%, transparent 70%)',
                 bottom: -180, right: -120, pointerEvents: 'none', zIndex: 0,
             }} />
 
             <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <Link href="/" style={{
-                    fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500,
-                    color: 'rgba(255,255,255,.9)', textDecoration: 'none', letterSpacing: '-.03em',
+                    fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 600,
+                    color: 'rgba(255,255,255,.92)', textDecoration: 'none', letterSpacing: '-.03em',
                 }}>
-                    kurma<em style={{ fontStyle: 'italic', color: 'rgba(44,150,100,.85)', fontWeight: 300 }}>.guide</em>
+                    Kurma<em style={{ fontStyle: 'italic', color: 'var(--kg-primary-tint)', fontWeight: 600 }}>Go.</em>
                 </Link>
 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: '20px 0 40px', marginTop: 20 }}>
                     <h2 style={{
                         fontFamily: 'Fraunces, serif', fontSize: 'clamp(28px, 3vw, 40px)',
-                        fontWeight: 500, lineHeight: 1.12, letterSpacing: '-.04em',
-                        color: 'rgba(255,255,255,.9)', marginBottom: 20,
+                        fontWeight: 600, lineHeight: 1.12, letterSpacing: '-.04em',
+                        color: 'rgba(255,255,255,.92)', marginBottom: 20,
                     }}>
-                        Your next trip,<br />
-                        <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'rgba(44,150,100,.8)' }}>thoughtfully</em><br />
-                        planned.
+                        Plan Smart.<br />
+                        <em style={{ fontStyle: 'italic', fontWeight: 600, color: 'var(--kg-primary-tint)' }}>Go Beyond.</em>
                     </h2>
-                    <p style={{ fontSize: 14, color: 'rgba(255,255,255,.35)', lineHeight: 1.75, maxWidth: 380 }}>
+                    <p style={{ fontSize: 15, color: 'rgba(168,218,220,.70)', lineHeight: 1.65, maxWidth: 380 }}>
                         Join thousands of travellers who plan smarter with Kurma — your personal itinerary companion for every journey.
                     </p>
                 </div>
@@ -277,12 +276,12 @@ function AuthLeft() {
                     borderRadius: 16, padding: '24px 28px', marginBottom: 10,
                     animation: 'fadeUp .9s ease .3s both',
                 }}>
-                    <p style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,.6)', lineHeight: 1.65, marginBottom: 16 }}>
-                        <span style={{ display: 'block', fontSize: 22, fontStyle: 'normal', color: 'var(--accent-light)', lineHeight: 1, marginBottom: 4 }}>&ldquo;</span>
-                        Kurma changed how I travel. Every detail, beautifully organised in one place.
+                    <p style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 400, fontStyle: 'italic', color: 'rgba(255,255,255,.65)', lineHeight: 1.65, marginBottom: 16 }}>
+                        <span style={{ display: 'block', fontSize: 22, fontStyle: 'normal', color: 'var(--kg-primary-tint)', lineHeight: 1, marginBottom: 4 }}>&ldquo;</span>
+                        KurmaGo changed how I travel. Every detail, beautifully organised in one place.
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent), rgba(184,149,106,.6))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: 'white', fontFamily: 'Plus Jakarta Sans, sans-serif', flexShrink: 0 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, var(--kg-primary), var(--kg-primary-bright))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: 'white', fontFamily: 'Plus Jakarta Sans, sans-serif', flexShrink: 0 }}>
                             SA
                         </div>
                         <div>
@@ -444,7 +443,7 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
             </div>
 
             {error && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, padding: '10px 14px', background: 'rgba(231,76,60,.05)', border: '1px solid rgba(231,76,60,.15)', borderRadius: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, padding: '10px 14px', background: 'var(--kg-coral-soft)', border: '1px solid var(--kg-coral)', borderRadius: 10 }}>
                     <svg viewBox="0 0 12 12" style={{ width: 14, height: 14, flexShrink: 0 }}>
                         <circle cx="6" cy="6" r="6" fill="var(--error)" opacity=".15" />
                         <path d="M6 3.5v3M6 8.5v.5" stroke="var(--error)" strokeWidth="1.2" strokeLinecap="round" fill="none" />
@@ -458,7 +457,7 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
                 disabled={loading || !allFilled}
                 onClick={() => submit(digits.join(''))}
                 style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: (loading || !allFilled) ? 'not-allowed' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (loading || !allFilled) ? .5 : 1 }}
-                onMouseEnter={(e) => { if (!loading && allFilled) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(44,95,78,.15)' } }}
+                onMouseEnter={(e) => { if (!loading && allFilled) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(30,96,145,.18)' } }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
                 {loading ? (
                     <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
@@ -579,7 +578,7 @@ function LoginForm({ onSwitch, onOtp }: {
 
                 <button type="submit" disabled={loading} className="auth-submit-btn"
                     style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
-                    onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(44,95,78,.15)' } }}
+                    onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(30,96,145,.18)' } }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
                     {loading ? (
                         <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
@@ -709,7 +708,7 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
 
                 <button type="submit" disabled={loading} className="auth-submit-btn"
                     style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
-                    onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(44,95,78,.15)' } }}
+                    onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(30,96,145,.18)' } }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
                     {loading ? (
                         <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
