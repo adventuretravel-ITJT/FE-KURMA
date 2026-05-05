@@ -1,22 +1,29 @@
-async function getHealth() {
-  const res = await fetch(`${process.env.API_URL}/api/health`, {
-    cache: "no-store",
-  });
+import Navbar from '@/src/components/home/Navbar'
+import Hero from '@/src/components/home/Hero'
+import TrustStats from '@/src/components/home/TrustStats'
+import HowItWorks from '@/src/components/home/HowItWorks'
+import Features from '@/src/components/home/Features'
+import DayInTrip from '@/src/components/home/DayInTrip'
+import FAQ from '@/src/components/home/FAQ'
+import CTASection from '@/src/components/home/CTASection'
+import Footer from '@/src/components/home/Footer'
+import RevealObserver from '@/src/components/home/RevealObserver'
 
-  if (!res.ok) {
-    throw new Error("Gagal mengambil data dari Lumen");
-  }
-
-  return res.json();
-}
-
-export default async function Home() {
-  const data = await getHealth();
-
+export default function HomePage() {
   return (
-    <main style={{ padding: 24 }}>
-      <h1>Next.js terhubung ke Lumen</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </main>
-  );
+    <>
+      <RevealObserver />
+      <Navbar />
+      <main>
+        <Hero />
+        <TrustStats />
+        <HowItWorks />
+        <Features />
+        <DayInTrip />
+        <FAQ />
+        <CTASection />
+      </main>
+      <Footer />
+    </>
+  )
 }

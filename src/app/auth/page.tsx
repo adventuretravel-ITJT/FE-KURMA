@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useGoogleLogin } from '@react-oauth/google'
 
-type Panel = 'login' | 'register'
+type AuthPanel = 'login' | 'register' | 'otp'
 
 function isValidEmail(v: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
@@ -141,6 +141,15 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
     const [googleLoading, setGoogleLoading] = useState(false)
     const [googleError, setGoogleError] = useState('')
 
+    useEffect(() => {
+        if (!googleLoading) return
+        const t = setTimeout(() => {
+            setGoogleLoading(false)
+            setGoogleError('Google sign-in timed out. Please try again.')
+        }, 20000)
+        return () => clearTimeout(t)
+    }, [googleLoading])
+
     const loginWithGoogle = useGoogleLogin({
         scope: 'openid email profile',
         onSuccess: async (tokenResponse) => {
@@ -173,7 +182,14 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
             setGoogleError('Google sign-in was cancelled or failed.')
             setGoogleLoading(false)
         },
-        onNonOAuthError: () => {
+        onNonOAuthError: (err) => {
+            if (err.type === 'popup_failed_to_open') {
+                setGoogleError('Popup was blocked. Please allow popups for this site.')
+            } else if (err.type === 'popup_closed') {
+                setGoogleError('Sign-in window was closed. Please try again.')
+            } else {
+                setGoogleError('Google sign-in could not be started. Please try again.')
+            }
             setGoogleLoading(false)
         },
     })
@@ -181,7 +197,12 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
     const handleGoogleClick = () => {
         setGoogleLoading(true)
         setGoogleError('')
-        loginWithGoogle()
+        try {
+            loginWithGoogle()
+        } catch {
+            setGoogleError('Google sign-in is unavailable. Please try again.')
+            setGoogleLoading(false)
+        }
     }
 
     const btnStyle: React.CSSProperties = {
@@ -202,7 +223,6 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
                     ) : <GoogleIcon />}
                     {variant === 'register' ? 'Sign up with Google' : 'Google'}
                 </button>
-
             </div>
             {googleError && (
                 <p style={{ fontSize: 11.5, color: 'var(--error)', marginTop: 4, fontWeight: 500 }}>{googleError}</p>
@@ -218,14 +238,11 @@ function AuthLeft() {
             position: 'sticky', top: 0, height: '100vh', overflow: 'hidden',
             background: 'var(--ink)', padding: '48px 56px',
         }}>
-
-            {/* Noise grain */}
             <div style={{
                 position: 'absolute', inset: 0, pointerEvents: 'none',
                 backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E")`,
                 opacity: .4, zIndex: 0,
             }} />
-            {/* Green orb */}
             <div style={{
                 position: 'absolute', width: 640, height: 640, borderRadius: '50%',
                 background: 'radial-gradient(circle, rgba(44,95,78,.35) 0%, transparent 70%)',
@@ -233,8 +250,6 @@ function AuthLeft() {
             }} />
 
             <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
-
-                {/* Logo */}
                 <Link href="/" style={{
                     fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500,
                     color: 'rgba(255,255,255,.9)', textDecoration: 'none', letterSpacing: '-.03em',
@@ -242,14 +257,7 @@ function AuthLeft() {
                     kurma<em style={{ fontStyle: 'italic', color: 'rgba(44,150,100,.85)', fontWeight: 300 }}>.guide</em>
                 </Link>
 
-                {/* Body */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: '20px 0 40px', marginTop: 20 }}>
-
-                    {/* <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px 6px 8px', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 100, marginBottom: 32, width: 'fit-content' }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent-light)', animation: 'pulse-dot 2s infinite', display: 'inline-block' }} />
-                        <span style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.4)', letterSpacing: '.05em' }}>NOW IN BETA</span>
-                    </div> */}
-
                     <h2 style={{
                         fontFamily: 'Fraunces, serif', fontSize: 'clamp(28px, 3vw, 40px)',
                         fontWeight: 500, lineHeight: 1.12, letterSpacing: '-.04em',
@@ -259,13 +267,11 @@ function AuthLeft() {
                         <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'rgba(44,150,100,.8)' }}>thoughtfully</em><br />
                         planned.
                     </h2>
-
                     <p style={{ fontSize: 14, color: 'rgba(255,255,255,.35)', lineHeight: 1.75, maxWidth: 380 }}>
                         Join thousands of travellers who plan smarter with Kurma — your personal itinerary companion for every journey.
                     </p>
                 </div>
 
-                {/* Testimonial */}
                 <div style={{
                     background: 'rgba(255,255,255,.04)', border: '1px solid rgba(255,255,255,.08)',
                     borderRadius: 16, padding: '24px 28px', marginBottom: 10,
@@ -285,14 +291,221 @@ function AuthLeft() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     )
 }
 
+/* ── OTP panel ───────────────────────────────────── */
+function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: string; onBack: () => void }) {
+    const [digits, setDigits] = useState(['', '', '', '', '', ''])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+    const [resendCooldown, setResendCooldown] = useState(60)
+
+    const r0 = useRef<HTMLInputElement>(null)
+    const r1 = useRef<HTMLInputElement>(null)
+    const r2 = useRef<HTMLInputElement>(null)
+    const r3 = useRef<HTMLInputElement>(null)
+    const r4 = useRef<HTMLInputElement>(null)
+    const r5 = useRef<HTMLInputElement>(null)
+    const refs = [r0, r1, r2, r3, r4, r5]
+
+    useEffect(() => { r0.current?.focus() }, [])
+
+    useEffect(() => {
+        if (resendCooldown <= 0) return
+        const t = setInterval(() => setResendCooldown((c) => c - 1), 1000)
+        return () => clearInterval(t)
+    }, [resendCooldown])
+
+    async function submit(otp: string) {
+        if (loading) return
+        setLoading(true)
+        setError('')
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login/otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp }),
+            })
+            const data = await res.json()
+            if (!res.ok) {
+                setError(data.message || 'Kode tidak valid.')
+                setDigits(['', '', '', '', '', ''])
+                setTimeout(() => r0.current?.focus(), 0)
+                return
+            }
+            localStorage.setItem('token', data.token)
+            window.location.href = '/dashboard'
+        } catch {
+            setError('Something went wrong. Please try again.')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    function handleChange(idx: number, v: string) {
+        const digit = v.replace(/\D/g, '').slice(-1)
+        const next = [...digits]
+        next[idx] = digit
+        setDigits(next)
+        setError('')
+        if (digit && idx < 5) refs[idx + 1].current?.focus()
+        if (digit && idx === 5 && next.every((d) => d)) submit(next.join(''))
+    }
+
+    function handleKeyDown(idx: number, e: React.KeyboardEvent) {
+        if (e.key === 'Backspace' && !digits[idx] && idx > 0) {
+            refs[idx - 1].current?.focus()
+        }
+    }
+
+    function handlePaste(e: React.ClipboardEvent) {
+        e.preventDefault()
+        const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+        if (!text) return
+        const next = ['', '', '', '', '', '']
+        text.split('').forEach((c, i) => { next[i] = c })
+        setDigits(next)
+        const focusIdx = Math.min(text.length, 5)
+        refs[focusIdx].current?.focus()
+        if (text.length === 6) submit(text)
+    }
+
+    async function handleResend() {
+        if (resendCooldown > 0) return
+        setResendCooldown(60)
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login/resend-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            })
+        } catch { /* silent */ }
+    }
+
+    const allFilled = digits.every((d) => d)
+
+    return (
+        <>
+            <div style={{ marginBottom: 28, textAlign: 'center' }}>
+                <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22 }}>
+                        <rect x="5" y="11" width="14" height="10" rx="2" />
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                    </svg>
+                </div>
+                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(20px, 2.5vw, 26px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 10, color: 'var(--ink)' }}>
+                    Check your <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>email</em>
+                </h1>
+                <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65 }}>
+                    We sent a 6-digit code to<br />
+                    <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{maskedEmail}</strong>
+                </p>
+            </div>
+
+            {/* OTP digit inputs */}
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 20 }}>
+                {digits.map((d, i) => (
+                    <input
+                        key={i}
+                        ref={refs[i]}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={d}
+                        onChange={(e) => handleChange(i, e.target.value)}
+                        onKeyDown={(e) => handleKeyDown(i, e)}
+                        onPaste={i === 0 ? handlePaste : undefined}
+                        style={{
+                            width: 52, height: 60,
+                            textAlign: 'center',
+                            fontSize: 24, fontWeight: 700,
+                            fontFamily: 'Plus Jakarta Sans, sans-serif',
+                            border: `1.5px solid ${d ? 'var(--accent)' : 'var(--line-strong)'}`,
+                            borderRadius: 12,
+                            background: d ? 'var(--accent-bg)' : 'var(--bg-card)',
+                            color: 'var(--ink)',
+                            outline: 'none',
+                            transition: 'border-color .15s, background .15s, box-shadow .15s',
+                            caretColor: 'var(--accent)',
+                        }}
+                        onFocus={(e) => {
+                            e.target.style.borderColor = 'var(--accent)'
+                            e.target.style.boxShadow = '0 0 0 3px var(--accent-10)'
+                        }}
+                        onBlur={(e) => {
+                            e.target.style.borderColor = d ? 'var(--accent)' : 'var(--line-strong)'
+                            e.target.style.boxShadow = 'none'
+                        }}
+                    />
+                ))}
+            </div>
+
+            {error && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, padding: '10px 14px', background: 'rgba(231,76,60,.05)', border: '1px solid rgba(231,76,60,.15)', borderRadius: 10 }}>
+                    <svg viewBox="0 0 12 12" style={{ width: 14, height: 14, flexShrink: 0 }}>
+                        <circle cx="6" cy="6" r="6" fill="var(--error)" opacity=".15" />
+                        <path d="M6 3.5v3M6 8.5v.5" stroke="var(--error)" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+                    </svg>
+                    <span style={{ fontSize: 12.5, color: 'var(--error)', fontWeight: 500 }}>{error}</span>
+                </div>
+            )}
+
+            <button
+                type="button"
+                disabled={loading || !allFilled}
+                onClick={() => submit(digits.join(''))}
+                style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: (loading || !allFilled) ? 'not-allowed' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (loading || !allFilled) ? .5 : 1 }}
+                onMouseEnter={(e) => { if (!loading && allFilled) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(44,95,78,.15)' } }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
+                {loading ? (
+                    <div style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin .7s linear infinite' }} />
+                ) : (
+                    <>
+                        <span>Verify code</span>
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: 16, height: 16 }}>
+                            <path d="M3 8h10M9.5 4.5L13 8l-3.5 3.5" />
+                        </svg>
+                    </>
+                )}
+            </button>
+
+            <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--ink-50)' }}>
+                {"Didn't receive it? "}
+                {resendCooldown > 0 ? (
+                    <span style={{ color: 'var(--ink-25)' }}>Resend in {resendCooldown}s</span>
+                ) : (
+                    <button type="button" onClick={handleResend}
+                        style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 13 }}
+                        onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                        onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
+                        Resend code
+                    </button>
+                )}
+            </p>
+
+            <p style={{ textAlign: 'center', marginTop: 10 }}>
+                <button type="button" onClick={onBack}
+                    style={{ fontSize: 13, color: 'var(--ink-50)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'color .2s' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 14, height: 14 }}>
+                        <path d="M10 3L5.5 8 10 13" />
+                    </svg>
+                    Back to sign in
+                </button>
+            </p>
+        </>
+    )
+}
+
 /* ── Login form ──────────────────────────────────── */
-function LoginForm({ onSwitch }: { onSwitch: () => void }) {
+function LoginForm({ onSwitch, onOtp }: {
+    onSwitch: () => void
+    onOtp: (email: string, maskedEmail: string) => void
+}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
@@ -318,6 +531,10 @@ function LoginForm({ onSwitch }: { onSwitch: () => void }) {
             })
             const data = await res.json()
             if (!res.ok) { setErrors({ email: data.message || 'Invalid credentials.' }); return }
+            if (data.requires_otp) {
+                onOtp(email, data.email)
+                return
+            }
             localStorage.setItem('token', data.token)
             window.location.href = '/dashboard'
         } catch {
@@ -544,14 +761,22 @@ function SuccessState() {
 
 /* ── Main page ───────────────────────────────────── */
 export default function AuthPage() {
-    const [panel, setPanel] = useState<Panel>('login')
+    const [panel, setPanel] = useState<AuthPanel>('login')
     const [success, setSuccess] = useState(false)
+    const [otpEmail, setOtpEmail] = useState('')
+    const [otpMasked, setOtpMasked] = useState('')
 
     useEffect(() => {
         if (!success) return
         const t = setTimeout(() => { window.location.href = '/auth/verify-email' }, 3500)
         return () => clearTimeout(t)
     }, [success])
+
+    function handleOtpRequired(email: string, masked: string) {
+        setOtpEmail(email)
+        setOtpMasked(masked)
+        setPanel('otp')
+    }
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
@@ -562,22 +787,17 @@ export default function AuthPage() {
             <div className="flex flex-col justify-center items-center relative min-h-screen pt-20 pb-10 lg:pt-10"
                 style={{ paddingLeft: 'clamp(24px, 5vw, 80px)', paddingRight: 'clamp(24px, 5vw, 80px)' }}>
 
-                {/* <Link href="/" className="absolute top-6 right-6 lg:top-8 lg:right-10" style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-50)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6, transition: 'color .25s', zIndex: 50 }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 14, height: 14 }}>
-                        <path d="M10 3L5.5 8 10 13" />
-                    </svg>
-                    Back to home
-                </Link> */}
-
                 <div className="auth-wrap-inner" style={{ width: '100%', maxWidth: 420, animation: 'fadeUp .7s ease both' }}>
 
-                    {success ? <SuccessState /> : (
+                    {success ? <SuccessState /> : panel === 'otp' ? (
+                        <div className="panel-anim" key="otp">
+                            <OTPForm email={otpEmail} maskedEmail={otpMasked} onBack={() => setPanel('login')} />
+                        </div>
+                    ) : (
                         <>
                             {/* Tab switcher */}
                             <div style={{ display: 'flex', gap: 0, marginBottom: 20, border: '1px solid var(--line-strong)', borderRadius: 12, overflow: 'hidden', background: 'var(--bg-warm)' }}>
-                                {(['login', 'register'] as Panel[]).map((tab) => (
+                                {(['login', 'register'] as const).map((tab) => (
                                     <button key={tab} type="button" onClick={() => setPanel(tab)}
                                         style={{
                                             flex: 1, padding: '13px 20px', textAlign: 'center', fontSize: 13,
@@ -597,7 +817,7 @@ export default function AuthPage() {
                             {/* Form panel */}
                             <div className="panel-anim" key={panel}>
                                 {panel === 'login'
-                                    ? <LoginForm onSwitch={() => setPanel('register')} />
+                                    ? <LoginForm onSwitch={() => setPanel('register')} onOtp={handleOtpRequired} />
                                     : <RegisterForm onSwitch={() => setPanel('login')} onSuccess={() => setSuccess(true)} />
                                 }
                             </div>
