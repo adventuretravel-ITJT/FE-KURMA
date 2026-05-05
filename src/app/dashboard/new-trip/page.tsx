@@ -352,7 +352,7 @@ export default function NewTripPage() {
                             <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--accent-bg)', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" style={{ width: 24, height: 24 }}><path d="M20 6L9 17l-5-5" /></svg>
                             </div>
-                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.025em', color: 'var(--ink)', marginBottom: 8 }}>
+                            <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 22, fontWeight: 500, letterSpacing: '-.025em', color: 'var(--ink)', marginBottom: 8 }}>
                                 &ldquo;{createdName}&rdquo; is ready!
                             </div>
                             <div style={{ fontSize: 13.5, color: 'var(--ink-50)', maxWidth: 300, margin: '0 auto 8px', lineHeight: 1.65 }}>
@@ -851,7 +851,7 @@ export default function NewTripPage() {
 /* ─── Shared style tokens ────────────────────────── */
 const ss = {
     eyebrow: { fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6 } as React.CSSProperties,
-    title:   { fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: 4 } as React.CSSProperties,
+    title:   { fontFamily: 'var(--font-fraunces)', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: 4 } as React.CSSProperties,
     sub:     { fontSize: 13.5, color: 'var(--ink-50)', marginBottom: 28, lineHeight: 1.6 } as React.CSSProperties,
     em:      { fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' } as React.CSSProperties,
     input:   { width: '100%', height: 46, padding: '0 14px', background: 'var(--bg)', border: '1px solid var(--line-strong)', borderRadius: 10, fontSize: 14, color: 'var(--ink)', fontFamily: 'inherit', outline: 'none', transition: 'border-color .18s, background .18s' } as React.CSSProperties,

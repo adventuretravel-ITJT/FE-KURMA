@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
             <div style={{ width: '100%', maxWidth: 420 }}>
 
                 <div style={{ textAlign: 'center', marginBottom: 32 }}>
-                    <Link href="/" style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-.03em' }}>
+                    <Link href="/" style={{ fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 500, color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-.03em' }}>
                         kurma<em style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 300 }}>.guide</em>
                     </Link>
                 </div>
@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
                                     <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
+                            <h2 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
                                 Check your inbox
                             </h2>
                             <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65, marginBottom: 8 }}>
@@ -75,13 +75,13 @@ export default function ForgotPasswordPage() {
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
                                 <Link href="/auth"
-                                    style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 600, borderRadius: 100, textDecoration: 'none', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                                    style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 600, borderRadius: 100, textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta-sans)' }}>
                                     Back to sign in
                                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M4 2l4 4-4 4" /></svg>
                                 </Link>
                                 <button
                                     onClick={() => { setSent(false); setEmail('') }}
-                                    style={{ background: 'none', border: 'none', fontSize: 12.5, color: 'var(--ink-50)', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', padding: 4 }}
+                                    style={{ background: 'none', border: 'none', fontSize: 12.5, color: 'var(--ink-50)', cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', padding: 4 }}
                                     onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
                                     onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
                                     Try a different email
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
                     ) : (
                         <>
                             <div style={{ marginBottom: 24 }}>
-                                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 8, color: 'var(--ink)' }}>
+                                <h1 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 8, color: 'var(--ink)' }}>
                                     Forgot your{' '}
                                     <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>password?</em>
                                 </h1>
@@ -116,7 +116,7 @@ export default function ForgotPasswordPage() {
                                             border: `1px solid ${error ? 'var(--error)' : 'var(--line-strong)'}`,
                                             borderRadius: 10, background: 'var(--bg-card)',
                                             color: 'var(--ink)', fontSize: 13, outline: 'none',
-                                            fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                            fontFamily: 'var(--font-plus-jakarta-sans)',
                                             transition: 'border-color .25s, box-shadow .25s',
                                         }}
                                         onFocus={(e) => {
@@ -147,7 +147,7 @@ export default function ForgotPasswordPage() {
                                     style={{
                                         width: '100%', padding: '14px 24px', background: 'var(--ink)',
                                         color: 'var(--bg)', border: 'none', borderRadius: 100,
-                                        fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                        fontSize: 14, fontWeight: 600, fontFamily: 'var(--font-plus-jakarta-sans)',
                                         cursor: loading ? 'wait' : 'pointer', transition: 'all .3s',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         gap: 8, opacity: loading ? .7 : 1,
@@ -180,7 +180,7 @@ export default function ForgotPasswordPage() {
                             <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--ink-50)' }}>
                                 Remember your password?{' '}
                                 <Link href="/auth"
-                                    style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 13 }}
+                                    style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta-sans)', fontSize: 13 }}
                                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
                                     Sign in

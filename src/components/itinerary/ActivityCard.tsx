@@ -241,7 +241,7 @@ function PlaceCard({ act, place, convertedCost, currSymbol, onDelete, onEdit, on
           <div style={{ fontSize: '9.5px', fontWeight: 600, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-25)', marginBottom: 4 }}>
             {place.eyebrow}
           </div>
-          <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 8 }}>
             {place.name}
           </div>
           <div style={{ fontSize: '12px', color: 'var(--ink-50)', lineHeight: 1.6, marginBottom: 12 }}>
@@ -413,7 +413,7 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onDelete, onEd
           {act.from && act.to && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{act.from}</div>
+                <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{act.from}</div>
                 <div style={{ fontSize: 9, color: 'var(--ink-25)' }}>{act.fromName}</div>
               </div>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, padding: '0 6px' }}>
@@ -423,13 +423,13 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onDelete, onEd
                 {act.dur && <div style={{ fontSize: 9, color: 'var(--ink-25)' }}>{act.dur}</div>}
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{act.to}</div>
+                <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 14, fontWeight: 500, color: 'var(--ink)' }}>{act.to}</div>
                 <div style={{ fontSize: 9, color: 'var(--ink-25)' }}>{act.toName}</div>
               </div>
             </div>
           )}
           {convertedCost != null && (
-            <div style={{ fontSize: '11.5px', color: convertedCost === 0 ? 'var(--accent-light, #38795f)' : 'var(--accent)', fontFamily: 'Fraunces, serif', marginTop: 4 }}>
+            <div style={{ fontSize: '11.5px', color: convertedCost === 0 ? 'var(--accent-light, #38795f)' : 'var(--accent)', fontFamily: 'var(--font-fraunces)', marginTop: 4 }}>
               {convertedCost === 0 ? 'Free' : `${currSymbol}${convertedCost.toLocaleString()}`}
             </div>
           )}
@@ -486,7 +486,7 @@ export default function ActivityCard({ act, baseCurr, currSymbol, onDelete, onEd
         {act.tip && <div style={{ fontSize: 11, color: 'var(--ink-25)', fontStyle: 'italic', marginTop: 3, display:'flex', alignItems:'flex-start', gap:4 }}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{width:11,height:11,flexShrink:0,marginTop:1}}><path d="M8 2a4 4 0 011 7.9V11H7v-1.1A4 4 0 018 2z"/><path d="M7 13h2"/></svg>{act.tip}</div>}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 5 }}>
           {convertedCost != null && (
-            <span style={{ fontSize: '11.5px', color: convertedCost === 0 ? 'var(--accent-light, #38795f)' : 'var(--accent)', fontFamily: 'Fraunces, serif' }}>
+            <span style={{ fontSize: '11.5px', color: convertedCost === 0 ? 'var(--accent-light, #38795f)' : 'var(--accent)', fontFamily: 'var(--font-fraunces)' }}>
               {convertedCost === 0 ? 'Free' : `${currSymbol}${convertedCost.toLocaleString()}`}
             </span>
           )}

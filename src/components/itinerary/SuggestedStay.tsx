@@ -82,7 +82,7 @@ export default function SuggestedStay({ cityA, cityB, baseCurr, currSymbol }: Pr
 
           {/* Name */}
           <div style={{
-            fontFamily: 'Fraunces, serif', fontSize: 14, fontWeight: 500,
+            fontFamily: 'var(--font-fraunces)', fontSize: 14, fontWeight: 500,
             letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 3,
           }}>
             {hotel.name}
@@ -103,7 +103,7 @@ export default function SuggestedStay({ cityA, cityB, baseCurr, currSymbol }: Pr
               </svg>
               {hotel.distanceNote}
             </div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
+            <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 13, fontWeight: 500, color: 'var(--accent)' }}>
               {currSymbol}{price.toLocaleString()}{' '}
               <span style={{ fontFamily: 'var(--sans)', fontSize: 10, color: 'var(--ink-25)', fontWeight: 400 }}>/malam</span>
             </div>

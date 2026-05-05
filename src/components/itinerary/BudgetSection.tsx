@@ -53,7 +53,7 @@ export default function BudgetSection({ days, baseCurr, onCurrChange }: Props) {
             <div style={{ fontSize: '10.5px', fontWeight: 600, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>
               Total Budget
             </div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginTop: 4 }}>
+            <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 22, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginTop: 4 }}>
               {curr.symbol}{Math.round(grand).toLocaleString()}{' '}
               <small style={{ fontFamily: 'inherit', fontSize: 11, color: 'var(--ink-25)', fontWeight: 400 }}>estimated</small>
             </div>
@@ -110,7 +110,7 @@ export default function BudgetSection({ days, baseCurr, onCurrChange }: Props) {
                 <div key={cat} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 9 }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: DOT_COLORS[i], flexShrink: 0 }} />
                   <div style={{ fontSize: 12, color: 'var(--ink-50)', flex: 1 }}>{cat}</div>
-                  <div style={{ fontSize: '12.5px', fontWeight: 500, color: 'var(--ink)', fontFamily: 'Fraunces, serif' }}>
+                  <div style={{ fontSize: '12.5px', fontWeight: 500, color: 'var(--ink)', fontFamily: 'var(--font-fraunces)' }}>
                     {curr.symbol}{Math.round(val).toLocaleString()}
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--ink-25)', minWidth: 32, textAlign: 'right' }}>{pct}%</div>
@@ -138,7 +138,7 @@ export default function BudgetSection({ days, baseCurr, onCurrChange }: Props) {
             maxHeight: '70vh', overflowY: 'auto',
           }}>
             <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500 }}>Currency</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500 }}>Currency</span>
               <button onClick={() => setShowCurrModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-25)', fontSize: 20, lineHeight: 1 }}>×</button>
             </div>
             {CURRENCIES.map((c) => (

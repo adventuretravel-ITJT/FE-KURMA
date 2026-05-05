@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300&display=swap");
-
 @import "tailwindcss";
 
 :root {
@@ -81,7 +79,7 @@ html {
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: var(--font-plus-jakarta-sans, "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif);
   font-weight: 400;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -90,7 +88,7 @@ body {
 }
 
 .font-serif {
-  font-family: "Fraunces", serif;
+  font-family: var(--font-fraunces, "Fraunces", ui-serif, Georgia, serif);
 }
 
 @keyframes pulse-dot {
@@ -311,7 +309,7 @@ body {
 }
 .hp-nav.scrolled::after { opacity: 1; }
 .hp-logo {
-  font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500;
+  font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 19px; font-weight: 500;
   color: var(--ink); text-decoration: none; letter-spacing: -.03em;
 }
 .hp-logo em { font-style: italic; color: var(--accent); font-weight: 300; }
@@ -373,7 +371,7 @@ body {
 .hp-hero-label-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .hp-hero-label-text { font-size: 11.5px; font-weight: 500; color: var(--ink-50); letter-spacing: .04em; }
 .hp-h1 {
-  font-family: 'Fraunces', serif; font-size: clamp(36px, 4.5vw, 58px);
+  font-family: var(--font-fraunces, 'Fraunces', serif); font-size: clamp(36px, 4.5vw, 58px);
   font-weight: 500; line-height: 1.08; letter-spacing: -.04em; margin-bottom: 20px;
 }
 .hp-h1 em { font-style: italic; font-weight: 300; color: var(--accent); }
@@ -426,7 +424,7 @@ body {
   color: var(--ink-25); display: flex; align-items: center; gap: 6px;
 }
 .hp-mf-day::after { content: ''; flex: 1; height: 1px; background: var(--line); }
-.hp-mf-city { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
+.hp-mf-city { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 14px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
 .hp-mf-card {
   display: flex; align-items: center; gap: 8px; padding: 8px 10px;
   background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
@@ -445,9 +443,9 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,.08), 0 20px 50px rgba(0,0,0,.12);
   animation: fadeUp 1s ease .55s both; z-index: 2;
 }
-.hp-cg-city { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 500; color: white; }
+.hp-cg-city { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 14px; font-weight: 500; color: white; }
 .hp-cg-season { font-size: 9px; color: rgba(255,255,255,.4); margin-top: 1px; }
-.hp-cg-temp { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; color: rgba(255,255,255,.5); margin-top: 4px; }
+.hp-cg-temp { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 28px; font-weight: 500; color: rgba(255,255,255,.5); margin-top: 4px; }
 .hp-cg-sep { height: 1px; background: rgba(255,255,255,.08); margin: 10px 0; }
 .hp-cg-label { font-size: 7.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: 6px; }
 .hp-cg-check { display: flex; align-items: center; gap: 6px; font-size: 9px; color: rgba(255,255,255,.5); margin-bottom: 4px; }
@@ -463,7 +461,7 @@ body {
 .hp-trust-stats { display: flex; justify-content: center; align-items: center; gap: 0; }
 .hp-trust-stat { display: flex; flex-direction: column; align-items: center; padding: 0 48px; }
 .hp-trust-num {
-  font-family: 'Fraunces', serif; font-size: 36px; font-weight: 500;
+  font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 36px; font-weight: 500;
   color: var(--ink); letter-spacing: -.03em; line-height: 1;
 }
 .hp-trust-num span { font-size: 20px; color: var(--accent); font-weight: 400; }
@@ -477,7 +475,7 @@ body {
   text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
 }
 .hp-h2 {
-  font-family: 'Fraunces', serif; font-size: clamp(28px, 3.5vw, 42px);
+  font-family: var(--font-fraunces, 'Fraunces', serif); font-size: clamp(28px, 3.5vw, 42px);
   font-weight: 500; letter-spacing: -.03em; line-height: 1.15; margin-bottom: 16px;
 }
 .hp-h2 em { font-style: italic; font-weight: 300; color: var(--accent); }
@@ -493,11 +491,11 @@ body {
 }
 .hp-how-step:first-child { border-top: 1px solid var(--line); }
 .hp-how-step-num {
-  font-family: 'Fraunces', serif; font-size: 28px; font-weight: 300;
+  font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 28px; font-weight: 300;
   color: var(--ink-25); transition: color .3s; line-height: 1;
 }
 .hp-how-step:hover .hp-how-step-num { color: var(--accent); }
-.hp-how-step-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
+.hp-how-step-title { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 18px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
 .hp-how-step-desc { font-size: 13px; color: var(--ink-50); line-height: 1.6; }
 
 /* FEATURES */
@@ -520,7 +518,7 @@ body {
 .hp-feat-icon.warm { background: var(--warm-bg); color: var(--warm); }
 .hp-feat-icon.neutral { background: var(--ink-05); color: var(--ink-50); }
 .hp-feat-card h3 {
-  font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500;
+  font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 18px; font-weight: 500;
   letter-spacing: -.02em; margin-bottom: 8px;
 }
 .hp-feat-card p { font-size: 13px; color: var(--ink-50); line-height: 1.65; }
@@ -557,7 +555,7 @@ body {
 }
 .hp-day-step.active .hp-day-step-time { color: var(--accent); }
 .hp-day-step-title {
-  font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500;
+  font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 17px; font-weight: 500;
   letter-spacing: -.02em; margin-bottom: 4px;
   color: var(--ink-50); transition: color .3s;
 }
@@ -593,7 +591,7 @@ body {
 /* Morning panel */
 .hp-dm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .hp-dm-day-label { font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-25); }
-.hp-dm-city { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500; letter-spacing: -.02em; }
+.hp-dm-city { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 20px; font-weight: 500; letter-spacing: -.02em; }
 .hp-dm-activity {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px;
   border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; transition: border-color .2s;
@@ -606,8 +604,8 @@ body {
 
 /* Afternoon panel — city guide */
 .hp-cg-panel-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-.hp-cg-city-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 500; letter-spacing: -.02em; }
-.hp-cg-panel-temp { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 300; color: var(--ink-50); }
+.hp-cg-city-name { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 18px; font-weight: 500; letter-spacing: -.02em; }
+.hp-cg-panel-temp { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 24px; font-weight: 300; color: var(--ink-50); }
 .hp-cg-panel-condition { font-size: 9px; color: var(--ink-25); }
 .hp-cg-tabs { display: flex; gap: 2px; margin-bottom: 14px; background: var(--bg-warm); border-radius: 7px; padding: 3px; }
 .hp-cg-tab { font-size: 10px; font-weight: 600; padding: 5px 10px; border-radius: 5px; cursor: pointer; color: var(--ink-50); transition: all .2s; }
@@ -619,7 +617,7 @@ body {
 
 /* Evening panel — travel folder */
 .hp-saku-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-25); margin-bottom: 4px; }
-.hp-saku-name { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 14px; }
+.hp-saku-name { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 17px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 14px; }
 .hp-saku-file { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); margin-bottom: 6px; }
 .hp-saku-file-icon { width: 28px; height: 28px; border-radius: 6px; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
 .hp-saku-file-name { font-size: 11px; font-weight: 600; color: var(--ink); flex: 1; }
@@ -632,7 +630,7 @@ body {
 .hp-saku-upload:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
 
 /* Night panel — share */
-.hp-share-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
+.hp-share-title { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 17px; font-weight: 500; letter-spacing: -.02em; margin-bottom: 4px; }
 .hp-share-sub { font-size: 11px; color: var(--ink-50); margin-bottom: 14px; }
 .hp-share-person { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; }
 .hp-share-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
@@ -649,7 +647,7 @@ body {
 .hp-faq-item { border-bottom: 1px solid var(--line); }
 .hp-faq-q {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 22px 0; cursor: pointer; font-family: 'Fraunces', serif;
+  padding: 22px 0; cursor: pointer; font-family: var(--font-fraunces, 'Fraunces', serif);
   font-size: 17px; font-weight: 500; letter-spacing: -.02em; color: var(--ink);
   transition: color .2s; user-select: none; border: none; background: none; width: 100%; text-align: left;
 }
@@ -674,7 +672,7 @@ body {
 /* FOOTER */
 .hp-footer { padding: 40px 0; border-top: 1px solid var(--line); }
 .hp-foot-inner { display: flex; justify-content: space-between; align-items: center; }
-.hp-foot-logo { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 500; color: var(--ink-25); }
+.hp-foot-logo { font-family: var(--font-fraunces, 'Fraunces', serif); font-size: 15px; font-weight: 500; color: var(--ink-25); }
 .hp-foot-logo em { font-style: italic; color: var(--accent); }
 .hp-foot-tagline { font-size: 10px; font-weight: 500; color: var(--ink-25); letter-spacing: .04em; margin-top: 4px; text-transform: uppercase; }
 .hp-foot-nav { display: flex; gap: 28px; }

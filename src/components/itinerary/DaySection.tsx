@@ -139,7 +139,7 @@ export default function DaySection({
       }}>
         {/* Day number + today badge */}
         <div style={{
-          fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 300,
+          fontFamily: 'var(--font-fraunces)', fontSize: 26, fontWeight: 300,
           color: 'var(--ink-25)', lineHeight: 1, minWidth: 36, flexShrink: 0,
           position: 'relative', paddingTop: isToday ? 10 : 0,
         }}>
@@ -160,7 +160,7 @@ export default function DaySection({
                   onKeyDown={onKeyDown}
                   onBlur={() => setTimeout(commitEdit, 120)}
                   style={{
-                    fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500,
+                    fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500,
                     letterSpacing: '-.02em', color: 'var(--ink)',
                     border: 'none', borderBottom: '1.5px solid var(--accent)',
                     background: 'transparent', outline: 'none',
@@ -198,7 +198,7 @@ export default function DaySection({
                 <span
                   onClick={startEdit}
                   style={{
-                    fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500,
+                    fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500,
                     letterSpacing: '-.02em', color: 'var(--ink)', cursor: 'text', lineHeight: 1.3,
                   }}
                 >

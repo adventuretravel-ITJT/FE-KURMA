@@ -90,7 +90,7 @@ export default function DashboardPage() {
                             <div style={{ fontSize: 10.5, fontWeight: 500, color: 'var(--ink-25)', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 5 }}>
                                 {greetingPrefix()}
                             </div>
-                            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1, color: 'var(--ink)' }}>
+                            <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1, color: 'var(--ink)' }}>
                                 {hasTrips
                                     ? `${firstName}.`
                                     : <>Welcome, <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>{firstName}.</em></>}
@@ -176,7 +176,7 @@ function TripCard({ trip }: { trip: Trip }) {
                 {trip.destination_flag ?? '🗺️'}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {trip.name}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--ink-50)' }}>
@@ -220,7 +220,7 @@ function EmptyState() {
                     <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7M9 20l6-3M9 20V7m6 13l5.447-2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m0 13V7M9 7l6-3" />
                 </svg>
             </div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 8 }}>No trips yet</div>
+            <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 8 }}>No trips yet</div>
             <div style={{ fontSize: 13.5, color: 'var(--ink-50)', maxWidth: 320, margin: '0 auto 24px', lineHeight: 1.7 }}>
                 Plan your first trip and we'll keep itinerary, bookings, and connectivity all in one place.
             </div>
@@ -298,7 +298,7 @@ function UpcomingWidget({ trips }: { trips: Trip[] }) {
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                 <div style={{ width: 36, height: 40, borderRadius: 8, background: i === 0 ? 'var(--accent-bg)' : 'var(--warm-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                                     <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: i === 0 ? 'var(--accent)' : 'var(--warm)' }}>{month}</div>
-                                    <div style={{ fontFamily: 'Fraunces, serif', fontSize: 17, fontWeight: 500, color: i === 0 ? 'var(--accent)' : 'var(--warm)', lineHeight: 1.1 }}>{day}</div>
+                                    <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 17, fontWeight: 500, color: i === 0 ? 'var(--accent)' : 'var(--warm)', lineHeight: 1.1 }}>{day}</div>
                                 </div>
                                 <div>
                                     <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink)' }}>Departure — {trip.destination}</div>
@@ -357,7 +357,7 @@ function KurmaTipWidget({ destination }: { destination?: string }) {
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', borderRadius: 100, fontSize: 10, fontWeight: 500, color: 'rgba(255,255,255,.35)', letterSpacing: '.04em', marginBottom: 12 }}>
                 {entry.dest}
             </div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 13.5, fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,.65)', lineHeight: 1.65 }}>
+            <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 13.5, fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,.65)', lineHeight: 1.65 }}>
                 <span style={{ display: 'block', fontSize: 18, color: 'var(--accent-light)', lineHeight: 1, marginBottom: 3, fontStyle: 'normal' }}>&ldquo;</span>
                 {entry.tip}
             </div>

@@ -71,7 +71,7 @@ function VerifyEmailContent() {
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
+                <h2 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
                     Check your email
                 </h2>
                 {userEmail ? (
@@ -94,12 +94,12 @@ function VerifyEmailContent() {
                         </p>
                     ) : (
                         <button onClick={handleResend} disabled={resending}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 14, fontWeight: 600, borderRadius: 100, border: 'none', cursor: resending ? 'wait' : 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', opacity: resending ? .6 : 1 }}>
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 14, fontWeight: 600, borderRadius: 100, border: 'none', cursor: resending ? 'wait' : 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', opacity: resending ? .6 : 1 }}>
                             {resending ? 'Sending…' : 'Resend verification email'}
                         </button>
                     )}
                     <Link href="/auth"
-                        style={{ fontSize: 13, color: 'var(--ink-50)', textDecoration: 'none', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                        style={{ fontSize: 13, color: 'var(--ink-50)', textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta-sans)' }}
                         onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
                         onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
                         Back to sign in
@@ -126,7 +126,7 @@ function VerifyEmailContent() {
                 <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" style={{ width: 24, height: 24 }}><path d="M20 6L9 17l-5-5" /></svg>
                 </div>
-                <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
+                <h2 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
                     Email verified!
                 </h2>
                 <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65, marginBottom: 12 }}>
@@ -146,14 +146,14 @@ function VerifyEmailContent() {
                 <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" style={{ width: 24, height: 24 }}><path d="M20 6L9 17l-5-5" /></svg>
                 </div>
-                <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
+                <h2 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
                     Already verified
                 </h2>
                 <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65, marginBottom: 28 }}>
                     This email has already been verified. You&apos;re good to go!
                 </p>
                 <Link href="/dashboard"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 600, borderRadius: 100, textDecoration: 'none', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 600, borderRadius: 100, textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta-sans)' }}>
                     Go to dashboard
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M4 2l4 4-4 4" /></svg>
                 </Link>
@@ -167,7 +167,7 @@ function VerifyEmailContent() {
             <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(231,76,60,.08)', border: '1px solid rgba(231,76,60,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--error)" strokeWidth="2" strokeLinecap="round" style={{ width: 24, height: 24 }}><path d="M12 8v4M12 16v.5" /><circle cx="12" cy="12" r="9" /></svg>
             </div>
-            <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
+            <h2 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
                 Link invalid or expired
             </h2>
             <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65, marginBottom: 28 }}>
@@ -180,12 +180,12 @@ function VerifyEmailContent() {
                     </p>
                 ) : (
                     <button onClick={handleResend} disabled={resending}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 14, fontWeight: 600, borderRadius: 100, border: 'none', cursor: resending ? 'wait' : 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', opacity: resending ? .6 : 1 }}>
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '12px 28px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 14, fontWeight: 600, borderRadius: 100, border: 'none', cursor: resending ? 'wait' : 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', opacity: resending ? .6 : 1 }}>
                         {resending ? 'Sending…' : 'Resend verification email'}
                     </button>
                 )}
                 <Link href="/auth"
-                    style={{ fontSize: 13, color: 'var(--ink-50)', textDecoration: 'none', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                    style={{ fontSize: 13, color: 'var(--ink-50)', textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta-sans)' }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
                     Back to sign in
@@ -200,7 +200,7 @@ export default function VerifyEmailPage() {
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: 'var(--bg)' }}>
             <div style={{ width: '100%', maxWidth: 420 }}>
                 <div style={{ textAlign: 'center', marginBottom: 32 }}>
-                    <Link href="/" style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-.03em' }}>
+                    <Link href="/" style={{ fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 500, color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-.03em' }}>
                         kurma<em style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 300 }}>.guide</em>
                     </Link>
                 </div>

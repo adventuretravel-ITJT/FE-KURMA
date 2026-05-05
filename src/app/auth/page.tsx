@@ -73,7 +73,7 @@ function FormInput({
                         background: 'var(--bg-card)',
                         color: 'var(--ink)',
                         fontSize: 13,
-                        fontFamily: 'Plus Jakarta Sans, sans-serif',
+                        fontFamily: 'var(--font-plus-jakarta-sans)',
                         fontWeight: 400,
                         outline: 'none',
                         transition: 'border-color .25s, box-shadow .25s, background .25s',
@@ -209,7 +209,7 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
         padding: '12px 16px', border: '1px solid var(--line-strong)', borderRadius: 10,
         background: 'var(--bg-card)', fontSize: 12.5, fontWeight: 600, color: 'var(--ink)',
-        cursor: googleLoading ? 'wait' : 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
+        cursor: googleLoading ? 'wait' : 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)',
         opacity: googleLoading ? .6 : 1,
     }
 
@@ -251,7 +251,7 @@ function AuthLeft() {
 
             <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <Link href="/" style={{
-                    fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 600,
+                    fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 600,
                     color: 'rgba(255,255,255,.92)', textDecoration: 'none', letterSpacing: '-.03em',
                 }}>
                     Kurma<em style={{ fontStyle: 'italic', color: 'var(--kg-primary-tint)', fontWeight: 600 }}>Go.</em>
@@ -259,7 +259,7 @@ function AuthLeft() {
 
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', padding: '20px 0 40px', marginTop: 20 }}>
                     <h2 style={{
-                        fontFamily: 'Fraunces, serif', fontSize: 'clamp(28px, 3vw, 40px)',
+                        fontFamily: 'var(--font-fraunces)', fontSize: 'clamp(28px, 3vw, 40px)',
                         fontWeight: 600, lineHeight: 1.12, letterSpacing: '-.04em',
                         color: 'rgba(255,255,255,.92)', marginBottom: 20,
                     }}>
@@ -276,12 +276,12 @@ function AuthLeft() {
                     borderRadius: 16, padding: '24px 28px', marginBottom: 10,
                     animation: 'fadeUp .9s ease .3s both',
                 }}>
-                    <p style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 400, fontStyle: 'italic', color: 'rgba(255,255,255,.65)', lineHeight: 1.65, marginBottom: 16 }}>
+                    <p style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 400, fontStyle: 'italic', color: 'rgba(255,255,255,.65)', lineHeight: 1.65, marginBottom: 16 }}>
                         <span style={{ display: 'block', fontSize: 22, fontStyle: 'normal', color: 'var(--kg-primary-tint)', lineHeight: 1, marginBottom: 4 }}>&ldquo;</span>
                         KurmaGo changed how I travel. Every detail, beautifully organised in one place.
                     </p>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, var(--kg-primary), var(--kg-primary-bright))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: 'white', fontFamily: 'Plus Jakarta Sans, sans-serif', flexShrink: 0 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, var(--kg-primary), var(--kg-primary-bright))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: 'white', fontFamily: 'var(--font-plus-jakarta-sans)', flexShrink: 0 }}>
                             SA
                         </div>
                         <div>
@@ -395,7 +395,7 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
                         <path d="M8 11V7a4 4 0 0 1 8 0v4" />
                     </svg>
                 </div>
-                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(20px, 2.5vw, 26px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 10, color: 'var(--ink)' }}>
+                <h1 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 'clamp(20px, 2.5vw, 26px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 10, color: 'var(--ink)' }}>
                     Check your <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>email</em>
                 </h1>
                 <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65 }}>
@@ -421,7 +421,7 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
                             width: 52, height: 60,
                             textAlign: 'center',
                             fontSize: 24, fontWeight: 700,
-                            fontFamily: 'Plus Jakarta Sans, sans-serif',
+                            fontFamily: 'var(--font-plus-jakarta-sans)',
                             border: `1.5px solid ${d ? 'var(--accent)' : 'var(--line-strong)'}`,
                             borderRadius: 12,
                             background: d ? 'var(--accent-bg)' : 'var(--bg-card)',
@@ -456,7 +456,7 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
                 type="button"
                 disabled={loading || !allFilled}
                 onClick={() => submit(digits.join(''))}
-                style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: (loading || !allFilled) ? 'not-allowed' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (loading || !allFilled) ? .5 : 1 }}
+                style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'var(--font-plus-jakarta-sans)', letterSpacing: '.01em', cursor: (loading || !allFilled) ? 'not-allowed' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: (loading || !allFilled) ? .5 : 1 }}
                 onMouseEnter={(e) => { if (!loading && allFilled) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(30,96,145,.18)' } }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
                 {loading ? (
@@ -477,7 +477,7 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
                     <span style={{ color: 'var(--ink-25)' }}>Resend in {resendCooldown}s</span>
                 ) : (
                     <button type="button" onClick={handleResend}
-                        style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 13 }}
+                        style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', fontSize: 13 }}
                         onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                         onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
                         Resend code
@@ -487,7 +487,7 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
 
             <p style={{ textAlign: 'center', marginTop: 10 }}>
                 <button type="button" onClick={onBack}
-                    style={{ fontSize: 13, color: 'var(--ink-50)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'color .2s' }}
+                    style={{ fontSize: 13, color: 'var(--ink-50)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'color .2s' }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}>
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" style={{ width: 14, height: 14 }}>
@@ -546,7 +546,7 @@ function LoginForm({ onSwitch, onOtp }: {
     return (
         <>
             <div style={{ marginBottom: 20 }}>
-                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(22px, 2.5vw, 28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 6, color: 'var(--ink)' }}>
+                <h1 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 'clamp(22px, 2.5vw, 28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 6, color: 'var(--ink)' }}>
                     Welcome <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>back</em>
                 </h1>
                 <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.6 }}>Sign in to continue planning your journeys.</p>
@@ -577,7 +577,7 @@ function LoginForm({ onSwitch, onOtp }: {
                 </div>
 
                 <button type="submit" disabled={loading} className="auth-submit-btn"
-                    style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
+                    style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'var(--font-plus-jakarta-sans)', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
                     onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(30,96,145,.18)' } }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
                     {loading ? (
@@ -596,7 +596,7 @@ function LoginForm({ onSwitch, onOtp }: {
             <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--ink-50)' }}>
                 Don&apos;t have an account?{' '}
                 <button type="button" onClick={onSwitch}
-                    style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', textDecoration: 'none', fontSize: 13 }}
+                    style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', textDecoration: 'none', fontSize: 13 }}
                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
                     Create Now
@@ -653,7 +653,7 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
     return (
         <>
             <div style={{ marginBottom: 20 }}>
-                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(22px, 2.5vw, 28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 6, color: 'var(--ink)' }}>
+                <h1 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 'clamp(22px, 2.5vw, 28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 6, color: 'var(--ink)' }}>
                     Start your journey <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>here</em>
                 </h1>
                 <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.6 }}>Create your free account and plan your first trip in minutes.</p>
@@ -707,7 +707,7 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
                 </div>
 
                 <button type="submit" disabled={loading} className="auth-submit-btn"
-                    style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
+                    style={{ width: '100%', padding: '15px 24px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 100, fontSize: 14, fontWeight: 600, fontFamily: 'var(--font-plus-jakarta-sans)', letterSpacing: '.01em', cursor: loading ? 'wait' : 'pointer', transition: 'all .3s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: loading ? .7 : 1, pointerEvents: loading ? 'none' : 'auto' }}
                     onMouseEnter={(e) => { if (!loading) { e.currentTarget.style.background = 'var(--accent)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(30,96,145,.18)' } }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}>
                     {loading ? (
@@ -726,7 +726,7 @@ function RegisterForm({ onSwitch, onSuccess }: { onSwitch: () => void; onSuccess
             <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--ink-50)' }}>
                 Already have an account?{' '}
                 <button type="button" onClick={onSwitch}
-                    style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 13 }}
+                    style={{ color: 'var(--accent)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', fontSize: 13 }}
                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
                     Sign in
@@ -745,7 +745,7 @@ function SuccessState() {
                     <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
             </div>
-            <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, letterSpacing: '-.03em', marginBottom: 8, color: 'var(--ink)' }}>
+            <h3 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 500, letterSpacing: '-.03em', marginBottom: 8, color: 'var(--ink)' }}>
                 Check your email!
             </h3>
             <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65, marginBottom: 12 }}>
@@ -803,7 +803,7 @@ export default function AuthPage() {
                                             fontWeight: 600, color: panel === tab ? 'var(--ink)' : 'var(--ink-50)',
                                             cursor: 'pointer', transition: 'all .25s', border: 'none',
                                             background: panel === tab ? 'var(--bg-card)' : 'none',
-                                            fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '.01em',
+                                            fontFamily: 'var(--font-plus-jakarta-sans)', letterSpacing: '.01em',
                                             boxShadow: panel === tab ? '0 1px 6px rgba(17,17,16,.06)' : 'none',
                                             borderRadius: panel === tab ? 10 : 0,
                                             margin: panel === tab ? (tab === 'login' ? '3px 0 3px 3px' : '3px 3px 3px 0') : 0,

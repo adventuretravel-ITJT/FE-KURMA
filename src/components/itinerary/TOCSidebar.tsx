@@ -65,7 +65,7 @@ export default function TOCSidebar({
             onMouseLeave={() => setHoveredId(null)}
           >
             <span style={{
-              fontFamily: 'Fraunces, serif', fontSize: 12,
+              fontFamily: 'var(--font-fraunces)', fontSize: 12,
               color: active ? 'var(--accent)' : 'var(--ink-25)',
               minWidth: 20, transition: 'color .18s', flexShrink: 0,
             }}>

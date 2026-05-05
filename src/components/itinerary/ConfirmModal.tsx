@@ -35,7 +35,7 @@ export default function ConfirmModal({ title, sub, confirmLabel = 'Delete', onCo
           </svg>
         </div>
         <div style={{
-          fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500,
+          fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500,
           letterSpacing: '-.02em', color: 'var(--ink)', textAlign: 'center', marginBottom: 6,
         }}>
           {title}

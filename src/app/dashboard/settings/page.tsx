@@ -44,7 +44,7 @@ function PasswordField({
                         border: `1px solid ${error ? 'var(--error)' : 'var(--line-strong)'}`,
                         borderRadius: 10, background: 'var(--bg)',
                         color: 'var(--ink)', fontSize: 13, outline: 'none',
-                        fontFamily: 'Plus Jakarta Sans, sans-serif',
+                        fontFamily: 'var(--font-plus-jakarta-sans)',
                         transition: 'border-color .2s, box-shadow .2s',
                     }}
                     onFocus={(e) => {
@@ -173,7 +173,7 @@ export default function SettingsPage() {
                             <path d="M2 4h12M2 8h12M2 12h12" />
                         </svg>
                     </button>
-                    <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)' }}>
+                    <h1 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 18, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)' }}>
                         Settings
                     </h1>
                 </div>
@@ -260,7 +260,7 @@ export default function SettingsPage() {
                                     style={{
                                         padding: '10px 24px', background: 'var(--ink)',
                                         color: 'var(--bg)', border: 'none', borderRadius: 100,
-                                        fontSize: 13.5, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                        fontSize: 13.5, fontWeight: 600, fontFamily: 'var(--font-plus-jakarta-sans)',
                                         cursor: loading ? 'wait' : 'pointer', transition: 'all .25s',
                                         display: 'flex', alignItems: 'center', gap: 7,
                                         opacity: loading ? .7 : 1,
@@ -290,7 +290,7 @@ export default function SettingsPage() {
                                 <button
                                     type="button"
                                     onClick={() => { setCurrent(''); setNewPw(''); setConfirm(''); setErrors({}) }}
-                                    style={{ padding: '10px 16px', background: 'none', border: '1px solid var(--line-strong)', borderRadius: 100, fontSize: 13, fontWeight: 500, color: 'var(--ink-50)', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', transition: 'all .2s' }}
+                                    style={{ padding: '10px 16px', background: 'none', border: '1px solid var(--line-strong)', borderRadius: 100, fontSize: 13, fontWeight: 500, color: 'var(--ink-50)', cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', transition: 'all .2s' }}
                                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink-25)'; e.currentTarget.style.color = 'var(--ink)' }}
                                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-50)' }}>
                                     Cancel
@@ -312,7 +312,7 @@ export default function SettingsPage() {
                         </div>
                         <button
                             onClick={onLogout}
-                            style={{ padding: '8px 18px', background: 'none', border: '1px solid rgba(192,57,43,.3)', borderRadius: 100, fontSize: 13, fontWeight: 600, color: 'var(--error)', cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif', transition: 'all .2s' }}
+                            style={{ padding: '8px 18px', background: 'none', border: '1px solid rgba(192,57,43,.3)', borderRadius: 100, fontSize: 13, fontWeight: 600, color: 'var(--error)', cursor: 'pointer', fontFamily: 'var(--font-plus-jakarta-sans)', transition: 'all .2s' }}
                             onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(192,57,43,.06)'; e.currentTarget.style.borderColor = 'var(--error)' }}
                             onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = 'rgba(192,57,43,.3)' }}>
                             Sign out

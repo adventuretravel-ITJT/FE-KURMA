@@ -52,7 +52,7 @@ export default function Sidebar() {
                 <Link
                     href="/dashboard"
                     onClick={onCloseSidebar}
-                    style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 500, color: 'var(--ink)', letterSpacing: '-.03em', textDecoration: 'none' }}
+                    style={{ fontFamily: 'var(--font-fraunces)', fontSize: 18, fontWeight: 500, color: 'var(--ink)', letterSpacing: '-.03em', textDecoration: 'none' }}
                 >
                     Kurma<em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>Go</em>
                 </Link>

@@ -151,7 +151,7 @@ export default function TripSettingsPage() {
 
         <div style={{ width: 1, height: 18, background: 'var(--line-strong)', flexShrink: 0 }} />
 
-        <div style={{ flex: 1, fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ flex: 1, fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           Settings
         </div>
 
@@ -180,7 +180,7 @@ export default function TripSettingsPage() {
       {/* Page body */}
       <div style={{ paddingTop: 60, maxWidth: 600, margin: '0 auto', padding: '80px 24px 80px' }}>
 
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 4 }}>
+        <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 4 }}>
           Trip Settings
         </div>
         <div style={{ fontSize: 13, color: 'var(--ink-50)', marginBottom: 32, lineHeight: 1.6 }}>

@@ -31,7 +31,7 @@ export default function CityPickerModal({ dayId, currentCity, onSelect, onClose 
           padding: '18px 20px 14px', borderBottom: '1px solid var(--line)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>
+          <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>
             Ganti kota
           </span>
           <button

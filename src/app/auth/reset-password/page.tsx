@@ -47,7 +47,7 @@ function FieldInput({
                         border: `1px solid ${error ? 'var(--error)' : 'var(--line-strong)'}`,
                         borderRadius: 10, background: 'var(--bg-card)',
                         color: 'var(--ink)', fontSize: 13, outline: 'none',
-                        fontFamily: 'Plus Jakarta Sans, sans-serif',
+                        fontFamily: 'var(--font-plus-jakarta-sans)',
                         transition: 'border-color .25s, box-shadow .25s',
                     }}
                     onFocus={(e) => {
@@ -154,7 +154,7 @@ function ResetPasswordContent() {
                         <path d="M20 6L9 17l-5-5" />
                     </svg>
                 </div>
-                <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
+                <h2 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)', marginBottom: 8 }}>
                     Password <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>reset!</em>
                 </h2>
                 <p style={{ fontSize: 13.5, color: 'var(--ink-50)', lineHeight: 1.65, marginBottom: 12 }}>
@@ -170,7 +170,7 @@ function ResetPasswordContent() {
     return (
         <>
             <div style={{ marginBottom: 24 }}>
-                <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 8, color: 'var(--ink)' }}>
+                <h1 style={{ fontFamily: 'var(--font-fraunces)', fontSize: 24, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.2, marginBottom: 8, color: 'var(--ink)' }}>
                     Reset your{' '}
                     <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>password</em>
                 </h1>
@@ -227,7 +227,7 @@ function ResetPasswordContent() {
                     style={{
                         width: '100%', padding: '14px 24px', background: 'var(--ink)',
                         color: 'var(--bg)', border: 'none', borderRadius: 100,
-                        fontSize: 14, fontWeight: 600, fontFamily: 'Plus Jakarta Sans, sans-serif',
+                        fontSize: 14, fontWeight: 600, fontFamily: 'var(--font-plus-jakarta-sans)',
                         cursor: loading ? 'wait' : 'pointer', transition: 'all .3s',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         gap: 8, opacity: loading ? .7 : 1, marginTop: 4,
@@ -260,7 +260,7 @@ function ResetPasswordContent() {
             <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--ink-50)' }}>
                 Token expired?{' '}
                 <Link href="/auth/forgot-password"
-                    style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none', fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: 13 }}
+                    style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none', fontFamily: 'var(--font-plus-jakarta-sans)', fontSize: 13 }}
                     onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
                     onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}>
                     Request a new one
@@ -275,7 +275,7 @@ export default function ResetPasswordPage() {
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', background: 'var(--bg)' }}>
             <div style={{ width: '100%', maxWidth: 420 }}>
                 <div style={{ textAlign: 'center', marginBottom: 32 }}>
-                    <Link href="/" style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 500, color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-.03em' }}>
+                    <Link href="/" style={{ fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 500, color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-.03em' }}>
                         kurma<em style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 300 }}>.guide</em>
                     </Link>
                 </div>

@@ -201,7 +201,7 @@ function AddPanel({ panel, onSave, onClose }: {
       }}>
         {/* Head */}
         <div style={{ padding: '18px 18px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: 'var(--bg-card)', zIndex: 2, borderBottom: '1px solid var(--line)' }}>
-          <span style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>{title}</span>
+          <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>{title}</span>
           <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)' }}>
             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ width: 12, height: 12 }}><path d="M2 2l8 8M10 2l-8 8" /></svg>
           </button>
@@ -293,7 +293,7 @@ function AddPanel({ panel, onSave, onClose }: {
                   <div style={{ marginTop: 10, background: 'var(--bg-warm)', borderRadius: 10, overflow: 'hidden' }}>
                     <img src={selectedPlace.photo} alt={selectedPlace.name} style={{ width: '100%', height: 120, objectFit: 'cover', display: 'block' }} />
                     <div style={{ padding: '10px 12px' }}>
-                      <div style={{ fontFamily: 'Fraunces, serif', fontSize: 14, fontWeight: 500, color: 'var(--ink)', marginBottom: 3 }}>{selectedPlace.name}</div>
+                      <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 14, fontWeight: 500, color: 'var(--ink)', marginBottom: 3 }}>{selectedPlace.name}</div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }}>
                         {[
                           { label: 'Hours', val: selectedPlace.open },
@@ -822,7 +822,7 @@ export default function TripItineraryPage() {
         <div style={{ width: 1, height: 18, background: 'var(--line-strong)', flexShrink: 0 }} />
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {trip?.name ?? 'Itinerary'}
           </div>
           <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 1 }}>
@@ -865,7 +865,7 @@ export default function TripItineraryPage() {
           <div onClick={() => setShowMobileToc(false)} style={{ position: 'fixed', inset: 0, zIndex: 490, background: 'rgba(17,17,16,.4)' }} />
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 500, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '70vh', overflowY: 'auto' }}>
             <div style={{ padding: '14px 18px 10px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 15, fontWeight: 500 }}>Days</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500 }}>Days</span>
               <button onClick={() => setShowMobileToc(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-25)', fontSize: 22, lineHeight: 1 }}>×</button>
             </div>
             {days.map((day) => {
@@ -876,7 +876,7 @@ export default function TripItineraryPage() {
                   onClick={() => { handleTocClick(day.id); setShowMobileToc(false) }}
                   style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 18px', borderBottom: '1px solid var(--line)', cursor: 'pointer', background: on ? 'var(--accent-bg)' : 'transparent' }}
                 >
-                  <span style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 300, color: on ? 'var(--accent)' : 'var(--ink-25)', minWidth: 28 }}>{day.num}</span>
+                  <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 300, color: on ? 'var(--accent)' : 'var(--ink-25)', minWidth: 28 }}>{day.num}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 500, color: on ? 'var(--accent)' : 'var(--ink)' }}>{day.label}</div>
                     {day.date && <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 1 }}>{day.date}</div>}
@@ -923,7 +923,7 @@ export default function TripItineraryPage() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-25)" strokeWidth="1.4" strokeLinecap="round" style={{width:26,height:26}}><path d="M3 20V5l6 3 6-3 6 3v15l-6-3-6 3-6-3z"/><path d="M9 8v10M15 5v10"/></svg>
               )}
             </div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1 }}>
+            <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1 }}>
               {trip?.name ?? 'Your Trip'} —{' '}
               <em style={{ fontStyle: 'italic', fontWeight: 300, color: 'var(--accent)' }}>
                 {trip?.start_date ? new Date(trip.start_date + 'T00:00:00').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : 'Itinerary'}
@@ -944,7 +944,7 @@ export default function TripItineraryPage() {
               <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--accent-bg)', margin: '0 auto 14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 20, height: 20 }}><path d="M12 5v14M5 12h14" /></svg>
               </div>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 6 }}>Itinerary masih kosong</div>
+              <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 6 }}>Itinerary masih kosong</div>
               <div style={{ fontSize: 12.5, color: 'var(--ink-50)', lineHeight: 1.6, marginBottom: 16, maxWidth: 300, margin: '0 auto 16px' }}>Tambahkan hari dan aktivitas secara manual, atau gunakan Kurma AI untuk membantu merencanakan perjalananmu.</div>
               <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <button onClick={addDay} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', background: 'transparent', color: 'var(--ink-50)', fontSize: 12, fontWeight: 500, borderRadius: 100, border: '1px solid var(--line-strong)', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .18s' }}
@@ -1112,12 +1112,12 @@ export default function TripItineraryPage() {
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '80vh', overflowY: 'auto' }}>
             <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetDays(false)} />
             <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Jump to day</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Jump to day</span>
               <button onClick={() => setSheetDays(false)} style={{ color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1, display:'flex' }}><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:14,height:14}}><path d="M1 1l10 10M11 1L1 11"/></svg></button>
             </div>
             {days.map((d) => (
               <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 18px', cursor: 'pointer', borderBottom: '1px solid var(--line)', background: d.id === activeDayId ? 'var(--accent-bg)' : 'transparent' }}>
-                <span style={{ fontFamily: 'Fraunces, serif', fontSize: 15, color: d.id === activeDayId ? 'var(--accent)' : 'var(--ink-25)', minWidth: 26, flexShrink: 0 }}
+                <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, color: d.id === activeDayId ? 'var(--accent)' : 'var(--ink-25)', minWidth: 26, flexShrink: 0 }}
                   onClick={() => { handleTocClick(d.id); setSheetDays(false) }}>
                   {d.num}
                 </span>
@@ -1152,14 +1152,14 @@ export default function TripItineraryPage() {
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '88vh', overflowY: 'auto' }}>
             <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetToday(false)} />
             <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Today</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Today</span>
               <button onClick={() => setSheetToday(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
             </div>
             {todayDay ? (
               <>
                 <div style={{ padding: '16px 18px 12px', borderBottom: '1px solid var(--line)', marginBottom: 16 }}>
                   <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4 }}>TODAY</div>
-                  <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)' }}>
+                  <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 22, fontWeight: 500, letterSpacing: '-.03em', color: 'var(--ink)' }}>
                     {CITY_DATA[todayDay.city]?.name ?? todayDay.city}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--ink-25)', marginTop: 2 }}>{todayDay.date}</div>
@@ -1194,7 +1194,7 @@ export default function TripItineraryPage() {
             ) : (
               <div style={{ padding: '32px 18px', textAlign: 'center' }}>
                 <div style={{ marginBottom: 12, display:'flex', justifyContent:'center' }}><svg viewBox="0 0 40 40" fill="none" stroke="var(--accent)" strokeWidth="1.4" strokeLinecap="round" style={{width:40,height:40}}><rect x="5" y="8" width="30" height="26" rx="3"/><path d="M5 16h30M14 5v6M26 5v6"/></svg></div>
-                <div style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 500, color: 'var(--ink)', marginBottom: 8 }}>
+                <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 18, fontWeight: 500, color: 'var(--ink)', marginBottom: 8 }}>
                   {trip?.start_date && new Date(trip.start_date + 'T00:00:00') > new Date()
                     ? "Trip hasn't started yet"
                     : "Today isn't on your itinerary"}
@@ -1218,7 +1218,7 @@ export default function TripItineraryPage() {
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '88vh', overflowY: 'auto' }}>
             <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetCity(false)} />
             <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)', marginBottom: 4 }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>City Guide</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>City Guide</span>
               <button onClick={() => setSheetCity(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
             </div>
             <div style={{ padding: '0 4px 24px' }}>
@@ -1270,7 +1270,7 @@ export default function TripItineraryPage() {
           <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetKurma(false)} />
           <div style={{ padding: '14px 18px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)', paddingBottom: 14 }}>
             <div>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Ask Kurma</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Ask Kurma</span>
               <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 2 }}>AI travel assistant</div>
             </div>
             <button onClick={() => setSheetKurma(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
@@ -1358,7 +1358,7 @@ export default function TripItineraryPage() {
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '60vh', overflowY: 'auto' }}>
             <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetShare(false)} />
             <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Share itinerary</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Share itinerary</span>
               <button onClick={() => setSheetShare(false)} style={{ color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1, display:'flex' }}><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:14,height:14}}><path d="M1 1l10 10M11 1L1 11"/></svg></button>
             </div>
             <div style={{ padding: '16px 18px 32px', display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -1413,7 +1413,7 @@ export default function TripItineraryPage() {
           <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 401, background: 'var(--bg-card)', borderRadius: '18px 18px 0 0', maxHeight: '60vh', overflowY: 'auto' }}>
             <div style={{ width: 36, height: 4, background: 'var(--line-strong)', borderRadius: 2, margin: '12px auto 0', cursor: 'pointer' }} onClick={() => setSheetOptimizer(false)} />
             <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--line)' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Adjust plan</span>
+              <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 16, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>Adjust plan</span>
               <button onClick={() => setSheetOptimizer(false)} style={{ fontSize: 22, color: 'var(--ink-25)', background: 'none', border: 'none', cursor: 'pointer', padding: 4, lineHeight: 1 }}>×</button>
             </div>
             <div style={{ padding: '14px 18px 32px' }}>
@@ -1462,7 +1462,7 @@ export default function TripItineraryPage() {
 function Stat({ n, label }: { n: string; label: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <span style={{ fontFamily: 'Fraunces, serif', fontSize: 17, fontWeight: 500, color: 'var(--ink)' }}>{n}</span>
+      <span style={{ fontFamily: 'var(--font-fraunces)', fontSize: 17, fontWeight: 500, color: 'var(--ink)' }}>{n}</span>
       <span style={{ fontSize: '9.5px', fontWeight: 500, letterSpacing: '.06em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>{label}</span>
     </div>
   )
@@ -1483,7 +1483,7 @@ function NotFoundState() {
   return (
     <div style={{ textAlign: 'center', padding: '120px 24px 0' }}>
       <div style={{ marginBottom: 16, display:'flex', justifyContent:'center' }}><svg viewBox="0 0 40 40" fill="none" stroke="var(--ink-25)" strokeWidth="1.4" strokeLinecap="round" style={{width:40,height:40}}><path d="M4 33V8l11 5 10-5 11 5v25l-11-5-10 5-11-5z"/><path d="M15 13v20M25 8v20"/></svg></div>
-      <div style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontWeight: 500, color: 'var(--ink)', marginBottom: 8 }}>Trip not found</div>
+      <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 22, fontWeight: 500, color: 'var(--ink)', marginBottom: 8 }}>Trip not found</div>
       <div style={{ fontSize: 13.5, color: 'var(--ink-50)', marginBottom: 24 }}>This trip doesn&apos;t exist or you don&apos;t have access.</div>
       <Link href="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 13, fontWeight: 600, borderRadius: 100, textDecoration: 'none' }}>
         Back to dashboard

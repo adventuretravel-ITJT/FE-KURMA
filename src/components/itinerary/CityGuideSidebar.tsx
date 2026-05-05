@@ -34,7 +34,7 @@ function WeatherCard({ cityName, cityInfo }: { cityName: string; cityInfo: CityI
     <div style={{ background: 'var(--bg-warm)', borderRadius: 10, padding: 13, marginBottom: 14 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
         <div>
-          <div style={{ fontFamily: 'Fraunces, serif', fontSize: 14, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>
+          <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 14, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)' }}>
             {cityInfo?.name ?? cityName}
             {cityInfo?.kanji && <span style={{ fontSize: 11, color: 'var(--ink-25)', marginLeft: 4 }}>{cityInfo.kanji}</span>}
           </div>
@@ -54,15 +54,15 @@ function WeatherCard({ cityName, cityInfo }: { cityName: string; cityInfo: CityI
         ) : data ? (
           <>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 17, lineHeight: 1, color: '#C0392B' }}>{data.tempMax}°</div>
+              <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 17, lineHeight: 1, color: '#C0392B' }}>{data.tempMax}°</div>
               <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>High</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 17, lineHeight: 1, color: '#2563eb' }}>{data.tempMin}°</div>
+              <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 17, lineHeight: 1, color: '#2563eb' }}>{data.tempMin}°</div>
               <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>Low</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 17, lineHeight: 1, color: 'var(--accent)' }}>{data.windspeed}<span style={{ fontSize: 11 }}>km/h</span></div>
+              <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 17, lineHeight: 1, color: 'var(--accent)' }}>{data.windspeed}<span style={{ fontSize: 11 }}>km/h</span></div>
               <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink-25)' }}>Wind</div>
             </div>
           </>
@@ -187,7 +187,7 @@ export default function CityGuideSidebar({ cities, tripMonth }: Props) {
             {cityInfo.eats.map((eat, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '5px 0', borderBottom: i < cityInfo.eats.length - 1 ? '1px solid var(--line)' : 'none' }}>
                 <span style={{ fontSize: 12, color: 'var(--ink)' }}>{eat.name}</span>
-                <span style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'Fraunces, serif' }}>{eat.price}</span>
+                <span style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-fraunces)' }}>{eat.price}</span>
               </div>
             ))}
           </div>
