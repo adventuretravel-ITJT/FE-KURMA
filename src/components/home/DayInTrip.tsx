@@ -61,7 +61,7 @@ function MockupBar() {
   return (
     <div className="hp-day-mockup-bar">
       <div className="hp-day-mockup-dots"><span /><span /><span /></div>
-      <div className="hp-day-mockup-url"><span>kurma.guide/itinerary/japan-7d</span></div>
+      <div className="hp-day-mockup-url"><span>kurmago/itinerary/japan-7d</span></div>
     </div>
   )
 }
@@ -228,7 +228,7 @@ function NightPanel() {
           <div className="hp-share-status hp-status-pending">Pending</div>
         </div>
         <div className="hp-share-link">
-          <div className="hp-share-link-text">kurma.guide/share/jp7d-x92k</div>
+          <div className="hp-share-link-text">kurmago/share/jp7d-x92k</div>
           <div className="hp-share-copy">Copy link</div>
         </div>
       </div>

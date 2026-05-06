@@ -816,7 +816,7 @@ export default function TripItineraryPage() {
           onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-50)')}
         >
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 14, height: 14 }}><path d="M9 2L4 7l5 5" /></svg>
-          Dashboard
+          <span className="dash-label">Dashboard</span>
         </Link>
 
         <div style={{ width: 1, height: 18, background: 'var(--line-strong)', flexShrink: 0 }} />
@@ -831,14 +831,6 @@ export default function TripItineraryPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          {/* Mobile: TOC toggle */}
-          <button
-            className="mobile-toc-btn"
-            onClick={() => setShowMobileToc(true)}
-            style={{ display: 'none', width: 32, height: 32, borderRadius: 8, border: '1px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)' }}
-          >
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 13, height: 13 }}><path d="M1 3h12M1 7h8M1 11h6" /></svg>
-          </button>
           <button
             onClick={() => setSheetShare(true)}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 16px', background: 'var(--ink)', color: 'var(--bg)', fontSize: 12, fontWeight: 600, borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'background .18s' }}
@@ -854,7 +846,7 @@ export default function TripItineraryPage() {
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink)'; e.currentTarget.style.color = 'var(--ink)' }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.color = 'var(--ink-50)' }}
           >
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 13, height: 13 }}><circle cx="7" cy="7" r="2.5" /><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.9 2.9l1 1M10.1 10.1l1 1M10.1 2.9l-1 1M3.9 10.1l-1 1" /></svg>
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{ width: 13, height: 13 }}><circle cx="7" cy="7" r="2"/><path d="M11.5 7a4.5 4.5 0 0 0-.1-1l1.1-.9-1-1.7-1.4.4A4.5 4.5 0 0 0 9 3.3L8.7 2H6.3L6 3.3a4.5 4.5 0 0 0-1.1.5l-1.4-.4-1 1.7 1.1.9A4.5 4.5 0 0 0 3.5 7a4.5 4.5 0 0 0 .1 1l-1.1.9 1 1.7 1.4-.4A4.5 4.5 0 0 0 6 10.7L6.3 12h2.4L9 10.7a4.5 4.5 0 0 0 1.1-.5l1.4.4 1-1.7-1.1-.9A4.5 4.5 0 0 0 11.5 7z"/></svg>
           </Link>
         </div>
       </nav>
@@ -1443,8 +1435,8 @@ export default function TripItineraryPage() {
           .itin-toc               { display: none !important; }
           .itin-guide             { display: none !important; }
           .itin-mobile-nav        { display: flex !important; }
-          .mobile-toc-btn         { display: inline-flex !important; }
           .nav-settings-label     { display: none; }
+          .dash-label             { display: none; }
           .act-actions            { opacity: 1 !important; }
         }
         @media (min-width: 901px) {

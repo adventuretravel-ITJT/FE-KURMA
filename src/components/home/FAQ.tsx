@@ -3,8 +3,8 @@ import { useState } from 'react'
 
 const faqs = [
   {
-    q: 'What is Kurma.Guide?',
-    a: "Kurma.Guide is your personal trip companion — built by travel consultants and powered by AI. Every itinerary is crafted by someone who's helped hundreds of travelers plan the same trip, then delivered in a clean, mobile-friendly format you can access anywhere.",
+    q: 'What is kurmaGo?',
+    a: "kurmaGo is your personal trip companion — built by travel consultants and powered by AI. Every itinerary is crafted by someone who's helped hundreds of travelers plan the same trip, then delivered in a clean, mobile-friendly format you can access anywhere.",
   },
   {
     q: 'Is it free to use?',
@@ -44,12 +44,14 @@ export default function FAQ() {
         </div>
         <div className="hp-faq-list">
           {faqs.map((faq, i) => (
-            <div key={i} className={`hp-faq-item reveal ${openItems.has(i) ? 'open' : ''}`}>
-              <button className="hp-faq-q" onClick={() => toggle(i)}>
-                {faq.q}
-                <span className="hp-faq-icon">+</span>
-              </button>
-              <div className="hp-faq-a">{faq.a}</div>
+            <div key={i} className="reveal">
+              <div className={`hp-faq-item${openItems.has(i) ? ' open' : ''}`}>
+                <button className="hp-faq-q" onClick={() => toggle(i)}>
+                  {faq.q}
+                  <span className="hp-faq-icon">+</span>
+                </button>
+                <div className="hp-faq-a">{faq.a}</div>
+              </div>
             </div>
           ))}
         </div>

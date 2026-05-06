@@ -12,7 +12,7 @@ export default function Navbar() {
 
   return (
     <nav className={`hp-nav ${scrolled ? 'scrolled' : ''}`}>
-      <Link href="/" className="hp-logo">kurma<em>.</em>guide</Link>
+      <Link href="/" className="hp-logo">Kurma<em>Go.</em></Link>
       <ul className="hp-nav-links">
         <li><a href="#how">How it works</a></li>
         <li><a href="#features">Features</a></li>

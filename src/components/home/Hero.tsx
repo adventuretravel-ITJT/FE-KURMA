@@ -44,7 +44,7 @@ export default function Hero() {
               <div className="hp-browser-bar">
                 <div className="hp-browser-dots"><span /><span /><span /></div>
                 <div className="hp-browser-url">
-                  <span className="hp-browser-url-text">kurma.guide/itinerary/japan</span>
+                  <span className="hp-browser-url-text">kurmago/itinerary/japan</span>
                 </div>
               </div>
               <div className="hp-mf-content">

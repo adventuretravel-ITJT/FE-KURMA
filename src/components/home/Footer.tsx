@@ -15,7 +15,7 @@ export default function Footer() {
       <div className="hp-wrap">
         <div className="hp-foot-inner">
           <div>
-            <div className="hp-foot-logo">kurma<em>.</em>guide</div>
+            <div className="hp-foot-logo">Kurma<em>Go.</em></div>
             <div className="hp-foot-tagline">Plan Smart. Go Beyond.</div>
           </div>
           <nav className="hp-foot-nav">
@@ -23,7 +23,7 @@ export default function Footer() {
               <a key={l.label} href={l.href}>{l.label}</a>
             ))}
           </nav>
-          <div className="hp-foot-copy">© 2026 Kurma.Guide</div>
+          <div className="hp-foot-copy">© 2026 KurmaGo.</div>
         </div>
       </div>
     </footer>
