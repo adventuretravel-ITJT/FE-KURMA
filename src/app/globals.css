@@ -514,7 +514,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; margin-bottom: 20px;
 }
-.hp-feat-icon.green { background: var(--accent-bg); color: var(--accent); }
+.hp-feat-icon.green { background: var(--warm-bg); color: var(--warm); }
 .hp-feat-icon.warm { background: var(--warm-bg); color: var(--warm); }
 .hp-feat-icon.neutral { background: var(--ink-05); color: var(--ink-50); }
 .hp-feat-card h3 {
@@ -565,12 +565,10 @@ body {
 }
 .hp-day-step.active .hp-day-step-title { color: var(--ink); }
 .hp-day-step-desc {
-  font-size: 13px; color: var(--ink-25); line-height: 1.6;
-  max-height: 0; overflow: hidden;
-  transition: max-height .4s ease, color .3s, opacity .4s;
-  opacity: 0;
+  font-size: 13px; color: var(--ink-50); line-height: 1.6;
+  opacity: 0; transition: opacity .4s ease;
 }
-.hp-day-step.active .hp-day-step-desc { max-height: 80px; color: var(--ink-50); opacity: 1; }
+.hp-day-step.active .hp-day-step-desc { opacity: 1; }
 .hp-daytime-mockup { position: sticky; top: 100px; }
 .hp-day-panels { display: grid; grid-template-columns: 1fr; }
 .hp-day-panel {
