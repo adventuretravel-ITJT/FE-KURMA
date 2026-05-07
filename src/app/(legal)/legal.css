@@ -49,7 +49,7 @@
   display: flex; align-items: center; justify-content: space-between;
 }
 .lp-wordmark {
-  font-family: var(--lp-serif); font-size: 22px; font-weight: 600;
+  font-family: var(--lp-serif); font-size: 19px; font-weight: 600;
   color: var(--lp-primary-deep); letter-spacing: -0.3px;
   display: inline-flex; align-items: baseline; position: relative;
 }
@@ -57,7 +57,7 @@
   position: absolute; top: 2px; left: -8px; width: 5px; height: 5px;
   border-radius: 50%; background: var(--lp-primary-deep);
 }
-.lp-wordmark em { font-style: italic; color: var(--lp-primary-bright); font-weight: 600; }
+.lp-wordmark em { font-style: italic; color: var(--lp-primary-bright); font-weight: 300; }
 .lp-wordmark .period { color: var(--lp-primary-deep); }
 .lp-back-link {
   font-family: var(--lp-sans); font-size: 14px; font-weight: 500;

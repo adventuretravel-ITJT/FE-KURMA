@@ -1,7 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 type Panel = 'morning' | 'afternoon' | 'evening' | 'night'
+
+const INTERVAL = 5000
+const stepIds: Panel[] = ['morning', 'afternoon', 'evening', 'night']
 
 const steps: { id: Panel; icon: React.ReactNode; time: string; title: string; desc: string }[] = [
   {
@@ -61,7 +64,7 @@ function MockupBar() {
   return (
     <div className="hp-day-mockup-bar">
       <div className="hp-day-mockup-dots"><span /><span /><span /></div>
-      <div className="hp-day-mockup-url"><span>kurmago/itinerary/japan-7d</span></div>
+      <div className="hp-day-mockup-url"><span>kurmago.com/itinerary/japan-7d</span></div>
     </div>
   )
 }
@@ -228,7 +231,7 @@ function NightPanel() {
           <div className="hp-share-status hp-status-pending">Pending</div>
         </div>
         <div className="hp-share-link">
-          <div className="hp-share-link-text">kurmago/share/jp7d-x92k</div>
+          <div className="hp-share-link-text">kurmago.com/share/jp7d-x92k</div>
           <div className="hp-share-copy">Copy link</div>
         </div>
       </div>
@@ -245,6 +248,27 @@ const panels: Record<Panel, React.ReactNode> = {
 
 export default function DayInTrip() {
   const [active, setActive] = useState<Panel>('morning')
+  const [tick, setTick] = useState(0)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    timerRef.current = setInterval(() => {
+      setActive(prev => stepIds[(stepIds.indexOf(prev) + 1) % stepIds.length])
+      setTick(t => t + 1)
+    }, INTERVAL)
+  }, [])
+
+  useEffect(() => {
+    startTimer()
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [startTimer])
+
+  const handleClick = (id: Panel) => {
+    setActive(id)
+    setTick(t => t + 1)
+    startTimer()
+  }
 
   return (
     <section className="hp-section hp-daytime" id="experience">
@@ -260,9 +284,16 @@ export default function DayInTrip() {
               <div
                 key={s.id}
                 className={`hp-day-step${active === s.id ? ' active' : ''}`}
-                onClick={() => setActive(s.id)}
+                onClick={() => handleClick(s.id)}
               >
-                <div className="hp-day-dot">{s.icon}</div>
+                <div className="hp-day-dot-wrap">
+                  {active === s.id && (
+                    <svg key={tick} className="hp-day-timer-ring" viewBox="0 0 41 41" aria-hidden="true">
+                      <circle className="hp-day-timer-circle" cx="20.5" cy="20.5" r="18" />
+                    </svg>
+                  )}
+                  <div className="hp-day-dot">{s.icon}</div>
+                </div>
                 <div className="hp-day-step-body">
                   <div className="hp-day-step-time">{s.time}</div>
                   <div className="hp-day-step-title">{s.title}</div>
@@ -272,11 +303,13 @@ export default function DayInTrip() {
             ))}
           </div>
           <div className="hp-daytime-mockup reveal reveal-d1">
-            {Object.entries(panels).map(([id, panel]) => (
-              <div key={id} className={`hp-day-panel${active === id ? ' active' : ''}`}>
-                {panel}
-              </div>
-            ))}
+            <div className="hp-day-panels">
+              {Object.entries(panels).map(([id, panel]) => (
+                <div key={id} className={`hp-day-panel${active === id ? ' active' : ''}`}>
+                  {panel}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

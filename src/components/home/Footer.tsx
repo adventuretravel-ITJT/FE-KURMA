@@ -9,6 +9,11 @@ const navLinks = [
   { label: 'FAQ', href: '#faq' },
 ]
 
+const legalLinks = [
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Service', href: '/terms' },
+]
+
 export default function Footer() {
   return (
     <footer className="hp-footer">
@@ -23,7 +28,14 @@ export default function Footer() {
               <a key={l.label} href={l.href}>{l.label}</a>
             ))}
           </nav>
-          <div className="hp-foot-copy">© 2026 KurmaGo.</div>
+          <div className="hp-foot-copy">
+            <span>© 2026 KurmaGo.</span>
+            <nav className="hp-foot-legal">
+              {legalLinks.map((l) => (
+                <Link key={l.label} href={l.href}>{l.label}</Link>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
     </footer>

@@ -63,7 +63,7 @@ export default function PrivacyPage() {
       <header className="lp-topbar">
         <div className="lp-topbar-inner">
           <Link href="/" className="lp-wordmark" aria-label="KurmaGo Home">
-            <span className="accent-dot" aria-hidden="true" />Kurma<em>Go</em><span className="period">.</span>
+            <span aria-hidden="true" />Kurma<em>Go</em><span className="period">.</span>
           </Link>
           <Link href="/" className="lp-back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
@@ -316,7 +316,7 @@ export default function PrivacyPage() {
           <div className="lp-footer-top">
             <div className="lp-footer-brand">
               <Link href="/" className="lp-wordmark" aria-label="KurmaGo Home">
-                <span className="accent-dot" aria-hidden="true" />Kurma<em>Go</em><span className="period">.</span>
+                <span aria-hidden="true" />Kurma<em>Go</em><span className="period">.</span>
               </Link>
               <div className="lp-tagline">Plan Smart · Go Beyond</div>
             </div>
