@@ -133,8 +133,10 @@ export default function AdminSidebar() {
             K
           </div>
           <div>
-            <p className="text-sm font-semibold text-[var(--kg-ink)] leading-tight">KurmaGo</p>
-            <p className="text-[11px] text-[var(--kg-ink-40)]">Admin Panel</p>
+            <p className="font-serif text-[17px] font-medium text-[var(--kg-ink)] tracking-[-0.03em] leading-none">
+              Kurma<em className="font-light italic text-[var(--kg-primary)]">Go.</em>
+            </p>
+            <p className="text-[10px] text-[var(--kg-ink-40)] tracking-[0.06em] uppercase mt-0.5">Admin Panel</p>
           </div>
         </Link>
       </div>
@@ -213,7 +215,7 @@ export default function AdminSidebar() {
             })}
 
             {gi < navGroups.length - 1 && (
-              <div className="h-px bg-[var(--kg-hairline)] mx-1 pt-3" />
+              <div className="mt-3 h-px bg-[var(--kg-hairline)] mx-1" />
             )}
           </div>
         ))}

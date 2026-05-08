@@ -9,7 +9,7 @@ interface PagePlaceholderProps {
 
 export default function PagePlaceholder({ icon: Icon, title, description, module }: PagePlaceholderProps) {
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-[var(--kg-ink)]">{title}</h1>
         <p className="text-sm text-[var(--kg-ink-56)] mt-1">{description}</p>
