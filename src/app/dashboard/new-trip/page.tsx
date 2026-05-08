@@ -1,10 +1,10 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useUser } from '@/src/contexts/UserContext'
-import { RadioOption, CheckboxOption } from '@/src/components/ui/SelectOption'
+import { useUser } from '@/contexts/UserContext'
+import { RadioOption, CheckboxOption } from '@/components/ui/SelectOption'
 import {
     IconCultureHistory, IconLocalFood, IconNature, IconShopping,
     IconSightseeing, IconThemeParks,
@@ -15,9 +15,9 @@ import {
     IconTravelSolo, IconTravelCouple, IconTravelFamily, IconTravelGroup,
     IconFileDefault, IconFileImage, IconFileSpreadsheet,
     IconLinkFlight, IconLinkHotel, IconLinkTour, IconLinkMap, IconLinkDefault,
-} from '@/src/components/ui/TripIcons'
+} from '@/components/ui/TripIcons'
 
-/* ─── Types ─────────────────────────────────────── */
+/* â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 type TravelType = 'solo' | 'couple' | 'family' | 'group' | ''
 type Pace       = 'easy' | 'balanced' | 'packed' | ''
 type Budget     = 'backpacker' | 'smart' | 'comfort' | 'splurge' | ''
@@ -33,23 +33,23 @@ interface FormState {
     files: File[]; links: TripLink[]
 }
 
-/* ─── Data ──────────────────────────────────────── */
+/* â”€â”€â”€ Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DESTS: Dest[] = [
-    { flag: '🗾', name: 'Japan',          country: 'East Asia',      tag: 'Popular' },
-    { flag: '🇨🇳', name: 'China',          country: 'East Asia',      tag: 'Popular' },
-    { flag: '🇰🇷', name: 'South Korea',    country: 'East Asia' },
-    { flag: '🇹🇭', name: 'Thailand',       country: 'Southeast Asia', tag: 'Popular' },
-    { flag: '🇸🇬', name: 'Singapore',      country: 'Southeast Asia' },
-    { flag: '🇮🇩', name: 'Indonesia',      country: 'Southeast Asia' },
-    { flag: '🇮🇹', name: 'Italy',          country: 'Europe' },
-    { flag: '🇫🇷', name: 'France',         country: 'Europe' },
-    { flag: '🇬🇧', name: 'United Kingdom', country: 'Europe' },
-    { flag: '🇺🇸', name: 'United States',  country: 'North America' },
-    { flag: '🇦🇺', name: 'Australia',      country: 'Oceania' },
-    { flag: '🇹🇷', name: 'Turkey',         country: 'Europe / Asia' },
-    { flag: '🇲🇦', name: 'Morocco',        country: 'North Africa' },
-    { flag: '🇦🇪', name: 'UAE',            country: 'Middle East' },
-    { flag: '🇮🇳', name: 'India',          country: 'South Asia' },
+    { flag: 'ðŸ—¾', name: 'Japan',          country: 'East Asia',      tag: 'Popular' },
+    { flag: 'ðŸ‡¨ðŸ‡³', name: 'China',          country: 'East Asia',      tag: 'Popular' },
+    { flag: 'ðŸ‡°ðŸ‡·', name: 'South Korea',    country: 'East Asia' },
+    { flag: 'ðŸ‡¹ðŸ‡­', name: 'Thailand',       country: 'Southeast Asia', tag: 'Popular' },
+    { flag: 'ðŸ‡¸ðŸ‡¬', name: 'Singapore',      country: 'Southeast Asia' },
+    { flag: 'ðŸ‡®ðŸ‡©', name: 'Indonesia',      country: 'Southeast Asia' },
+    { flag: 'ðŸ‡®ðŸ‡¹', name: 'Italy',          country: 'Europe' },
+    { flag: 'ðŸ‡«ðŸ‡·', name: 'France',         country: 'Europe' },
+    { flag: 'ðŸ‡¬ðŸ‡§', name: 'United Kingdom', country: 'Europe' },
+    { flag: 'ðŸ‡ºðŸ‡¸', name: 'United States',  country: 'North America' },
+    { flag: 'ðŸ‡¦ðŸ‡º', name: 'Australia',      country: 'Oceania' },
+    { flag: 'ðŸ‡¹ðŸ‡·', name: 'Turkey',         country: 'Europe / Asia' },
+    { flag: 'ðŸ‡²ðŸ‡¦', name: 'Morocco',        country: 'North Africa' },
+    { flag: 'ðŸ‡¦ðŸ‡ª', name: 'UAE',            country: 'Middle East' },
+    { flag: 'ðŸ‡®ðŸ‡³', name: 'India',          country: 'South Asia' },
 ]
 
 const TRAVEL_TYPES = [
@@ -69,8 +69,8 @@ const ACTIVITIES = [
 ]
 
 const PACES = [
-    { key: 'easy',     label: 'Easy',     description: '2 – 3 spots a day',   icon: IconPaceEasy },
-    { key: 'balanced', label: 'Balanced', description: '4 – 5 spots a day',   icon: IconPaceBalanced },
+    { key: 'easy',     label: 'Easy',     description: '2 â€“ 3 spots a day',   icon: IconPaceEasy },
+    { key: 'balanced', label: 'Balanced', description: '4 â€“ 5 spots a day',   icon: IconPaceBalanced },
     { key: 'packed',   label: 'Packed',   description: 'Maximise every hour', icon: IconPacePacked },
 ]
 
@@ -94,7 +94,7 @@ const QUICK_PICKS   = [5, 7, 10, 14, 21]
 const ACCEPTED_TYPES = '.pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.csv,.txt'
 const MAX_FILE_MB   = 10
 
-/* ─── Helpers ───────────────────────────────────── */
+/* â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function formatBytes(b: number) {
     if (b < 1024)             return `${b} B`
     if (b < 1024 * 1024)      return `${(b / 1024).toFixed(1)} KB`
@@ -117,9 +117,9 @@ function getLinkIcon(url: string) {
     return IconLinkDefault
 }
 
-/* ══════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    PAGE
-══════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function NewTripPage() {
     const router = useRouter()
     const { onToggleSidebar } = useUser()
@@ -170,7 +170,7 @@ export default function NewTripPage() {
         ? Math.round((new Date(form.endDate).getTime() - new Date(form.startDate).getTime()) / 86400000)
         : null
 
-    /* ── helpers ── */
+    /* â”€â”€ helpers â”€â”€ */
     function setField<K extends keyof FormState>(key: K, val: FormState[K]) {
         setForm((f) => ({ ...f, [key]: val }))
     }
@@ -204,7 +204,7 @@ export default function NewTripPage() {
         })
     }
 
-    /* ── file handling ── */
+    /* â”€â”€ file handling â”€â”€ */
     function addFiles(incoming: FileList | null) {
         if (!incoming) return
         setFileErr('')
@@ -226,7 +226,7 @@ export default function NewTripPage() {
         addFiles(e.dataTransfer.files)
     }
 
-    /* ── link handling ── */
+    /* â”€â”€ link handling â”€â”€ */
     function addLink() {
         setLinkErr('')
         const url = linkInput.url.trim()
@@ -240,7 +240,7 @@ export default function NewTripPage() {
         setForm((f) => ({ ...f, links: f.links.filter((_, idx) => idx !== i) }))
     }
 
-    /* ── navigation ── */
+    /* â”€â”€ navigation â”€â”€ */
     function goNext() {
         if (step === 1) {
             if (!form.destination) { setDestErr(true); return }
@@ -300,7 +300,7 @@ export default function NewTripPage() {
     const STEP_LABELS = ['Destination', 'Dates', 'Preferences', 'Documents']
     const TOTAL       = 4
 
-    /* ── Render ── */
+    /* â”€â”€ Render â”€â”€ */
     return (
         <>
             {/* Topbar */}
@@ -346,7 +346,7 @@ export default function NewTripPage() {
             <div className="dash-page">
                 <div style={{ maxWidth: 560, margin: '0 auto' }}>
 
-                    {/* ── SUCCESS ── */}
+                    {/* â”€â”€ SUCCESS â”€â”€ */}
                     {success && (
                         <div style={{ textAlign: 'center', padding: '48px 0' }}>
                             <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--accent-bg)', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -364,7 +364,7 @@ export default function NewTripPage() {
                                         <circle cx="8" cy="8" r="6" /><path d="M8 5v4M8 11v.5" />
                                     </svg>
                                     <span style={{ fontSize: 12, color: 'var(--ink-50)', lineHeight: 1.4 }}>
-                                        {form.files.length} file{form.files.length > 1 ? 's' : ''} noted — upload will be available in the trip detail page.
+                                        {form.files.length} file{form.files.length > 1 ? 's' : ''} noted â€” upload will be available in the trip detail page.
                                     </span>
                                 </div>
                             )}
@@ -386,7 +386,7 @@ export default function NewTripPage() {
                         </div>
                     )}
 
-                    {/* ── STEP 1: Destination & Party ── */}
+                    {/* â”€â”€ STEP 1: Destination & Party â”€â”€ */}
                     {!success && step === 1 && (
                         <div>
                             <div style={ss.eyebrow}>Step 1 of {TOTAL}</div>
@@ -403,7 +403,7 @@ export default function NewTripPage() {
                                             <input autoFocus type="text" value={query}
                                                 onChange={(e) => { setQuery(e.target.value); setDdOpen(true); setDestErr(false) }}
                                                 onFocus={() => setDdOpen(true)}
-                                                placeholder="Search city or country…"
+                                                placeholder="Search city or countryâ€¦"
                                                 style={{ ...ss.input, paddingLeft: 38, borderColor: destErr ? 'var(--error)' : undefined }}
                                             />
                                             {ddOpen && filtered.length > 0 && (
@@ -429,7 +429,7 @@ export default function NewTripPage() {
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', borderRadius: 10 }}>
                                             <span style={{ fontSize: 16 }}>{form.destinationFlag}</span>
                                             <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--accent)', flex: 1 }}>{form.destination}</span>
-                                            <button onClick={clearDest} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 18, lineHeight: 1, opacity: .6, padding: '0 2px' }}>×</button>
+                                            <button onClick={clearDest} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 18, lineHeight: 1, opacity: .6, padding: '0 2px' }}>Ã—</button>
                                         </div>
                                     )}
                                 </div>
@@ -466,7 +466,7 @@ export default function NewTripPage() {
                                         </div>
                                         {([
                                             { field: 'adults',  label: 'Adults',      sub: '13 and older',   show: true },
-                                            { field: 'kids',    label: 'Kids',         sub: '5 – 12 years',   show: form.travelType === 'family' },
+                                            { field: 'kids',    label: 'Kids',         sub: '5 â€“ 12 years',   show: form.travelType === 'family' },
                                             { field: 'littles', label: 'Little ones',  sub: 'Under 5',        show: form.travelType === 'family' },
                                         ] as const).filter((r) => r.show).map((row, i, arr) => (
                                             <div key={row.field} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
@@ -477,7 +477,7 @@ export default function NewTripPage() {
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                                     <button onClick={() => stepperChange(row.field, -1)}
                                                         disabled={form[row.field] <= (row.field === 'adults' ? 1 : 0)}
-                                                        style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)', fontSize: 16, fontFamily: 'inherit', opacity: form[row.field] <= (row.field === 'adults' ? 1 : 0) ? .3 : 1 }}>−</button>
+                                                        style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)', fontSize: 16, fontFamily: 'inherit', opacity: form[row.field] <= (row.field === 'adults' ? 1 : 0) ? .3 : 1 }}>âˆ’</button>
                                                     <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)', minWidth: 20, textAlign: 'center' }}>{form[row.field]}</span>
                                                     <button onClick={() => stepperChange(row.field, 1)}
                                                         style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)', fontSize: 16, fontFamily: 'inherit' }}>+</button>
@@ -490,7 +490,7 @@ export default function NewTripPage() {
                         </div>
                     )}
 
-                    {/* ── STEP 2: Dates ── */}
+                    {/* â”€â”€ STEP 2: Dates â”€â”€ */}
                     {!success && step === 2 && (
                         <div>
                             <div style={ss.eyebrow}>Step 2 of {TOTAL}</div>
@@ -522,7 +522,7 @@ export default function NewTripPage() {
                                         {nights !== null && nights >= 0 && (
                                             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, padding: '4px 10px', background: 'var(--accent-bg)', borderRadius: 100, fontSize: 11.5, fontWeight: 500, color: 'var(--accent)' }}>
                                                 <svg viewBox="0 0 12 12" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 12, height: 12 }}><circle cx="6" cy="6" r="4.5" /><path d="M6 3.5V6l2 1.5" /></svg>
-                                                {nights} night{nights !== 1 ? 's' : ''} · {nights + 1} days
+                                                {nights} night{nights !== 1 ? 's' : ''} Â· {nights + 1} days
                                             </div>
                                         )}
                                         {dateErr && <FieldErr>Return must be after departure.</FieldErr>}
@@ -547,7 +547,7 @@ export default function NewTripPage() {
                                         <button onClick={skipDates} style={{ fontSize: 12, color: 'var(--ink-25)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'inherit', padding: '4px 8px', transition: 'color .18s' }}
                                             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
                                             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-25)')}>
-                                            Skip for now — figure it out later
+                                            Skip for now â€” figure it out later
                                         </button>
                                     </div>
                                 </>
@@ -555,7 +555,7 @@ export default function NewTripPage() {
                                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px', background: 'var(--bg-warm)', borderRadius: 10, marginBottom: 12 }}>
                                     <svg viewBox="0 0 16 16" fill="none" stroke="var(--warm)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 15, height: 15, flexShrink: 0, marginTop: 1 }}><circle cx="8" cy="8" r="6" /><path d="M8 5v4M8 11v.5" /></svg>
                                     <span style={{ fontSize: 12.5, color: 'var(--ink-50)', lineHeight: 1.5 }}>
-                                        No worries — saved as <strong>Planning.</strong>{' '}
+                                        No worries â€” saved as <strong>Planning.</strong>{' '}
                                         <button onClick={undoSkip} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: 500, fontFamily: 'inherit', fontSize: 12.5, padding: 0 }}>Add dates anytime.</button>
                                     </span>
                                 </div>
@@ -573,7 +573,7 @@ export default function NewTripPage() {
                         </div>
                     )}
 
-                    {/* ── STEP 3: Preferences ── */}
+                    {/* â”€â”€ STEP 3: Preferences â”€â”€ */}
                     {!success && step === 3 && (
                         <div>
                             <div style={ss.eyebrow}>Step 3 of {TOTAL}</div>
@@ -659,17 +659,17 @@ export default function NewTripPage() {
                                         />
                                     ))}
                                 </div>
-                                <FieldHint>Nothing fits? That&apos;s totally fine — AI will still do its thing.</FieldHint>
+                                <FieldHint>Nothing fits? That&apos;s totally fine â€” AI will still do its thing.</FieldHint>
                             </PrefBlock>
                         </div>
                     )}
 
-                    {/* ── STEP 4: Documents & Links ── */}
+                    {/* â”€â”€ STEP 4: Documents & Links â”€â”€ */}
                     {!success && step === 4 && (
                         <div>
                             <div style={ss.eyebrow}>Step 4 of {TOTAL}</div>
                             <div style={ss.title}>Add your <em style={ss.em}>references.</em></div>
-                            <div style={ss.sub}>Upload travel documents and save useful links — all in one place.</div>
+                            <div style={ss.sub}>Upload travel documents and save useful links â€” all in one place.</div>
 
                             {/* File upload */}
                             <Field label="Travel documents">
@@ -690,7 +690,7 @@ export default function NewTripPage() {
                                     <div style={{ fontSize: 13, fontWeight: 600, color: dragOver ? 'var(--accent)' : 'var(--ink)', marginBottom: 4 }}>
                                         {dragOver ? 'Drop files here' : 'Click to upload or drag & drop'}
                                     </div>
-                                    <div style={{ fontSize: 11.5, color: 'var(--ink-25)' }}>PDF, JPG, PNG, DOC, DOCX, XLSX · Max {MAX_FILE_MB} MB each</div>
+                                    <div style={{ fontSize: 11.5, color: 'var(--ink-25)' }}>PDF, JPG, PNG, DOC, DOCX, XLSX Â· Max {MAX_FILE_MB} MB each</div>
                                 </div>
                                 <input ref={fileInputRef} type="file" multiple accept={ACCEPTED_TYPES} style={{ display: 'none' }} onChange={(e) => addFiles(e.target.files)} />
                                 {fileErr && <FieldErr>{fileErr}</FieldErr>}
@@ -727,7 +727,7 @@ export default function NewTripPage() {
                                     <div style={{ display: 'flex', gap: 8 }}>
                                         <input type="text" value={linkInput.title} onChange={(e) => setLinkInput((p) => ({ ...p, title: e.target.value }))}
                                             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addLink() } }}
-                                            placeholder="Label — e.g. Hotel booking, Flight ticket" style={{ ...ss.input, flex: 1 }} />
+                                            placeholder="Label â€” e.g. Hotel booking, Flight ticket" style={{ ...ss.input, flex: 1 }} />
                                         <button onClick={addLink}
                                             style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0 18px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0, transition: 'background .18s' }}
                                             onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent)')}
@@ -774,7 +774,7 @@ export default function NewTripPage() {
                                         <div>
                                             <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)', marginBottom: 3 }}>Pro tip</div>
                                             <div style={{ fontSize: 11.5, color: 'var(--ink-50)', lineHeight: 1.55 }}>
-                                                Save your hotel confirmation, flight booking, and map links here — everything in one place when you travel.
+                                                Save your hotel confirmation, flight booking, and map links here â€” everything in one place when you travel.
                                             </div>
                                         </div>
                                     </div>
@@ -798,7 +798,7 @@ export default function NewTripPage() {
                         </div>
                     )}
 
-                    {/* ── Footer nav ── */}
+                    {/* â”€â”€ Footer nav â”€â”€ */}
                     {!success && (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 32, paddingTop: 20, borderTop: '1px solid var(--line)' }}>
                             {step > 1 ? (
@@ -848,7 +848,7 @@ export default function NewTripPage() {
     )
 }
 
-/* ─── Shared style tokens ────────────────────────── */
+/* â”€â”€â”€ Shared style tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const ss = {
     eyebrow: { fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6 } as React.CSSProperties,
     title:   { fontFamily: 'var(--font-fraunces)', fontSize: 26, fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.15, color: 'var(--ink)', marginBottom: 4 } as React.CSSProperties,
@@ -857,7 +857,7 @@ const ss = {
     input:   { width: '100%', height: 46, padding: '0 14px', background: 'var(--bg)', border: '1px solid var(--line-strong)', borderRadius: 10, fontSize: 14, color: 'var(--ink)', fontFamily: 'inherit', outline: 'none', transition: 'border-color .18s, background .18s' } as React.CSSProperties,
 }
 
-/* ─── Sub-components ─────────────────────────────── */
+/* â”€â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
     return (
         <div style={{ marginBottom: 20 }}>
@@ -884,3 +884,4 @@ function PrefBlock({ num, label, hint, children }: { num: number; label: string;
         </div>
     )
 }
+

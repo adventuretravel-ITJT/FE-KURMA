@@ -3,157 +3,237 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import {
+  LayoutDashboard,
+  Users,
+  Settings2,
+  Globe,
+  LayoutTemplate,
+  FileText,
+  BookOpen,
+  Images,
+  Megaphone,
+  Ticket,
+  Bell,
+  Handshake,
+  CreditCard,
+  Shield,
+  Settings,
+  Lock,
+  ClipboardList,
+  SlidersHorizontal,
+  FileStack,
+  ChevronDown,
+  LogOut,
+  HelpCircle,
+  type LucideIcon,
+} from 'lucide-react';
+
+interface NavChild {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+}
 
 interface NavItem {
   label: string;
-  href: string;
-  icon: string;
-  children?: NavItem[];
+  href?: string;
+  icon: LucideIcon;
+  children?: NavChild[];
 }
 
-const navItems: NavItem[] = [
+interface NavGroup {
+  items: NavItem[];
+}
+
+const navGroups: NavGroup[] = [
   {
-    label: 'Overview',
-    href: '/admin/overview',
-    icon: '📊',
+    items: [
+      { label: 'Overview',         href: '/admin/overview',  icon: LayoutDashboard },
+      { label: 'User Management',  href: '/admin/users',     icon: Users           },
+      { label: 'Product Config',   href: '/admin/product',   icon: Settings2       },
+    ],
   },
   {
-    label: 'User Management',
-    href: '/admin/users',
-    icon: '👥',
+    items: [
+      { label: 'Destination & City', href: '/admin/destinations', icon: Globe          },
+      { label: 'Master Templates',   href: '/admin/templates',    icon: LayoutTemplate },
+      {
+        label: 'CMS Manager',
+        icon: FileText,
+        children: [
+          { label: 'Blog Posts',    href: '/admin/cms/posts',  icon: BookOpen  },
+          { label: 'Static Pages',  href: '/admin/cms/pages',  icon: FileStack },
+          { label: 'Media Library', href: '/admin/cms/media',  icon: Images    },
+        ],
+      },
+    ],
   },
   {
-    label: 'Destination & City',
-    href: '/admin/destinations',
-    icon: '🌍',
+    items: [
+      {
+        label: 'Marketing Tools',
+        icon: Megaphone,
+        children: [
+          { label: 'Vouchers & Promo',  href: '/admin/marketing/vouchers',       icon: Ticket },
+          { label: 'Notification Blast', href: '/admin/marketing/notifications',  icon: Bell   },
+        ],
+      },
+      { label: 'Affiliate Manager', href: '/admin/affiliates', icon: Handshake },
+    ],
   },
   {
-    label: 'Master Templates',
-    href: '/admin/templates',
-    icon: '📋',
+    items: [
+      { label: 'Transactions', href: '/admin/transactions', icon: CreditCard },
+      { label: 'Moderation',   href: '/admin/moderation',   icon: Shield     },
+    ],
   },
   {
-    label: 'CMS Manager',
-    href: '/admin/cms',
-    icon: '📝',
-  },
-  {
-    label: 'Marketing Tools',
-    href: '/admin/marketing',
-    icon: '📢',
-  },
-  {
-    label: 'Affiliate Manager',
-    href: '/admin/affiliates',
-    icon: '🤝',
-  },
-  {
-    label: 'Transactions',
-    href: '/admin/transactions',
-    icon: '💰',
-  },
-  {
-    label: 'Moderation',
-    href: '/admin/moderation',
-    icon: '🛡️',
-  },
-  {
-    label: 'Settings',
-    href: '/admin/settings',
-    icon: '⚙️',
-    children: [
-      { label: 'Role Management', href: '/admin/role-management', icon: '🔐' },
-      { label: 'Configuration', href: '/admin/settings/config', icon: '⚙️' },
-      { label: 'Audit Log', href: '/admin/settings/audit', icon: '📋' },
+    items: [
+      {
+        label: 'Settings',
+        icon: Settings,
+        children: [
+          { label: 'Role Management', href: '/admin/role-management',  icon: Lock           },
+          { label: 'Audit Log',       href: '/admin/settings/audit',   icon: ClipboardList  },
+          { label: 'Configuration',   href: '/admin/settings/config',  icon: SlidersHorizontal },
+        ],
+      },
     ],
   },
 ];
 
+function isChildActive(children: NavChild[], pathname: string | null) {
+  if (!pathname) return false;
+  return children.some((c) => pathname === c.href || pathname.startsWith(c.href + '/'));
+}
+
 export default function AdminSidebar() {
   const pathname = usePathname();
-  const [expandedItem, setExpandedItem] = useState<string | null>('Settings');
+
+  const defaultExpanded = navGroups
+    .flatMap((g) => g.items)
+    .filter((item) => item.children && isChildActive(item.children, pathname))
+    .map((item) => item.label);
+
+  const [expanded, setExpanded] = useState<string[]>(defaultExpanded);
+
+  const toggle = (label: string) => {
+    setExpanded((prev) =>
+      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
+    );
+  };
 
   return (
-    <aside className="fixed left-0 top-0 w-[var(--sidebar)] h-screen bg-[var(--kg-paper)] border-r border-[var(--kg-hairline)] flex flex-col">
+    <aside className="fixed left-0 top-0 w-[var(--sidebar)] h-screen bg-[var(--kg-paper)] border-r border-[var(--kg-hairline)] flex flex-col z-50">
       {/* Logo */}
-      <div className="p-6 border-b border-[var(--kg-hairline)]">
-        <Link href="/admin" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--kg-primary)] to-[var(--kg-primary-bright)] flex items-center justify-center text-white font-bold">
+      <div className="px-5 py-4 border-b border-[var(--kg-hairline)]">
+        <Link href="/admin/overview" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--kg-primary)] to-[var(--kg-primary-bright)] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
             K
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-600 text-[var(--kg-ink)]">KurmaGo</span>
-            <span className="text-xs text-[var(--kg-ink-40)]">Admin</span>
+          <div>
+            <p className="text-sm font-semibold text-[var(--kg-ink)] leading-tight">KurmaGo</p>
+            <p className="text-[11px] text-[var(--kg-ink-40)]">Admin Panel</p>
           </div>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          const hasChildren = item.children && item.children.length > 0;
-          const isExpanded = expandedItem === item.label;
+      <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4 scrollbar-hide">
+        {navGroups.map((group, gi) => (
+          <div key={gi} className="space-y-0.5">
+            {group.items.map((item) => {
+              const hasChildren = !!item.children?.length;
+              const isExpanded  = expanded.includes(item.label);
+              const isActive    = item.href && pathname
+                ? pathname === item.href || pathname.startsWith(item.href + '/')
+                : false;
+              const childActive = hasChildren && isChildActive(item.children!, pathname);
 
-          return (
-            <div key={item.href}>
-              <button
-                onClick={() => hasChildren && setExpandedItem(isExpanded ? null : item.label)}
-                className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-500 transition-all ${
-                  isActive
-                    ? 'bg-[var(--kg-surface-mist)] text-[var(--kg-primary)] border border-[var(--kg-hairline-mist)]'
-                    : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)]'
-                }`}
-              >
-                <span className="text-base">{item.icon}</span>
-                <span className="flex-1 text-left">{item.label}</span>
-                {hasChildren && (
-                  <span className={`text-xs transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                    ▼
-                  </span>
-                )}
-              </button>
-
-              {/* Submenu */}
-              {hasChildren && isExpanded && (
-                <div className="ml-6 mt-1 space-y-1 border-l border-[var(--kg-hairline)] pl-3 ml-3">
-                  {item.children.map((child) => {
-                    const isChildActive = pathname === child.href;
-                    return (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-500 transition-all ${
-                          isChildActive
-                            ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)]'
-                            : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)]'
+              if (hasChildren) {
+                return (
+                  <div key={item.label}>
+                    <button
+                      onClick={() => toggle(item.label)}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                        childActive
+                          ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)]'
+                          : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4 flex-shrink-0" />
+                      <span className="flex-1 text-left font-medium">{item.label}</span>
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 flex-shrink-0 transition-transform duration-200 ${
+                          isExpanded ? 'rotate-180' : ''
                         }`}
-                      >
-                        <span className="text-sm">{child.icon}</span>
-                        {child.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
+                      />
+                    </button>
+
+                    {isExpanded && (
+                      <div className="mt-0.5 ml-3 pl-3 border-l border-[var(--kg-hairline)] space-y-0.5">
+                        {item.children!.map((child) => {
+                          const isChildActive = !!pathname && (pathname === child.href || pathname.startsWith(child.href + '/'));
+                          return (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                                isChildActive
+                                  ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)] font-medium'
+                                  : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
+                              }`}
+                            >
+                              <child.icon className="w-3.5 h-3.5 flex-shrink-0" />
+                              {child.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href!}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    isActive
+                      ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)] font-medium'
+                      : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
+                  }`}
+                >
+                  <item.icon className="w-4 h-4 flex-shrink-0" />
+                  {item.label}
+                </Link>
+              );
+            })}
+
+            {gi < navGroups.length - 1 && (
+              <div className="h-px bg-[var(--kg-hairline)] mx-1 pt-3" />
+            )}
+          </div>
+        ))}
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-[var(--kg-hairline)] space-y-3">
-        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm font-500 text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] rounded-lg transition-all">
-          📚 Help
+      <div className="p-2 border-t border-[var(--kg-hairline)] space-y-0.5">
+        <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)] transition-colors">
+          <HelpCircle className="w-4 h-4 flex-shrink-0" />
+          Help & Docs
         </button>
         <button
           onClick={() => {
             localStorage.removeItem('token');
-            window.location.href = '/auth/login';
+            window.location.href = '/auth';
           }}
-          className="w-full flex items-center gap-2 px-3 py-2 text-sm font-500 text-[var(--kg-coral)] hover:bg-[var(--kg-coral-soft)] rounded-lg transition-all"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--kg-coral)] hover:bg-[var(--kg-coral-soft)] transition-colors"
         >
-          🚪 Logout
+          <LogOut className="w-4 h-4 flex-shrink-0" />
+          Logout
         </button>
       </div>
     </aside>

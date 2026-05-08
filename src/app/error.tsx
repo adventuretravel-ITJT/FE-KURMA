@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
-import ErrorPage from '@/src/components/error/ErrorPage'
+import ErrorPage from '@/components/error/ErrorPage'
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -18,3 +18,4 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
     />
   )
 }
+

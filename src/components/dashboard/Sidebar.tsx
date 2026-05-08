@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useUser } from '@/src/contexts/UserContext'
+import { useUser } from '@/contexts/UserContext'
 
 const SETTINGS_HREF = '/dashboard/settings'
 
@@ -117,7 +117,7 @@ export default function Sidebar() {
             {/* User row */}
             <div style={{ padding: '14px 10px 24px', borderTop: '1px solid var(--line)', flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    {/* Avatar + name → Settings */}
+                    {/* Avatar + name â†’ Settings */}
                     <Link
                         href={SETTINGS_HREF}
                         onClick={onCloseSidebar}
@@ -161,3 +161,4 @@ export default function Sidebar() {
         </aside>
     )
 }
+

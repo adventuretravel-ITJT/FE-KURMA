@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 import { useState, useMemo } from 'react'
-import { useUser } from '@/src/contexts/UserContext'
+import { useUser } from '@/contexts/UserContext'
 
 function getPasswordStrength(password: string) {
     if (!password) return { score: 0, label: '', color: '' }
@@ -142,7 +142,7 @@ export default function SettingsPage() {
                 }
                 return
             }
-            // Token is invalidated by backend — clear it and redirect to login
+            // Token is invalidated by backend â€” clear it and redirect to login
             setDone(true)
             localStorage.removeItem('token')
             setTimeout(() => { window.location.href = '/auth' }, 3000)
@@ -215,7 +215,7 @@ export default function SettingsPage() {
                                 </svg>
                             </div>
                             <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>Password changed!</p>
-                            <p style={{ fontSize: 13, color: 'var(--ink-50)' }}>Redirecting to sign in…</p>
+                            <p style={{ fontSize: 13, color: 'var(--ink-50)' }}>Redirecting to sign inâ€¦</p>
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} noValidate>
@@ -324,3 +324,4 @@ export default function SettingsPage() {
         </>
     )
 }
+

@@ -1,4 +1,4 @@
-import ErrorPage from '@/src/components/error/ErrorPage'
+﻿import ErrorPage from '@/components/error/ErrorPage'
 
 export default function NotFound() {
   return (
@@ -11,3 +11,4 @@ export default function NotFound() {
     />
   )
 }
+

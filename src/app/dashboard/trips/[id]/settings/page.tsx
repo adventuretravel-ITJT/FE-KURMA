@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useUser } from '@/src/contexts/UserContext'
-import { Trip } from '@/src/components/itinerary/types'
+import { useUser } from '@/contexts/UserContext'
+import { Trip } from '@/components/itinerary/types'
 
 const TRAVEL_TYPES = ['solo', 'couple', 'family', 'group'] as const
 const STATUSES     = ['draft', 'active', 'completed'] as const

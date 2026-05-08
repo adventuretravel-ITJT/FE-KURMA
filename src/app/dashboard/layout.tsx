@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useState, ReactNode } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { UserContext, User } from '@/src/contexts/UserContext'
-import Sidebar from '@/src/components/dashboard/Sidebar'
+import { UserContext, User } from '@/contexts/UserContext'
+import Sidebar from '@/components/dashboard/Sidebar'
 
 const API = process.env.NEXT_PUBLIC_API_URL
 
@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             }).catch(() => null)
             clearTimeout(t1)
 
-            // Token expired — try to refresh once
+            // Token expired â€” try to refresh once
             if (!res || res.status === 401) {
                 token = await tryRefreshToken()
                 if (!token) {
@@ -141,3 +141,4 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </UserContext.Provider>
     )
 }
+

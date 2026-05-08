@@ -3,19 +3,19 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useUser } from '@/src/contexts/UserContext'
+import { useUser } from '@/contexts/UserContext'
 import {
   Trip, Day, Activity, ActivityFile, ItineraryData, CurrencyCode, CURRENCIES,
-} from '@/src/components/itinerary/types'
-import { DESTINATION_TO_CITY, CITY_DATA } from '@/src/components/itinerary/cityData'
-import { PLACES, searchPlaces, getPlace, PlaceData } from '@/src/components/itinerary/placesData'
-import TOCSidebar from '@/src/components/itinerary/TOCSidebar'
-import DaySection from '@/src/components/itinerary/DaySection'
-import SuggestedStay from '@/src/components/itinerary/SuggestedStay'
-import BudgetSection from '@/src/components/itinerary/BudgetSection'
-import CityGuideSidebar from '@/src/components/itinerary/CityGuideSidebar'
-import ConfirmModal from '@/src/components/itinerary/ConfirmModal'
-import CityPickerModal from '@/src/components/itinerary/CityPickerModal'
+} from '@/components/itinerary/types'
+import { DESTINATION_TO_CITY, CITY_DATA } from '@/components/itinerary/cityData'
+import { PLACES, searchPlaces, getPlace, PlaceData } from '@/components/itinerary/placesData'
+import TOCSidebar from '@/components/itinerary/TOCSidebar'
+import DaySection from '@/components/itinerary/DaySection'
+import SuggestedStay from '@/components/itinerary/SuggestedStay'
+import BudgetSection from '@/components/itinerary/BudgetSection'
+import CityGuideSidebar from '@/components/itinerary/CityGuideSidebar'
+import ConfirmModal from '@/components/itinerary/ConfirmModal'
+import CityPickerModal from '@/components/itinerary/CityPickerModal'
 
 /* ── Helpers ─────────────────────────────────────── */
 function genId() { return 'a' + Date.now() + Math.floor(Math.random() * 9999) }
