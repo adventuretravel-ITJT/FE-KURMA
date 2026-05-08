@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             }).catch(() => null)
             clearTimeout(t1)
 
-            // Token expired â€” try to refresh once
+            // Token expired — try to refresh once
             if (!res || res.status === 401) {
                 token = await tryRefreshToken()
                 if (!token) {

@@ -69,8 +69,8 @@ const ACTIVITIES = [
 ]
 
 const PACES = [
-    { key: 'easy',     label: 'Easy',     description: '2 â€“ 3 spots a day',   icon: IconPaceEasy },
-    { key: 'balanced', label: 'Balanced', description: '4 â€“ 5 spots a day',   icon: IconPaceBalanced },
+    { key: 'easy',     label: 'Easy',     description: '2 – 3 spots a day',   icon: IconPaceEasy },
+    { key: 'balanced', label: 'Balanced', description: '4 – 5 spots a day',   icon: IconPaceBalanced },
     { key: 'packed',   label: 'Packed',   description: 'Maximise every hour', icon: IconPacePacked },
 ]
 
@@ -364,7 +364,7 @@ export default function NewTripPage() {
                                         <circle cx="8" cy="8" r="6" /><path d="M8 5v4M8 11v.5" />
                                     </svg>
                                     <span style={{ fontSize: 12, color: 'var(--ink-50)', lineHeight: 1.4 }}>
-                                        {form.files.length} file{form.files.length > 1 ? 's' : ''} noted â€” upload will be available in the trip detail page.
+                                        {form.files.length} file{form.files.length > 1 ? 's' : ''} noted — upload will be available in the trip detail page.
                                     </span>
                                 </div>
                             )}
@@ -403,7 +403,7 @@ export default function NewTripPage() {
                                             <input autoFocus type="text" value={query}
                                                 onChange={(e) => { setQuery(e.target.value); setDdOpen(true); setDestErr(false) }}
                                                 onFocus={() => setDdOpen(true)}
-                                                placeholder="Search city or countryâ€¦"
+                                                placeholder="Search city or country…"
                                                 style={{ ...ss.input, paddingLeft: 38, borderColor: destErr ? 'var(--error)' : undefined }}
                                             />
                                             {ddOpen && filtered.length > 0 && (
@@ -466,7 +466,7 @@ export default function NewTripPage() {
                                         </div>
                                         {([
                                             { field: 'adults',  label: 'Adults',      sub: '13 and older',   show: true },
-                                            { field: 'kids',    label: 'Kids',         sub: '5 â€“ 12 years',   show: form.travelType === 'family' },
+                                            { field: 'kids',    label: 'Kids',         sub: '5 – 12 years',   show: form.travelType === 'family' },
                                             { field: 'littles', label: 'Little ones',  sub: 'Under 5',        show: form.travelType === 'family' },
                                         ] as const).filter((r) => r.show).map((row, i, arr) => (
                                             <div key={row.field} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 0', borderBottom: i < arr.length - 1 ? '1px solid var(--line)' : 'none' }}>
@@ -522,7 +522,7 @@ export default function NewTripPage() {
                                         {nights !== null && nights >= 0 && (
                                             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, padding: '4px 10px', background: 'var(--accent-bg)', borderRadius: 100, fontSize: 11.5, fontWeight: 500, color: 'var(--accent)' }}>
                                                 <svg viewBox="0 0 12 12" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 12, height: 12 }}><circle cx="6" cy="6" r="4.5" /><path d="M6 3.5V6l2 1.5" /></svg>
-                                                {nights} night{nights !== 1 ? 's' : ''} Â· {nights + 1} days
+                                                {nights} night{nights !== 1 ? 's' : ''} · {nights + 1} days
                                             </div>
                                         )}
                                         {dateErr && <FieldErr>Return must be after departure.</FieldErr>}
@@ -547,7 +547,7 @@ export default function NewTripPage() {
                                         <button onClick={skipDates} style={{ fontSize: 12, color: 'var(--ink-25)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'inherit', padding: '4px 8px', transition: 'color .18s' }}
                                             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--ink)')}
                                             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--ink-25)')}>
-                                            Skip for now â€” figure it out later
+                                            Skip for now — figure it out later
                                         </button>
                                     </div>
                                 </>
@@ -555,7 +555,7 @@ export default function NewTripPage() {
                                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px', background: 'var(--bg-warm)', borderRadius: 10, marginBottom: 12 }}>
                                     <svg viewBox="0 0 16 16" fill="none" stroke="var(--warm)" strokeWidth="1.5" strokeLinecap="round" style={{ width: 15, height: 15, flexShrink: 0, marginTop: 1 }}><circle cx="8" cy="8" r="6" /><path d="M8 5v4M8 11v.5" /></svg>
                                     <span style={{ fontSize: 12.5, color: 'var(--ink-50)', lineHeight: 1.5 }}>
-                                        No worries â€” saved as <strong>Planning.</strong>{' '}
+                                        No worries — saved as <strong>Planning.</strong>{' '}
                                         <button onClick={undoSkip} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontWeight: 500, fontFamily: 'inherit', fontSize: 12.5, padding: 0 }}>Add dates anytime.</button>
                                     </span>
                                 </div>
@@ -659,7 +659,7 @@ export default function NewTripPage() {
                                         />
                                     ))}
                                 </div>
-                                <FieldHint>Nothing fits? That&apos;s totally fine â€” AI will still do its thing.</FieldHint>
+                                <FieldHint>Nothing fits? That&apos;s totally fine — AI will still do its thing.</FieldHint>
                             </PrefBlock>
                         </div>
                     )}
@@ -669,7 +669,7 @@ export default function NewTripPage() {
                         <div>
                             <div style={ss.eyebrow}>Step 4 of {TOTAL}</div>
                             <div style={ss.title}>Add your <em style={ss.em}>references.</em></div>
-                            <div style={ss.sub}>Upload travel documents and save useful links â€” all in one place.</div>
+                            <div style={ss.sub}>Upload travel documents and save useful links — all in one place.</div>
 
                             {/* File upload */}
                             <Field label="Travel documents">
@@ -690,7 +690,7 @@ export default function NewTripPage() {
                                     <div style={{ fontSize: 13, fontWeight: 600, color: dragOver ? 'var(--accent)' : 'var(--ink)', marginBottom: 4 }}>
                                         {dragOver ? 'Drop files here' : 'Click to upload or drag & drop'}
                                     </div>
-                                    <div style={{ fontSize: 11.5, color: 'var(--ink-25)' }}>PDF, JPG, PNG, DOC, DOCX, XLSX Â· Max {MAX_FILE_MB} MB each</div>
+                                    <div style={{ fontSize: 11.5, color: 'var(--ink-25)' }}>PDF, JPG, PNG, DOC, DOCX, XLSX · Max {MAX_FILE_MB} MB each</div>
                                 </div>
                                 <input ref={fileInputRef} type="file" multiple accept={ACCEPTED_TYPES} style={{ display: 'none' }} onChange={(e) => addFiles(e.target.files)} />
                                 {fileErr && <FieldErr>{fileErr}</FieldErr>}
@@ -727,7 +727,7 @@ export default function NewTripPage() {
                                     <div style={{ display: 'flex', gap: 8 }}>
                                         <input type="text" value={linkInput.title} onChange={(e) => setLinkInput((p) => ({ ...p, title: e.target.value }))}
                                             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addLink() } }}
-                                            placeholder="Label â€” e.g. Hotel booking, Flight ticket" style={{ ...ss.input, flex: 1 }} />
+                                            placeholder="Label — e.g. Hotel booking, Flight ticket" style={{ ...ss.input, flex: 1 }} />
                                         <button onClick={addLink}
                                             style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '0 18px', background: 'var(--ink)', color: 'var(--bg)', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0, transition: 'background .18s' }}
                                             onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--accent)')}
@@ -774,7 +774,7 @@ export default function NewTripPage() {
                                         <div>
                                             <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)', marginBottom: 3 }}>Pro tip</div>
                                             <div style={{ fontSize: 11.5, color: 'var(--ink-50)', lineHeight: 1.55 }}>
-                                                Save your hotel confirmation, flight booking, and map links here â€” everything in one place when you travel.
+                                                Save your hotel confirmation, flight booking, and map links here — everything in one place when you travel.
                                             </div>
                                         </div>
                                     </div>

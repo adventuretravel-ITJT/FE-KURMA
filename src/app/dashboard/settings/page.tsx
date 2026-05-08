@@ -142,7 +142,7 @@ export default function SettingsPage() {
                 }
                 return
             }
-            // Token is invalidated by backend â€” clear it and redirect to login
+            // Token is invalidated by backend — clear it and redirect to login
             setDone(true)
             localStorage.removeItem('token')
             setTimeout(() => { window.location.href = '/auth' }, 3000)
@@ -215,7 +215,7 @@ export default function SettingsPage() {
                                 </svg>
                             </div>
                             <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>Password changed!</p>
-                            <p style={{ fontSize: 13, color: 'var(--ink-50)' }}>Redirecting to sign inâ€¦</p>
+                            <p style={{ fontSize: 13, color: 'var(--ink-50)' }}>Redirecting to sign in…</p>
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} noValidate>

@@ -228,6 +228,7 @@ export default function AdminSidebar() {
         <button
           onClick={() => {
             localStorage.removeItem('token');
+            document.cookie = 'token=; path=/; max-age=0';
             window.location.href = '/auth';
           }}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--kg-coral)] hover:bg-[var(--kg-coral-soft)] transition-colors"

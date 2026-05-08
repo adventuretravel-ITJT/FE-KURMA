@@ -6,6 +6,34 @@ import { useGoogleLogin } from '@react-oauth/google'
 
 type AuthPanel = 'login' | 'register' | 'otp'
 
+const ADMIN_ROLES = ['superadmin', 'admin', 'cs', 'editor', 'marketing']
+
+function decodeJwtRole(token: string): string | null {
+    try {
+        const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+        const payload = JSON.parse(atob(b64))
+        return (payload.role as string) ?? null
+    } catch {
+        return null
+    }
+}
+
+function setAuthToken(token: string) {
+    localStorage.setItem('token', token)
+    // Cookie needed for Next.js middleware (runs server-side, no localStorage access)
+    const maxAge = 60 * 60 * 24 * 7 // 7 days
+    document.cookie = `token=${token}; path=/; SameSite=Lax; max-age=${maxAge}`
+}
+
+function resolveRedirect(token: string): string {
+    const role = decodeJwtRole(token)
+    const params = new URLSearchParams(window.location.search)
+    const redirect = params.get('redirect')
+    if (redirect && ADMIN_ROLES.includes(role ?? '')) return redirect
+    if (ADMIN_ROLES.includes(role ?? '')) return '/admin/overview'
+    return redirect && !redirect.startsWith('/admin') ? redirect : '/dashboard'
+}
+
 function isValidEmail(v: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 }
@@ -166,8 +194,8 @@ function SocialButtons({ variant }: { variant: 'login' | 'register' }) {
                 clearTimeout(tid)
                 const data = await res.json()
                 if (!res.ok) { setGoogleError(data.message || 'Google login failed.'); return }
-                localStorage.setItem('token', data.token)
-                window.location.href = '/dashboard'
+                setAuthToken(data.token)
+                window.location.href = resolveRedirect(data.token)
             } catch (err) {
                 if (err instanceof Error && err.name === 'AbortError') {
                     setGoogleError('Request timed out. Please try again.')
@@ -335,8 +363,8 @@ function OTPForm({ email, maskedEmail, onBack }: { email: string; maskedEmail: s
                 setTimeout(() => r0.current?.focus(), 0)
                 return
             }
-            localStorage.setItem('token', data.token)
-            window.location.href = '/dashboard'
+            setAuthToken(data.token)
+            window.location.href = resolveRedirect(data.token)
         } catch {
             setError('Something went wrong. Please try again.')
         } finally {
@@ -534,8 +562,8 @@ function LoginForm({ onSwitch, onOtp }: {
                 onOtp(email, data.email)
                 return
             }
-            localStorage.setItem('token', data.token)
-            window.location.href = '/dashboard'
+            setAuthToken(data.token)
+            window.location.href = resolveRedirect(data.token)
         } catch {
             setErrors({ email: 'Something went wrong. Please try again.' })
         } finally {

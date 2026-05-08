@@ -124,7 +124,7 @@ export default function DashboardPage() {
                             )}
                         </div>
 
-                        {/* Onboarding â€” empty state only */}
+                        {/* Onboarding — empty state only */}
                         {!hasTrips && !loading && (
                             <div style={{ animation: 'fadeUp .45s ease .16s both' }}>
                                 <OnboardingCard />
@@ -135,10 +135,10 @@ export default function DashboardPage() {
                     {/* â”€â”€ RIGHT COLUMN â”€â”€ */}
                     <div className="dash-right" style={{ animation: 'fadeUp .45s ease .08s both' }}>
 
-                        {/* Upcoming card â€” shown when trips exist */}
+                        {/* Upcoming card — shown when trips exist */}
                         {hasTrips && <UpcomingWidget trips={trips} />}
 
-                        {/* Kurma tip â€” always visible */}
+                        {/* Kurma tip — always visible */}
                         <KurmaTipWidget destination={nextTrip?.destination} />
                     </div>
 
@@ -181,7 +181,7 @@ function TripCard({ trip }: { trip: Trip }) {
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--ink-50)' }}>
                     {hasDates
-                        ? `${trip.destination} Â· ${fmt(trip.start_date!)}${trip.end_date ? ` â€“ ${fmt(trip.end_date)}` : ''}`
+                        ? `${trip.destination} · ${fmt(trip.start_date!)}${trip.end_date ? ` – ${fmt(trip.end_date)}` : ''}`
                         : 'No dates set yet'}
                 </div>
                 <div style={{ display: 'flex', gap: 5, marginTop: 7, flexWrap: 'wrap' }}>
@@ -248,7 +248,7 @@ function OnboardingCard() {
     const steps = [
         { done: true,  current: false, label: 'Create your account',            desc: '' },
         { done: false, current: true,  label: 'Plan your first trip',           desc: 'Add a destination and let AI draft your itinerary.' },
-        { done: false, current: false, label: 'Activate eSIM for connectivity', desc: 'Stay connected the moment you land â€” no SIM swapping.' },
+        { done: false, current: false, label: 'Activate eSIM for connectivity', desc: 'Stay connected the moment you land — no SIM swapping.' },
     ]
     return (
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--line)', borderRadius: 16, padding: '24px 28px', marginTop: 16 }}>
@@ -301,7 +301,7 @@ function UpcomingWidget({ trips }: { trips: Trip[] }) {
                                     <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 17, fontWeight: 500, color: i === 0 ? 'var(--accent)' : 'var(--warm)', lineHeight: 1.1 }}>{day}</div>
                                 </div>
                                 <div>
-                                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink)' }}>Departure â€” {trip.destination}</div>
+                                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--ink)' }}>Departure — {trip.destination}</div>
                                     <div style={{ fontSize: 11, color: 'var(--ink-25)', marginTop: 1 }}>{trip.name}</div>
                                 </div>
                             </div>
@@ -339,14 +339,14 @@ function UpcomingWidget({ trips }: { trips: Trip[] }) {
    KURMA TIP WIDGET
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const TIPS: Record<string, { dest: string; tip: string }> = {
-    Japan:          { dest: 'Japan',         tip: 'Shinkansen tickets sell out fast during peak season â€” book at least 2 weeks ahead for Golden Week or sakura season.' },
-    'South Korea':  { dest: 'Seoul',         tip: 'T-money card works on all transit in Seoul â€” top it up at any convenience store before your first subway ride.' },
+    Japan:          { dest: 'Japan',         tip: 'Shinkansen tickets sell out fast during peak season — book at least 2 weeks ahead for Golden Week or sakura season.' },
+    'South Korea':  { dest: 'Seoul',         tip: 'T-money card works on all transit in Seoul — top it up at any convenience store before your first subway ride.' },
     Thailand:       { dest: 'Thailand',      tip: 'Visit temples early morning to beat the crowds and the heat. Most open from 8am and are quietest before 9am.' },
-    Indonesia:      { dest: 'Bali',          tip: "Rent a scooter only if you're comfortable in heavy traffic â€” Bali roads move fast and lane rules are loose." },
+    Indonesia:      { dest: 'Bali',          tip: "Rent a scooter only if you're comfortable in heavy traffic — Bali roads move fast and lane rules are loose." },
     France:         { dest: 'Paris',         tip: "The Musee d'Orsay is far less crowded than the Louvre and houses some of the finest impressionist works in the world." },
-    Italy:          { dest: 'Italy',         tip: 'Book Colosseum and Vatican tickets online at least 3 days ahead â€” same-day queues can be 2+ hours.' },
+    Italy:          { dest: 'Italy',         tip: 'Book Colosseum and Vatican tickets online at least 3 days ahead — same-day queues can be 2+ hours.' },
     Singapore:      { dest: 'Singapore',     tip: 'Hawker centres offer the best local food at unbeatable prices. Try Maxwell Food Centre or Lau Pa Sat.' },
-    __default:      { dest: 'Japan Â· Kyoto', tip: 'Arashiyama bamboo grove is best before 7am â€” most tour groups arrive after 9 and crowds get thick fast.' },
+    __default:      { dest: 'Japan · Kyoto', tip: 'Arashiyama bamboo grove is best before 7am — most tour groups arrive after 9 and crowds get thick fast.' },
 }
 
 function KurmaTipWidget({ destination }: { destination?: string }) {
