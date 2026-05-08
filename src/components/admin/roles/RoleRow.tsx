@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Role, Permission } from '@/types/admin';
 import EditRoleModal from './EditRoleModal';
 import ConfirmModal from '@/components/itinerary/ConfirmModal';
@@ -98,30 +99,33 @@ export default function RoleRow({ role, permissions, isDefault, onUpdate, onDele
         </td>
       </tr>
 
-      {isEditOpen && (
+      {isEditOpen && createPortal(
         <EditRoleModal
           role={role}
           permissions={permissions}
           onClose={() => setIsEditOpen(false)}
           onSuccess={onUpdate}
-        />
+        />,
+        document.body
       )}
 
-      {showConfirm && (
+      {showConfirm && createPortal(
         <ConfirmModal
           title={`Hapus role "${role.name}"?`}
           sub="Tindakan ini tidak bisa dibatalkan."
           confirmLabel={isDeleting ? 'Menghapus...' : 'Hapus'}
           onConfirm={handleDelete}
           onCancel={() => setShowConfirm(false)}
-        />
+        />,
+        document.body
       )}
 
-      {deleteError && (
+      {deleteError && createPortal(
         <div className="fixed bottom-4 right-4 z-50 px-4 py-3 bg-[var(--kg-coral-soft)] border border-[var(--kg-coral)] rounded-lg text-sm text-[var(--kg-coral)] shadow-lg">
           {deleteError}
           <button onClick={() => setDeleteError('')} className="ml-3 font-600 hover:opacity-70">✕</button>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
