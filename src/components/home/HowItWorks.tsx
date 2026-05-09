@@ -1,4 +1,6 @@
-const steps = [
+import type { HowItWorksContent } from '@/types/homepage'
+
+const DEFAULT_STEPS = [
   {
     num: '01',
     title: 'Create your account',
@@ -7,7 +9,7 @@ const steps = [
   {
     num: '02',
     title: 'Tell us about your trip',
-    desc: 'Share your destination, travel dates, who\'s joining, and how you like to explore. The more we know, the better your plan.',
+    desc: "Share your destination, travel dates, who's joining, and how you like to explore. The more we know, the better your plan.",
   },
   {
     num: '03',
@@ -16,15 +18,21 @@ const steps = [
   },
 ]
 
-export default function HowItWorks() {
+interface Props { data?: HowItWorksContent }
+
+export default function HowItWorks({ data }: Props) {
+  const heading    = data?.heading    ?? 'From idea to departure — guided every step.'
+  const subheading = data?.subheading ?? 'No complicated setup. No information overload. Just your trip, organized the way it should be.'
+  const steps      = data?.steps      ?? DEFAULT_STEPS
+
   return (
     <section className="hp-section hp-how" id="how">
       <div className="hp-wrap">
         <div className="hp-how-inner">
           <div>
             <div className="hp-section-label reveal">How it works</div>
-            <h2 className="hp-h2 reveal">From idea to departure —<br />guided every step.</h2>
-            <p className="hp-section-sub reveal">No complicated setup. No information overload. Just your trip, organized the way it should be.</p>
+            <h2 className="hp-h2 reveal">{heading}</h2>
+            <p className="hp-section-sub reveal">{subheading}</p>
           </div>
           <div className="hp-how-steps">
             {steps.map((s, i) => (

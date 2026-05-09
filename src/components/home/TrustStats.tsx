@@ -1,17 +1,23 @@
 import React from 'react'
+import type { TrustStatsContent } from '@/types/homepage'
 
-const stats = [
+const DEFAULT_STATS = [
   { num: '200', suffix: '+', label: 'Trips planned' },
   { num: '4.8', suffix: '/5', label: 'Average satisfaction' },
-  { num: '60', suffix: '%', label: 'Travelers who return' },
-  { num: '10', suffix: '+', label: 'Destinations covered' },
+  { num: '60',  suffix: '%', label: 'Travelers who return' },
+  { num: '10',  suffix: '+', label: 'Destinations covered' },
 ]
 
-export default function TrustStats() {
+interface Props { data?: TrustStatsContent }
+
+export default function TrustStats({ data }: Props) {
+  const label = data?.label ?? 'Trusted by travelers planning their next adventure'
+  const stats = data?.items ?? DEFAULT_STATS
+
   return (
     <div className="hp-trust reveal">
       <div className="hp-wrap">
-        <div className="hp-trust-label">Trusted by travelers planning their next adventure</div>
+        <div className="hp-trust-label">{label}</div>
         <div className="hp-trust-stats">
           {stats.map((s, i) => (
             <React.Fragment key={s.label}>

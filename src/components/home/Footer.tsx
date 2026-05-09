@@ -1,27 +1,35 @@
 import Link from 'next/link'
+import type { FooterContent } from '@/types/homepage'
 
-const navLinks = [
-  { label: 'Itineraries', href: '#' },
+const DEFAULT_NAV_LINKS = [
+  { label: 'Itineraries',  href: '#' },
   { label: 'Destinations', href: '#' },
-  { label: 'Pricing', href: '#' },
-  { label: 'Blog', href: '#' },
+  { label: 'Pricing',      href: '#' },
+  { label: 'Blog',         href: '#' },
   { label: 'How it works', href: '#how' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'FAQ',          href: '#faq' },
 ]
 
-const legalLinks = [
-  { label: 'Privacy Policy', href: '/privacy' },
+const DEFAULT_LEGAL_LINKS = [
+  { label: 'Privacy Policy',   href: '/privacy' },
   { label: 'Terms of Service', href: '/terms' },
 ]
 
-export default function Footer() {
+interface Props { data?: FooterContent }
+
+export default function Footer({ data }: Props) {
+  const logoText   = data?.logo_text   ?? 'KurmaGo.'
+  const tagline    = data?.tagline     ?? 'Plan Smart. Go Beyond.'
+  const navLinks   = data?.nav_links   ?? DEFAULT_NAV_LINKS
+  const legalLinks = data?.legal_links ?? DEFAULT_LEGAL_LINKS
+
   return (
     <footer className="hp-footer">
       <div className="hp-wrap">
         <div className="hp-foot-inner">
           <div>
-            <div className="hp-foot-logo">Kurma<em>Go.</em></div>
-            <div className="hp-foot-tagline">Plan Smart. Go Beyond.</div>
+            <div className="hp-foot-logo">{logoText}</div>
+            <div className="hp-foot-tagline">{tagline}</div>
           </div>
           <nav className="hp-foot-nav">
             {navLinks.map((l) => (

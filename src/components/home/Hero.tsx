@@ -1,6 +1,19 @@
 import Link from 'next/link'
+import type { HeroContent } from '@/types/homepage'
 
-export default function Hero() {
+interface Props { data?: HeroContent }
+
+export default function Hero({ data }: Props) {
+  const label       = data?.label                ?? 'Itinerary · Booking · Connectivity'
+  const heading     = data?.heading              ?? 'Your journey, planned with purpose.'
+  const subheading  = data?.subheading           ?? 'From itinerary to connectivity — everything you need for your trip, in one place.'
+  const primaryLabel= data?.button_primary_label ?? 'Start for free'
+  const primaryHref = data?.button_primary_href  ?? '/auth'
+  const secondLabel = data?.button_secondary_label ?? 'Learn more'
+  const secondHref  = data?.button_secondary_href  ?? '#how'
+  const imageUrl    = data?.image_url            ?? 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80'
+  const imageAlt    = data?.image_alt            ?? 'Fushimi Inari Shrine, Kyoto'
+
   return (
     <section className="hp-hero">
       <div className="hp-wrap">
@@ -10,22 +23,18 @@ export default function Hero() {
           <div className="hp-hero-text">
             <div className="hp-hero-label">
               <span className="hp-hero-label-dot" />
-              <span className="hp-hero-label-text">Itinerary · Booking · Connectivity</span>
+              <span className="hp-hero-label-text">{label}</span>
             </div>
-            <h1 className="hp-h1">
-              Your journey,<br /><em>planned with</em> purpose.
-            </h1>
-            <p className="hp-hero-sub">
-              From itinerary to connectivity — everything you need for your trip, in one place.
-            </p>
+            <h1 className="hp-h1" dangerouslySetInnerHTML={{ __html: heading.replace('\n', '<br />') }} />
+            <p className="hp-hero-sub">{subheading}</p>
             <div className="hp-hero-actions">
-              <Link href="/auth" className="btn-dark">
-                Start for free
+              <Link href={primaryHref} className="btn-dark">
+                {primaryLabel}
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M3 8h10M9 4l4 4-4 4" />
                 </svg>
               </Link>
-              <a href="#how" className="btn-ghost">Learn more</a>
+              <a href={secondHref} className="btn-ghost">{secondLabel}</a>
             </div>
           </div>
 
@@ -33,10 +42,7 @@ export default function Hero() {
           <div className="hp-hero-visual">
             <div className="hp-hero-img">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80"
-                alt="Fushimi Inari Shrine, Kyoto"
-              />
+              <img src={imageUrl} alt={imageAlt} />
             </div>
 
             {/* Floating itinerary mockup */}

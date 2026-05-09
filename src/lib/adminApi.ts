@@ -1,9 +1,20 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 function authHeaders(): HeadersInit {
-  if (typeof document === 'undefined') return {};
-  const token = document.cookie.match(/(?:^|;\s*)token=([^;]+)/)?.[1];
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  if (typeof window === 'undefined') return {};
+
+  const lsToken = localStorage.getItem('token');
+  if (lsToken) return { Authorization: `Bearer ${lsToken}` };
+
+  const cookieToken = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('token='))
+    ?.split('=')
+    .slice(1)
+    .join('=');
+  if (cookieToken) return { Authorization: `Bearer ${cookieToken}` };
+
+  return {};
 }
 
 export interface OverviewStats {

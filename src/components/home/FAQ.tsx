@@ -1,7 +1,8 @@
 'use client'
 import { useState } from 'react'
+import type { FaqContent } from '@/types/homepage'
 
-const faqs = [
+const DEFAULT_FAQS = [
   {
     q: 'What is kurmaGo?',
     a: "kurmaGo is your personal trip companion — built by travel consultants and powered by AI. Every itinerary is crafted by someone who's helped hundreds of travelers plan the same trip, then delivered in a clean, mobile-friendly format you can access anywhere.",
@@ -12,7 +13,7 @@ const faqs = [
   },
   {
     q: 'What destinations are available?',
-    a: 'We offer curated itineraries across Asia and are continuously expanding. New destinations are added regularly — follow us to stay updated on what\'s coming next.',
+    a: "We offer curated itineraries across Asia and are continuously expanding. New destinations are added regularly — follow us to stay updated on what's coming next.",
   },
   {
     q: 'Can I share my itinerary?',
@@ -24,8 +25,13 @@ const faqs = [
   },
 ]
 
-export default function FAQ() {
+interface Props { data?: FaqContent }
+
+export default function FAQ({ data }: Props) {
   const [openItems, setOpenItems] = useState(new Set<number>())
+
+  const heading = data?.heading ?? 'Questions & answers'
+  const faqs    = data?.items   ?? DEFAULT_FAQS
 
   const toggle = (i: number) => {
     setOpenItems((prev) => {
@@ -40,7 +46,7 @@ export default function FAQ() {
       <div className="hp-wrap">
         <div style={{ textAlign: 'center' }}>
           <div className="hp-section-label reveal">FAQ</div>
-          <h2 className="hp-h2 reveal">Questions &amp; answers</h2>
+          <h2 className="hp-h2 reveal">{heading}</h2>
         </div>
         <div className="hp-faq-list">
           {faqs.map((faq, i) => (
