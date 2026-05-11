@@ -3,23 +3,20 @@ import { type ReactNode } from 'react';
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
-  description?: string; // ← tambah alias, atau ganti subtitle → description
+  description?: string;
   action?: ReactNode;
   icon?: ReactNode;
 }
 
 export function PageHeader({ title, subtitle, description, action, icon }: PageHeaderProps) {
-  const subtext = subtitle ?? description; // support kedua nama prop
-
+  const subtext = subtitle ?? description;
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex items-start justify-between gap-4 mb-6">
       <div className="flex items-center gap-2">
-        {icon && <span className="text-[var(--kg-ink-56)]">{icon}</span>}
+        {icon && <span style={{ color: '#8A95A2' }}>{icon}</span>}
         <div>
-          <h1 className="text-[20px] font-bold text-[var(--kg-ink)] leading-tight">{title}</h1>
-          {subtext && (
-            <p className="text-sm text-[var(--kg-ink-56)] mt-0.5">{subtext}</p>
-          )}
+          <h1 className="text-[20px] font-bold leading-tight" style={{ color: '#0D1B2A' }}>{title}</h1>
+          {subtext && <p className="text-sm mt-0.5" style={{ color: '#8A95A2' }}>{subtext}</p>}
         </div>
       </div>
       {action && <div className="flex-shrink-0">{action}</div>}
