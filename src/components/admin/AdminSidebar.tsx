@@ -27,6 +27,8 @@ import {
   ChevronDown,
   LogOut,
   HelpCircle,
+  Briefcase,
+  Scale,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -52,6 +54,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: 'Overview',         href: '/admin/overview',  icon: LayoutDashboard },
       { label: 'User Management',  href: '/admin/users',     icon: Users           },
+      { label: 'Trip Manager',     href: '/admin/trips',     icon: Briefcase       },
       { label: 'Product Config',   href: '/admin/product',   icon: Settings2       },
     ],
   },
@@ -65,7 +68,7 @@ const navGroups: NavGroup[] = [
         children: [
           { label: 'Homepage',      href: '/admin/homepage',   icon: MonitorPlay },
           { label: 'Blog Posts',    href: '/admin/cms/posts',  icon: BookOpen    },
-          { label: 'Static Pages',  href: '/admin/cms/pages',  icon: FileStack   },
+          { label: 'Legal Pages',   href: '/admin/cms/pages',  icon: Scale       },
           { label: 'Media Library', href: '/admin/cms/media',  icon: Images      },
         ],
       },
