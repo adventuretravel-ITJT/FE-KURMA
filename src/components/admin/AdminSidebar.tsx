@@ -32,6 +32,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+import NotificationBell from '@/components/admin/NotificationBell';
+
 interface NavChild {
   label: string;
   href: string;
@@ -52,24 +54,24 @@ interface NavGroup {
 const navGroups: NavGroup[] = [
   {
     items: [
-      { label: 'Overview',         href: '/admin/overview',  icon: LayoutDashboard },
-      { label: 'User Management',  href: '/admin/users',     icon: Users           },
-      { label: 'Trip Manager',     href: '/admin/trips',     icon: Briefcase       },
-      { label: 'Product Config',   href: '/admin/product',   icon: Settings2       },
+      { label: 'Overview', href: '/admin/overview', icon: LayoutDashboard },
+      { label: 'User Management', href: '/admin/users', icon: Users },
+      { label: 'Trip Manager', href: '/admin/trips', icon: Briefcase },
+      { label: 'Product Config', href: '/admin/product', icon: Settings2 },
     ],
   },
   {
     items: [
-      { label: 'Destination & City', href: '/admin/destinations', icon: Globe          },
-      { label: 'Master Templates',   href: '/admin/templates',    icon: LayoutTemplate },
+      { label: 'Destination & City', href: '/admin/destinations', icon: Globe },
+      { label: 'Master Templates', href: '/admin/templates', icon: LayoutTemplate },
       {
         label: 'CMS Manager',
         icon: FileText,
         children: [
-          { label: 'Homepage',      href: '/admin/homepage',   icon: MonitorPlay },
-          { label: 'Blog Posts',    href: '/admin/cms/posts',  icon: BookOpen    },
-          { label: 'Legal Pages',   href: '/admin/cms/pages',  icon: Scale       },
-          { label: 'Media Library', href: '/admin/cms/media',  icon: Images      },
+          { label: 'Homepage', href: '/admin/homepage', icon: MonitorPlay },
+          { label: 'Blog Posts', href: '/admin/cms/posts', icon: BookOpen },
+          { label: 'Legal Pages', href: '/admin/cms/pages', icon: Scale },
+          { label: 'Media Library', href: '/admin/cms/media', icon: Images },
         ],
       },
     ],
@@ -80,8 +82,8 @@ const navGroups: NavGroup[] = [
         label: 'Marketing Tools',
         icon: Megaphone,
         children: [
-          { label: 'Vouchers & Promo',  href: '/admin/marketing/vouchers',       icon: Ticket },
-          { label: 'Notification Blast', href: '/admin/marketing/notifications',  icon: Bell   },
+          { label: 'Vouchers & Promo', href: '/admin/marketing/vouchers', icon: Ticket },
+          { label: 'Notification Blast', href: '/admin/marketing/notifications', icon: Bell },
         ],
       },
       { label: 'Affiliate Manager', href: '/admin/affiliates', icon: Handshake },
@@ -90,7 +92,7 @@ const navGroups: NavGroup[] = [
   {
     items: [
       { label: 'Transactions', href: '/admin/transactions', icon: CreditCard },
-      { label: 'Moderation',   href: '/admin/moderation',   icon: Shield     },
+      { label: 'Moderation', href: '/admin/moderation', icon: Shield },
     ],
   },
   {
@@ -99,9 +101,9 @@ const navGroups: NavGroup[] = [
         label: 'Settings',
         icon: Settings,
         children: [
-          { label: 'Role Management', href: '/admin/role-management',  icon: Lock           },
-          { label: 'Audit Log',       href: '/admin/settings/audit',   icon: ClipboardList  },
-          { label: 'Configuration',   href: '/admin/settings/config',  icon: SlidersHorizontal },
+          { label: 'Role Management', href: '/admin/role-management', icon: Lock },
+          { label: 'Audit Log', href: '/admin/settings/audit', icon: ClipboardList },
+          { label: 'Configuration', href: '/admin/settings/config', icon: SlidersHorizontal },
         ],
       },
     ],
@@ -152,8 +154,8 @@ export default function AdminSidebar() {
           <div key={gi} className="space-y-0.5">
             {group.items.map((item) => {
               const hasChildren = !!item.children?.length;
-              const isExpanded  = expanded.includes(item.label);
-              const isActive    = item.href && pathname
+              const isExpanded = expanded.includes(item.label);
+              const isActive = item.href && pathname
                 ? pathname === item.href || pathname.startsWith(item.href + '/')
                 : false;
               const childActive = hasChildren && isChildActive(item.children!, pathname);
@@ -163,18 +165,16 @@ export default function AdminSidebar() {
                   <div key={item.label}>
                     <button
                       onClick={() => toggle(item.label)}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                        childActive
-                          ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)]'
-                          : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
-                      }`}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${childActive
+                        ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)]'
+                        : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
+                        }`}
                     >
                       <item.icon className="w-4 h-4 flex-shrink-0" />
                       <span className="flex-1 text-left font-medium">{item.label}</span>
                       <ChevronDown
-                        className={`w-3.5 h-3.5 flex-shrink-0 transition-transform duration-200 ${
-                          isExpanded ? 'rotate-180' : ''
-                        }`}
+                        className={`w-3.5 h-3.5 flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''
+                          }`}
                       />
                     </button>
 
@@ -186,11 +186,10 @@ export default function AdminSidebar() {
                             <Link
                               key={child.href}
                               href={child.href}
-                              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                                isChildActive
-                                  ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)] font-medium'
-                                  : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
-                              }`}
+                              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isChildActive
+                                ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)] font-medium'
+                                : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
+                                }`}
                             >
                               <child.icon className="w-3.5 h-3.5 flex-shrink-0" />
                               {child.label}
@@ -207,11 +206,10 @@ export default function AdminSidebar() {
                 <Link
                   key={item.href}
                   href={item.href!}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
-                    isActive
-                      ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)] font-medium'
-                      : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
-                  }`}
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${isActive
+                    ? 'text-[var(--kg-primary)] bg-[var(--kg-surface-mist)] font-medium'
+                    : 'text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)]'
+                    }`}
                 >
                   <item.icon className="w-4 h-4 flex-shrink-0" />
                   {item.label}
@@ -228,6 +226,15 @@ export default function AdminSidebar() {
 
       {/* Footer */}
       <div className="p-2 border-t border-[var(--kg-hairline)] space-y-0.5">
+
+        {/* Notification Bell */}
+        <div className="px-3 py-2 flex items-center gap-2.5">
+          <NotificationBell />
+          <span className="text-sm text-[var(--kg-ink-72)] font-medium">Notifikasi</span>
+        </div>
+
+        <div className="h-px bg-[var(--kg-hairline)] mx-1 my-1" />
+
         <button className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-[var(--kg-ink-72)] hover:bg-[var(--kg-canvas)] hover:text-[var(--kg-ink)] transition-colors">
           <HelpCircle className="w-4 h-4 flex-shrink-0" />
           Help & Docs
