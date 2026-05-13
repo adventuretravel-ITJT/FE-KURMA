@@ -142,7 +142,7 @@ export default function NotificationBell() {
             {/* Dropdown */}
             {open && (
                 <div style={{
-                    position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                    position: 'absolute', bottom: 'calc(100% + 8px)', left: 0,
                     width: 340, maxHeight: 440,
                     background: 'var(--kg-paper)',
                     border: '1px solid var(--kg-hairline)',
