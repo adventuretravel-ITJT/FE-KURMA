@@ -24,6 +24,22 @@ function greetingPrefix() {
     return 'Good evening'
 }
 
+// Returns the flag string only if it contains valid emoji codepoints.
+// Corrupted UTF-8-as-Latin-1 strings only have codepoints ≤ 0xFF — we reject those.
+function safeFlagEmoji(flag: string | null | undefined): string | null {
+    if (!flag) return null
+    return [...flag].some(c => (c.codePointAt(0) ?? 0) > 0xFF) ? flag : null
+}
+
+function GlobeIcon() {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, color: 'var(--ink-25)' }}>
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 3a15 15 0 010 18M3 12h18M3.6 8h16.8M3.6 16h16.8" />
+        </svg>
+    )
+}
+
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    DASHBOARD PAGE
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
