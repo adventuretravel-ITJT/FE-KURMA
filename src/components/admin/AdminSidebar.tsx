@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -22,17 +22,18 @@ import {
   Lock,
   ClipboardList,
   SlidersHorizontal,
-  FileStack,
   MonitorPlay,
   ChevronDown,
   LogOut,
   HelpCircle,
   Briefcase,
   Scale,
+  Search,
   type LucideIcon,
 } from 'lucide-react';
 
 import NotificationBell from '@/components/admin/NotificationBell';
+import GlobalSearch from '@/components/admin/GlobalSearch';
 
 interface NavChild {
   label: string;
@@ -123,7 +124,20 @@ export default function AdminSidebar() {
     .filter((item) => item.children && isChildActive(item.children, pathname))
     .map((item) => item.label);
 
-  const [expanded, setExpanded] = useState<string[]>(defaultExpanded);
+  const [expanded, setExpanded]       = useState<string[]>(defaultExpanded);
+  const [searchOpen, setSearchOpen]   = useState(false);
+
+  // Ctrl+K / Cmd+K global shortcut
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const toggle = (label: string) => {
     setExpanded((prev) =>
@@ -146,6 +160,20 @@ export default function AdminSidebar() {
             <p className="text-[10px] text-[var(--kg-ink-40)] tracking-[0.06em] uppercase mt-0.5">Admin Panel</p>
           </div>
         </Link>
+      </div>
+
+      {/* Global search trigger */}
+      <div className="px-3 pt-3 pb-1">
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg border border-[var(--kg-hairline)] bg-[var(--kg-canvas)] text-[var(--kg-ink-56)] hover:border-[var(--kg-primary)] hover:text-[var(--kg-primary)] transition-colors text-sm"
+        >
+          <Search className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="flex-1 text-left text-xs">Cari apa saja...</span>
+          <kbd className="text-[10px] px-1.5 py-0.5 rounded border border-[var(--kg-hairline)] bg-[var(--kg-paper)] font-sans leading-none">
+            ⌃K
+          </kbd>
+        </button>
       </div>
 
       {/* Navigation */}
@@ -251,6 +279,8 @@ export default function AdminSidebar() {
           Logout
         </button>
       </div>
+
+      <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </aside>
   );
 }
