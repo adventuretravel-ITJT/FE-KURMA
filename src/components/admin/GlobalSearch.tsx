@@ -12,9 +12,8 @@ const RECENT_KEY = 'admin_search_recent';
 const MAX_RECENT = 8;
 
 function authHeaders(): Record<string, string> {
-  const token = typeof window !== 'undefined'
-    ? localStorage.getItem('token') ?? document.cookie.match(/token=([^;]+)/)?.[1]
-    : null;
+  if (typeof window === 'undefined') return {};
+  const token = localStorage.getItem('token') ?? document.cookie.match(/token=([^;]+)/)?.[1] ?? '';
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
