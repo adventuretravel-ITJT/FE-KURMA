@@ -68,3 +68,48 @@ export async function fetchAdminOverview(): Promise<OverviewData> {
   if (!res.ok) throw new Error(`Overview fetch failed: ${res.status}`);
   return res.json();
 }
+
+export interface AdminUser {
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at: string | null;
+  created_at: string;
+  trips_count: number;
+  role: { id: number; name: string; slug: string } | null;
+}
+
+export interface UserListMeta {
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+}
+
+export interface UserListParams {
+  search?: string;
+  role?: string;
+  verified?: '0' | '1' | '';
+  sort?: string;
+  dir?: 'asc' | 'desc';
+  per_page?: number;
+  page?: number;
+}
+
+export async function fetchAdminUsers(params: UserListParams = {}): Promise<{ data: AdminUser[]; meta: UserListMeta }> {
+  const q = new URLSearchParams();
+  if (params.search)   q.set('search',   params.search);
+  if (params.role)     q.set('role',     params.role);
+  if (params.verified) q.set('verified', params.verified);
+  if (params.sort)     q.set('sort',     params.sort);
+  if (params.dir)      q.set('dir',      params.dir);
+  if (params.per_page) q.set('per_page', String(params.per_page));
+  if (params.page)     q.set('page',     String(params.page));
+
+  const res = await fetch(`${BASE}/api/admin/users?${q}`, {
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error(`User list fetch failed: ${res.status}`);
+  return res.json();
+}
