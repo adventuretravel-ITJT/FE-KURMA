@@ -11,7 +11,7 @@ const API = process.env.NEXT_PUBLIC_API_URL;
 const RECENT_KEY = 'admin_search_recent';
 const MAX_RECENT = 8;
 
-function authHeaders() {
+function authHeaders(): Record<string, string> {
   const token = typeof window !== 'undefined'
     ? localStorage.getItem('token') ?? document.cookie.match(/token=([^;]+)/)?.[1]
     : null;
