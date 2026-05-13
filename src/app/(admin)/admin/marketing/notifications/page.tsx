@@ -694,20 +694,20 @@ export default function NotificationsPage() {
             {blasts.last_page > 1 && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '14px 20px', borderTop: '1px solid var(--kg-hairline)' }}>
                 <button
-                  onClick={() => fetchBlasts(page - 1)}
+                  onClick={() => fetchBlasts(page - 1, searchCommit, filterType, filterTarget)}
                   disabled={page === 1}
                   style={{ ...pageBtnStyle, opacity: page === 1 ? 0.4 : 1 }}
                 >
                   ‹
                 </button>
                 {Array.from({ length: blasts.last_page }, (_, i) => i + 1).map(p => (
-                  <button key={p} onClick={() => fetchBlasts(p)}
+                  <button key={p} onClick={() => fetchBlasts(p, searchCommit, filterType, filterTarget)}
                     style={{ ...pageBtnStyle, border: `1px solid ${p === page ? 'var(--kg-primary)' : 'var(--kg-hairline)'}`, background: p === page ? 'var(--kg-primary)' : 'transparent', color: p === page ? '#fff' : 'var(--kg-ink-56)' }}>
                     {p}
                   </button>
                 ))}
                 <button
-                  onClick={() => fetchBlasts(page + 1)}
+                  onClick={() => fetchBlasts(page + 1, searchCommit, filterType, filterTarget)}
                   disabled={page === blasts.last_page}
                   style={{ ...pageBtnStyle, opacity: page === blasts.last_page ? 0.4 : 1 }}
                 >
