@@ -1,10 +1,9 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useUser } from '@/contexts/UserContext'
 
-/* â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 interface Trip {
     id: number
     name: string
@@ -16,7 +15,6 @@ interface Trip {
     end_date?: string
 }
 
-/* â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function greetingPrefix() {
     const h = new Date().getHours()
     if (h < 12) return 'Good morning'
@@ -25,7 +23,7 @@ function greetingPrefix() {
 }
 
 // Returns the flag string only if it contains valid emoji codepoints.
-// Corrupted UTF-8-as-Latin-1 strings only have codepoints ≤ 0xFF — we reject those.
+// Corrupted UTF-8-as-Latin-1 strings only have codepoints <= 0xFF — we reject those.
 function safeFlagEmoji(flag: string | null | undefined): string | null {
     if (!flag) return null
     return [...flag].some(c => (c.codePointAt(0) ?? 0) > 0xFF) ? flag : null
@@ -40,9 +38,6 @@ function GlobeIcon() {
     )
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   DASHBOARD PAGE
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function DashboardPage() {
     const { user, onToggleSidebar } = useUser()
     const [trips, setTrips]     = useState<Trip[]>([])
@@ -67,7 +62,7 @@ export default function DashboardPage() {
 
     return (
         <>
-            {/* â”€â”€ Topbar â”€â”€ */}
+            {/* Topbar */}
             <div className="dash-topbar">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <button
@@ -95,11 +90,11 @@ export default function DashboardPage() {
                 </Link>
             </div>
 
-            {/* â”€â”€ Page â”€â”€ */}
+            {/* Page */}
             <div className="dash-page">
                 <div className="dash-grid">
 
-                    {/* â”€â”€ LEFT COLUMN â”€â”€ */}
+                    {/* LEFT COLUMN */}
                     <div>
                         {/* Greeting */}
                         <div style={{ marginBottom: 28, animation: 'fadeUp .45s ease both' }}>
@@ -148,13 +143,9 @@ export default function DashboardPage() {
                         )}
                     </div>
 
-                    {/* â”€â”€ RIGHT COLUMN â”€â”€ */}
+                    {/* RIGHT COLUMN */}
                     <div className="dash-right" style={{ animation: 'fadeUp .45s ease .08s both' }}>
-
-                        {/* Upcoming card — shown when trips exist */}
                         {hasTrips && <UpcomingWidget trips={trips} />}
-
-                        {/* Kurma tip — always visible */}
                         <KurmaTipWidget destination={nextTrip?.destination} />
                     </div>
 
@@ -164,9 +155,6 @@ export default function DashboardPage() {
     )
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   TRIP CARD
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
     active:    { bg: 'var(--accent-bg)', color: 'var(--accent)', label: 'Active' },
     draft:     { bg: 'var(--ink-05)',    color: 'var(--ink-50)', label: 'Planning' },
@@ -180,6 +168,7 @@ function TripCard({ trip }: { trip: Trip }) {
         ? Math.round((new Date(trip.end_date).getTime() - new Date(trip.start_date).getTime()) / 86400000)
         : null
     const hasDates = !!trip.start_date
+    const flag = safeFlagEmoji(trip.destination_flag)
 
     return (
         <Link
@@ -189,7 +178,7 @@ function TripCard({ trip }: { trip: Trip }) {
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line)'; e.currentTarget.style.boxShadow = 'none' }}
         >
             <div style={{ width: 48, height: 48, borderRadius: 10, background: hasDates ? 'linear-gradient(135deg,rgba(44,95,78,.08),rgba(184,149,106,.08))' : 'var(--ink-05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
-                {trip.destination_flag ?? 'ðŸ—ºï¸'}
+                {flag ?? <GlobeIcon />}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -211,7 +200,7 @@ function TripCard({ trip }: { trip: Trip }) {
                     )}
                     {!hasDates && (
                         <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 100, background: 'rgba(220,100,40,.07)', color: '#C4511A' }}>
-                            ðŸ“… Add dates
+                            Add dates
                         </span>
                     )}
                 </div>
@@ -225,9 +214,6 @@ function TripCard({ trip }: { trip: Trip }) {
     )
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   EMPTY STATE
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function EmptyState() {
     return (
         <div style={{ background: 'var(--bg-card)', border: '1.5px dashed var(--line-strong)', borderRadius: 16, padding: '56px 32px', textAlign: 'center' }}>
@@ -238,7 +224,7 @@ function EmptyState() {
             </div>
             <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 20, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 8 }}>No trips yet</div>
             <div style={{ fontSize: 13.5, color: 'var(--ink-50)', maxWidth: 320, margin: '0 auto 24px', lineHeight: 1.7 }}>
-                Plan your first trip and we'll keep itinerary, bookings, and connectivity all in one place.
+                Plan your first trip and we&apos;ll keep itinerary, bookings, and connectivity all in one place.
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <Link
@@ -257,9 +243,6 @@ function EmptyState() {
     )
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   ONBOARDING CARD
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function OnboardingCard() {
     const steps = [
         { done: true,  current: false, label: 'Create your account',            desc: '' },
@@ -288,9 +271,6 @@ function OnboardingCard() {
     )
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   UPCOMING WIDGET
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function UpcomingWidget({ trips }: { trips: Trip[] }) {
     const upcoming = trips
         .filter((t) => t.start_date && new Date(t.start_date) >= new Date())
@@ -338,9 +318,11 @@ function UpcomingWidget({ trips }: { trips: Trip[] }) {
                                     onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--line-strong)')}
                                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)')}
                                 >
-                                    <span style={{ fontSize: 14 }}>{t.destination_flag ?? 'ðŸ—ºï¸'}</span>
+                                    <span style={{ fontSize: 16, lineHeight: 1, width: 20, textAlign: 'center', flexShrink: 0 }}>
+                                        {safeFlagEmoji(t.destination_flag) ?? <GlobeIcon />}
+                                    </span>
                                     <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</span>
-                                    <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 100, background: 'rgba(220,100,40,.07)', color: '#C4511A', whiteSpace: 'nowrap' }}>ðŸ“… Add dates</span>
+                                    <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 100, background: 'rgba(220,100,40,.07)', color: '#C4511A', whiteSpace: 'nowrap' }}>Add dates</span>
                                 </Link>
                             ))}
                         </div>
@@ -351,15 +333,12 @@ function UpcomingWidget({ trips }: { trips: Trip[] }) {
     )
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   KURMA TIP WIDGET
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 const TIPS: Record<string, { dest: string; tip: string }> = {
     Japan:          { dest: 'Japan',         tip: 'Shinkansen tickets sell out fast during peak season — book at least 2 weeks ahead for Golden Week or sakura season.' },
     'South Korea':  { dest: 'Seoul',         tip: 'T-money card works on all transit in Seoul — top it up at any convenience store before your first subway ride.' },
     Thailand:       { dest: 'Thailand',      tip: 'Visit temples early morning to beat the crowds and the heat. Most open from 8am and are quietest before 9am.' },
     Indonesia:      { dest: 'Bali',          tip: "Rent a scooter only if you're comfortable in heavy traffic — Bali roads move fast and lane rules are loose." },
-    France:         { dest: 'Paris',         tip: "The Musee d'Orsay is far less crowded than the Louvre and houses some of the finest impressionist works in the world." },
+    France:         { dest: 'Paris',         tip: "The Musée d'Orsay is far less crowded than the Louvre and houses some of the finest impressionist works in the world." },
     Italy:          { dest: 'Italy',         tip: 'Book Colosseum and Vatican tickets online at least 3 days ahead — same-day queues can be 2+ hours.' },
     Singapore:      { dest: 'Singapore',     tip: 'Hawker centres offer the best local food at unbeatable prices. Try Maxwell Food Centre or Lau Pa Sat.' },
     __default:      { dest: 'Japan · Kyoto', tip: 'Arashiyama bamboo grove is best before 7am — most tour groups arrive after 9 and crowds get thick fast.' },
@@ -381,9 +360,6 @@ function KurmaTipWidget({ destination }: { destination?: string }) {
     )
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   LOADING SKELETON
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function TripSkeleton() {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -400,4 +376,3 @@ function TripSkeleton() {
         </div>
     )
 }
-
