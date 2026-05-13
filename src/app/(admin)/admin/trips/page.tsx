@@ -280,7 +280,12 @@ export default function AdminTripsPage() {
 
                     <td style={{ padding: '12px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span style={{ fontSize: 18 }}>{trip.destination_flag || '✈️'}</span>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 6, background: '#F0EBE1', fontSize: 10, fontWeight: 700, letterSpacing: '.05em', fontFamily: 'monospace', color: '#5C6B7A' }}>
+                          {trip.destination_flag && /^[A-Za-z]{2}$/.test(trip.destination_flag.trim())
+                            ? trip.destination_flag.trim().toUpperCase()
+                            : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 13, height: 13 }}><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 010 18M3 12h18M3.6 8h16.8M3.6 16h16.8"/></svg>
+                          }
+                        </span>
                         <div>
                           <p style={{ fontSize: 13, fontWeight: 600, color: '#0D1B2A', lineHeight: 1.2 }}>{trip.name}</p>
                           <p style={{ fontSize: 11.5, color: '#8A95A2', display: 'flex', alignItems: 'center', gap: 3, marginTop: 1 }}>
