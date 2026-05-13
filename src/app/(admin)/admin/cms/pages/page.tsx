@@ -243,6 +243,12 @@ export default function LegalPagesPage() {
         }
       />
 
+      {/* Slug guide */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20, padding: '12px 16px', background: '#EEF4FA', borderRadius: 10, border: '1px solid #C3D9ED', fontSize: 12.5, color: '#1E6091' }}>
+        <span style={{ fontWeight: 600, flexShrink: 0 }}>💡 Slug penting:</span>
+        <span>Halaman <strong>Privacy Policy</strong> harus pakai slug <code style={{ background: '#fff', padding: '1px 6px', borderRadius: 4 }}>privacy-policy</code> · Halaman <strong>Terms of Service</strong> harus pakai slug <code style={{ background: '#fff', padding: '1px 6px', borderRadius: 4 }}>terms-of-service</code> agar tampil otomatis di halaman publik.</span>
+      </div>
+
       {/* Filters */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: 340 }}>

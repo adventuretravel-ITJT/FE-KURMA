@@ -466,7 +466,7 @@ export default function HomepagePage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Gagal menyimpan');
+      setError(e instanceof Error ? e.message : 'Gagal menyimpan');
     } finally {
       setSaving(false);
     }
