@@ -88,8 +88,43 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         init()
 
+        // Re-check auth when user returns to the tab after being away
+        async function onVisibilityChange() {
+            if (document.visibilityState !== 'visible') return
+            const token = localStorage.getItem('token')
+            if (!token) { router.replace('/auth'); return }
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+                const exp = payload.exp as number | undefined
+                if (exp && Date.now() / 1000 > exp) {
+                    const refreshed = await tryRefreshToken()
+                    if (!refreshed) {
+                        localStorage.removeItem('token')
+                        router.replace('/auth')
+                    }
+                }
+            } catch { /* malformed token — leave it to next API call */ }
+        }
+        document.addEventListener('visibilitychange', onVisibilityChange)
+
+        // Intercept 401 responses — try refresh once, redirect if it fails
+        const originalFetch = window.fetch
+        window.fetch = async (...args: Parameters<typeof fetch>) => {
+            const res = await originalFetch(...args)
+            if (res.status === 401) {
+                const refreshed = await tryRefreshToken()
+                if (!refreshed) {
+                    localStorage.removeItem('token')
+                    router.replace('/auth')
+                }
+            }
+            return res
+        }
+
         return () => {
             if (refreshTimer.current) clearInterval(refreshTimer.current)
+            document.removeEventListener('visibilitychange', onVisibilityChange)
+            window.fetch = originalFetch
         }
     }, [router])
 
