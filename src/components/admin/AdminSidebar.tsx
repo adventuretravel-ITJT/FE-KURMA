@@ -29,8 +29,6 @@ import {
   Briefcase,
   Scale,
   Search,
-  ShieldCheck,
-  FileCheck,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -74,8 +72,6 @@ const navGroups: NavGroup[] = [
           { label: 'Homepage', href: '/admin/homepage', icon: MonitorPlay },
           { label: 'Blog Posts', href: '/admin/cms/posts', icon: BookOpen },
           { label: 'Legal Pages', href: '/admin/cms/pages', icon: Scale },
-          { label: 'Privacy Policy', href: '/admin/cms/pages/privacy', icon: ShieldCheck },
-          { label: 'Terms of Service', href: '/admin/cms/pages/terms', icon: FileCheck },
           { label: 'Media Library', href: '/admin/cms/media', icon: Images },
         ],
       },
