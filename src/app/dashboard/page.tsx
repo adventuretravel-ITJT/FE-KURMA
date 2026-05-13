@@ -22,16 +22,23 @@ function greetingPrefix() {
     return 'Good evening'
 }
 
-// Returns the flag string only if it contains valid emoji codepoints.
-// Corrupted UTF-8-as-Latin-1 strings only have codepoints <= 0xFF — we reject those.
-function safeFlagEmoji(flag: string | null | undefined): string | null {
+// Returns a 2-letter country code if valid, null otherwise.
+function safeCountryCode(flag: string | null | undefined): string | null {
     if (!flag) return null
-    return [...flag].some(c => (c.codePointAt(0) ?? 0) > 0xFF) ? flag : null
+    const t = flag.trim()
+    return /^[A-Za-z]{2}$/.test(t) ? t.toUpperCase() : null
 }
 
-function GlobeIcon() {
+function FlagBadge({ code }: { code: string | null }) {
+    if (code) {
+        return (
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.06em', color: 'var(--ink-50)', fontFamily: 'monospace' }}>
+                {code}
+            </span>
+        )
+    }
     return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 22, height: 22, color: 'var(--ink-25)' }}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 20, height: 20, color: 'var(--ink-25)' }}>
             <circle cx="12" cy="12" r="9" />
             <path d="M12 3a15 15 0 010 18M3 12h18M3.6 8h16.8M3.6 16h16.8" />
         </svg>
@@ -168,7 +175,7 @@ function TripCard({ trip }: { trip: Trip }) {
         ? Math.round((new Date(trip.end_date).getTime() - new Date(trip.start_date).getTime()) / 86400000)
         : null
     const hasDates = !!trip.start_date
-    const flag = safeFlagEmoji(trip.destination_flag)
+    const code = safeCountryCode(trip.destination_flag)
 
     return (
         <Link
@@ -177,8 +184,8 @@ function TripCard({ trip }: { trip: Trip }) {
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; e.currentTarget.style.boxShadow = '0 2px 16px rgba(0,0,0,.05)' }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line)'; e.currentTarget.style.boxShadow = 'none' }}
         >
-            <div style={{ width: 48, height: 48, borderRadius: 10, background: hasDates ? 'linear-gradient(135deg,rgba(44,95,78,.08),rgba(184,149,106,.08))' : 'var(--ink-05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
-                {flag ?? <GlobeIcon />}
+            <div style={{ width: 48, height: 48, borderRadius: 10, background: hasDates ? 'linear-gradient(135deg,rgba(44,95,78,.08),rgba(184,149,106,.08))' : 'var(--ink-05)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <FlagBadge code={code} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 15, fontWeight: 500, letterSpacing: '-.02em', color: 'var(--ink)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -318,8 +325,8 @@ function UpcomingWidget({ trips }: { trips: Trip[] }) {
                                     onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--line-strong)')}
                                     onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--line)')}
                                 >
-                                    <span style={{ fontSize: 16, lineHeight: 1, width: 20, textAlign: 'center', flexShrink: 0 }}>
-                                        {safeFlagEmoji(t.destination_flag) ?? <GlobeIcon />}
+                                    <span style={{ width: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                        <FlagBadge code={safeCountryCode(t.destination_flag)} />
                                     </span>
                                     <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</span>
                                     <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 100, background: 'rgba(220,100,40,.07)', color: '#C4511A', whiteSpace: 'nowrap' }}>Add dates</span>

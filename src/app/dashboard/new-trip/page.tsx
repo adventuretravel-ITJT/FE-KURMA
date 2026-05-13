@@ -35,21 +35,21 @@ interface FormState {
 
 /* â”€â”€â”€ Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const DESTS: Dest[] = [
-    { flag: 'ðŸ—¾', name: 'Japan',          country: 'East Asia',      tag: 'Popular' },
-    { flag: 'ðŸ‡¨ðŸ‡³', name: 'China',          country: 'East Asia',      tag: 'Popular' },
-    { flag: 'ðŸ‡°ðŸ‡·', name: 'South Korea',    country: 'East Asia' },
-    { flag: 'ðŸ‡¹ðŸ‡­', name: 'Thailand',       country: 'Southeast Asia', tag: 'Popular' },
-    { flag: 'ðŸ‡¸ðŸ‡¬', name: 'Singapore',      country: 'Southeast Asia' },
-    { flag: 'ðŸ‡®ðŸ‡©', name: 'Indonesia',      country: 'Southeast Asia' },
-    { flag: 'ðŸ‡®ðŸ‡¹', name: 'Italy',          country: 'Europe' },
-    { flag: 'ðŸ‡«ðŸ‡·', name: 'France',         country: 'Europe' },
-    { flag: 'ðŸ‡¬ðŸ‡§', name: 'United Kingdom', country: 'Europe' },
-    { flag: 'ðŸ‡ºðŸ‡¸', name: 'United States',  country: 'North America' },
-    { flag: 'ðŸ‡¦ðŸ‡º', name: 'Australia',      country: 'Oceania' },
-    { flag: 'ðŸ‡¹ðŸ‡·', name: 'Turkey',         country: 'Europe / Asia' },
-    { flag: 'ðŸ‡²ðŸ‡¦', name: 'Morocco',        country: 'North Africa' },
-    { flag: 'ðŸ‡¦ðŸ‡ª', name: 'UAE',            country: 'Middle East' },
-    { flag: 'ðŸ‡®ðŸ‡³', name: 'India',          country: 'South Asia' },
+    { flag: 'JP', name: 'Japan',          country: 'East Asia',      tag: 'Popular' },
+    { flag: 'CN', name: 'China',          country: 'East Asia',      tag: 'Popular' },
+    { flag: 'KR', name: 'South Korea',    country: 'East Asia' },
+    { flag: 'TH', name: 'Thailand',       country: 'Southeast Asia', tag: 'Popular' },
+    { flag: 'SG', name: 'Singapore',      country: 'Southeast Asia' },
+    { flag: 'ID', name: 'Indonesia',      country: 'Southeast Asia' },
+    { flag: 'IT', name: 'Italy',          country: 'Europe' },
+    { flag: 'FR', name: 'France',         country: 'Europe' },
+    { flag: 'GB', name: 'United Kingdom', country: 'Europe' },
+    { flag: 'US', name: 'United States',  country: 'North America' },
+    { flag: 'AU', name: 'Australia',      country: 'Oceania' },
+    { flag: 'TR', name: 'Turkey',         country: 'Europe / Asia' },
+    { flag: 'MA', name: 'Morocco',        country: 'North Africa' },
+    { flag: 'AE', name: 'UAE',            country: 'Middle East' },
+    { flag: 'IN', name: 'India',          country: 'South Asia' },
 ]
 
 const TRAVEL_TYPES = [
@@ -414,7 +414,9 @@ export default function NewTripPage() {
                                                             onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-warm)')}
                                                             onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                                                         >
-                                                            <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--accent-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>{d.flag}</div>
+                                                            <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--accent-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.04em', color: 'var(--accent)', fontFamily: 'monospace' }}>{d.flag}</span>
+                                            </div>
                                                             <div style={{ flex: 1 }}>
                                                                 <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--ink)' }}>{d.name}</div>
                                                                 <div style={{ fontSize: 11, color: 'var(--ink-25)' }}>{d.country}</div>
@@ -427,7 +429,7 @@ export default function NewTripPage() {
                                         </>
                                     ) : (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', borderRadius: 10 }}>
-                                            <span style={{ fontSize: 16 }}>{form.destinationFlag}</span>
+                                            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.05em', color: 'var(--accent)', fontFamily: 'monospace', minWidth: 20, textAlign: 'center' }}>{form.destinationFlag}</span>
                                             <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--accent)', flex: 1 }}>{form.destination}</span>
                                             <button onClick={clearDest} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 18, lineHeight: 1, opacity: .6, padding: '0 2px' }}>Ã—</button>
                                         </div>
@@ -498,7 +500,7 @@ export default function NewTripPage() {
                             <div style={ss.sub}>Set your travel dates, or skip and decide later.</div>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: 'var(--bg-warm)', borderRadius: 10, marginBottom: 20 }}>
-                                <span style={{ fontSize: 16 }}>{form.destinationFlag}</span>
+                                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.05em', color: 'var(--ink-50)', fontFamily: 'monospace', minWidth: 20, textAlign: 'center' }}>{form.destinationFlag}</span>
                                 <div>
                                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{form.destination}</div>
                                     <div style={{ fontSize: 11, color: 'var(--ink-25)' }}>{form.tripName || `${form.destination} Trip`}</div>

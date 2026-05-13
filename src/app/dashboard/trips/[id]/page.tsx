@@ -910,10 +910,11 @@ export default function TripItineraryPage() {
         }}>
           {/* Trip header */}
           <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid var(--line)' }}>
-            <div style={{ fontSize: 26, marginBottom: 8, lineHeight: 1 }}>
-              {trip?.destination_flag ?? (
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-25)" strokeWidth="1.4" strokeLinecap="round" style={{width:26,height:26}}><path d="M3 20V5l6 3 6-3 6 3v15l-6-3-6 3-6-3z"/><path d="M9 8v10M15 5v10"/></svg>
-              )}
+            <div style={{ marginBottom: 8, lineHeight: 1 }}>
+              {trip?.destination_flag && /^[A-Za-z]{2}$/.test(trip.destination_flag.trim())
+                ? <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '.08em', color: 'var(--ink-50)', fontFamily: 'monospace', display: 'inline-block', padding: '4px 8px', background: 'var(--ink-05)', borderRadius: 6 }}>{trip.destination_flag.trim().toUpperCase()}</span>
+                : <svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-25)" strokeWidth="1.4" strokeLinecap="round" style={{width:26,height:26}}><path d="M3 20V5l6 3 6-3 6 3v15l-6-3-6 3-6-3z"/><path d="M9 8v10M15 5v10"/></svg>
+              }
             </div>
             <div style={{ fontFamily: 'var(--font-fraunces)', fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 500, letterSpacing: '-.03em', lineHeight: 1.1 }}>
               {trip?.name ?? 'Your Trip'} —{' '}

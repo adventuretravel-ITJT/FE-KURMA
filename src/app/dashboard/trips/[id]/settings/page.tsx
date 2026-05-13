@@ -184,7 +184,9 @@ export default function TripSettingsPage() {
           Trip Settings
         </div>
         <div style={{ fontSize: 13, color: 'var(--ink-50)', marginBottom: 32, lineHeight: 1.6 }}>
-          {trip?.destination_flag && <span style={{ marginRight: 6 }}>{trip.destination_flag}</span>}
+          {trip?.destination_flag && /^[A-Za-z]{2}$/.test(trip.destination_flag.trim()) && (
+            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.05em', fontFamily: 'monospace', color: 'var(--ink-25)', marginRight: 6 }}>{trip.destination_flag.trim().toUpperCase()}</span>
+          )}
           {trip?.destination}
         </div>
 
@@ -211,7 +213,9 @@ export default function TripSettingsPage() {
 
         <SettingRow label="Destination">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px', height: 42, background: 'var(--bg-warm)', border: '1px solid var(--line)', borderRadius: 10, fontSize: 13, color: 'var(--ink-50)' }}>
-            {trip?.destination_flag && <span>{trip.destination_flag}</span>}
+            {trip?.destination_flag && /^[A-Za-z]{2}$/.test(trip.destination_flag.trim()) && (
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.05em', fontFamily: 'monospace', color: 'var(--ink-50)' }}>{trip.destination_flag.trim().toUpperCase()}</span>
+            )}
             <span>{trip?.destination}</span>
             <span style={{ fontSize: 10, color: 'var(--ink-25)', marginLeft: 4 }}>· change via new trip</span>
           </div>
