@@ -431,7 +431,7 @@ export default function NewTripPage() {
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', background: 'var(--accent-bg)', border: '1px solid var(--accent-10)', borderRadius: 10 }}>
                                             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.05em', color: 'var(--accent)', fontFamily: 'monospace', minWidth: 20, textAlign: 'center' }}>{form.destinationFlag}</span>
                                             <span style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--accent)', flex: 1 }}>{form.destination}</span>
-                                            <button onClick={clearDest} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 18, lineHeight: 1, opacity: .6, padding: '0 2px' }}>Ã—</button>
+                                            <button onClick={clearDest} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 18, lineHeight: 1, opacity: .6, padding: '0 2px' }}><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" style="width:14px;height:14px"><path d="M2 2l6 6M8 2l-6 6"/></svg></button>
                                         </div>
                                     )}
                                 </div>
@@ -479,7 +479,7 @@ export default function NewTripPage() {
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                                     <button onClick={() => stepperChange(row.field, -1)}
                                                         disabled={form[row.field] <= (row.field === 'adults' ? 1 : 0)}
-                                                        style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)', fontSize: 16, fontFamily: 'inherit', opacity: form[row.field] <= (row.field === 'adults' ? 1 : 0) ? .3 : 1 }}>âˆ’</button>
+                                                        style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)', fontSize: 16, fontFamily: 'inherit', opacity: form[row.field] <= (row.field === 'adults' ? 1 : 0) ? .3 : 1 }}><svg viewBox="0 0 10 2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{width:12,height:12}}><path d="M1 1h8"/></svg></button>
                                                     <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)', minWidth: 20, textAlign: 'center' }}>{form[row.field]}</span>
                                                     <button onClick={() => stepperChange(row.field, 1)}
                                                         style={{ width: 28, height: 28, borderRadius: '50%', border: '1.5px solid var(--line-strong)', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-50)', fontSize: 16, fontFamily: 'inherit' }}>+</button>
