@@ -53,7 +53,7 @@ export default function NotificationBell() {
             });
             const data = await res.json();
             if (res.ok) {
-                setNotifs(data.data ?? []);
+                setNotifs(data.notifications ?? []);
                 setUnread(data.unread_count ?? 0);
             }
         } catch {
