@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { FileStack, Plus, Pencil, Trash2, Search, Eye, EyeOff, RefreshCw, X, AlertCircle } from 'lucide-react';
 import { PageHeader } from '@/components/admin/ui/PageHeader';
+import RichTextEditor from '@/components/admin/ui/RichTextEditor';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -65,7 +66,7 @@ function PageModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.title.trim()) { setError('Title is required.'); return; }
-    if (!form.content.trim()) { setError('Content is required.'); return; }
+    if (!form.content.trim() || form.content === '<p></p>') { setError('Content is required.'); return; }
     setSaving(true); setError('');
     try {
       const url  = isEdit ? `${API}/api/admin/legal-pages/${page!.id}` : `${API}/api/admin/legal-pages`;
@@ -122,9 +123,12 @@ function PageModal({
 
           <div>
             <label style={labelStyle}>Content *</label>
-            <textarea style={{ ...inputStyle, minHeight: 200, resize: 'vertical', lineHeight: 1.6 }}
-              value={form.content} onChange={e => setField('content', e.target.value)}
-              placeholder="Write the full legal page content here..." required />
+            <RichTextEditor
+              value={form.content}
+              onChange={(html) => setField('content', html)}
+              placeholder="Write the full legal page content here…"
+              minHeight={220}
+            />
           </div>
 
           <div>

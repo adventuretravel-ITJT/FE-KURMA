@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Save, CheckCircle2, AlertCircle, ExternalLink, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { PageHeader } from '@/components/admin/ui/PageHeader';
+import RichTextEditor from '@/components/admin/ui/RichTextEditor';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 const SLUG = 'terms-of-service';
@@ -55,7 +56,7 @@ export default function TermsEditor() {
 
   async function handleSave() {
     if (!form.title.trim()) { setError('Title wajib diisi.'); return; }
-    if (!form.content.trim()) { setError('Content wajib diisi.'); return; }
+    if (!form.content.trim() || form.content === '<p></p>') { setError('Content wajib diisi.'); return; }
     setSaving(true); setError(''); setSaved(false);
     try {
       const isEdit = !!page;
@@ -153,19 +154,12 @@ export default function TermsEditor() {
 
           {/* Content */}
           <div>
-            <label style={labelStyle}>
-              Konten *{' '}
-              <span style={{ fontWeight: 400, textTransform: 'none', color: '#8A95A2' }}>(HTML — akan dirender langsung di halaman /terms)</span>
-            </label>
-            <div style={{ fontSize: 11.5, color: '#1E6091', background: '#EEF4FA', border: '1px solid #C3D9ED', borderRadius: 6, padding: '8px 12px', marginBottom: 8 }}>
-              💡 Tulis konten dalam format HTML. Gunakan tag seperti <code>&lt;h2&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;ul&gt;&lt;li&gt;</code>, <code>&lt;section id="s01"&gt;</code> untuk membuat struktur yang rapi.
-            </div>
-            <textarea
-              style={{ ...inputStyle, minHeight: 480, resize: 'vertical', lineHeight: 1.6, fontFamily: 'monospace', fontSize: 12 }}
+            <label style={labelStyle}>Konten *</label>
+            <RichTextEditor
               value={form.content}
-              onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-              placeholder={`<section id="s01">\n  <h2>Acceptance of Terms</h2>\n  <p>Your terms of service content here...</p>\n</section>\n\n<section id="s02">\n  <h2>The Service</h2>\n  <p>...</p>\n</section>`}
-              spellCheck={false}
+              onChange={(html) => setForm(f => ({ ...f, content: html }))}
+              placeholder="Mulai menulis konten terms of service di sini…"
+              minHeight={480}
             />
           </div>
 
