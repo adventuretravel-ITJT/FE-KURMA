@@ -27,6 +27,18 @@ function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
+interface LegalSection { eyebrow: string; title: string; content: string }
+
+function parseSections(content: string): LegalSection[] | null {
+  try {
+    const parsed = JSON.parse(content)
+    if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0].title === 'string') {
+      return parsed as LegalSection[]
+    }
+  } catch { /* legacy HTML */ }
+  return null
+}
+
 const TOC_ITEMS: [string, string][] = [
   ['s01', 'Acceptance of Terms'], ['s02', 'The Service'], ['s03', 'User Accounts'],
   ['s04', 'Subscription Plans'], ['s05', 'Payment & Renewal'], ['s06', 'eSIM Services'],
@@ -100,7 +112,8 @@ function LegalFooter() {
 }
 
 export default async function TermsPage() {
-  const page = await fetchLegalPage('terms-of-service')
+  const page     = await fetchLegalPage('terms-of-service')
+  const sections = page ? parseSections(page.content) : null
 
   return (
     <div className="legal-root">
@@ -141,12 +154,45 @@ export default async function TermsPage() {
 
       {page ? (
         /* ── DB content ──────────────────────────────────────────────────────── */
-        <div className="lp-layout">
-          <main
-            className="lp-content"
-            dangerouslySetInnerHTML={{ __html: page.content }}
-          />
-        </div>
+        sections ? (
+          <div className="lp-layout">
+            <aside className="lp-toc" aria-label="Table of contents">
+              <div className="lp-toc-eyebrow">Table of Contents</div>
+              <ul className="lp-toc-list">
+                {sections.map((s, i) => {
+                  const n = String(i + 1).padStart(2, '0')
+                  return (
+                    <li key={i}>
+                      <a href={`#s${n}`}>
+                        <span className="lp-num">{n}</span>{s.title}
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </aside>
+            <main className="lp-content">
+              {sections.map((s, i) => {
+                const id  = `s${String(i + 1).padStart(2, '0')}`
+                const num = String(i + 1).padStart(2, '0')
+                return (
+                  <section key={i} className="lp-section" id={id}>
+                    <div className="lp-section-eyebrow">
+                      <span className="lp-num">{num}</span>
+                      <span>{s.eyebrow || `Section ${num}`}</span>
+                    </div>
+                    <h2 className="lp-section-title">{s.title}</h2>
+                    <div dangerouslySetInnerHTML={{ __html: s.content }} />
+                  </section>
+                )
+              })}
+            </main>
+          </div>
+        ) : (
+          <div className="lp-layout">
+            <main className="lp-content" dangerouslySetInnerHTML={{ __html: page.content }} />
+          </div>
+        )
       ) : (
         /* ── Static fallback ─────────────────────────────────────────────────── */
         <>
