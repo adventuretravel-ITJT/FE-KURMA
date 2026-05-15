@@ -189,7 +189,7 @@ export default async function TermsPage() {
             </main>
           </div>
         ) : (
-          <div className="lp-layout">
+          <div className="lp-layout" style={{ gridTemplateColumns: '1fr' }}>
             <main className="lp-content" dangerouslySetInnerHTML={{ __html: page.content }} />
           </div>
         )
