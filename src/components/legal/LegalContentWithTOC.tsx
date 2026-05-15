@@ -9,13 +9,24 @@ export default function LegalContentWithTOC({ html }: { html: string }) {
   const [toc, setToc]         = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState('');
 
-  // Build TOC by scanning h2 elements after render
+  // Build TOC by scanning h2 elements after render.
+  // If an h2 has no lp-section-eyebrow sibling before it, inject one automatically.
   useEffect(() => {
     if (!contentRef.current) return;
     const headings = Array.from(contentRef.current.querySelectorAll('h2'));
     const items: TocItem[] = headings.map((h, i) => {
-      const id = `s${String(i + 1).padStart(2, '0')}`;
+      const id  = `s${String(i + 1).padStart(2, '0')}`;
+      const num = String(i + 1).padStart(2, '0');
       h.id = id;
+
+      const prev = h.previousElementSibling;
+      if (!prev || !prev.classList.contains('lp-section-eyebrow')) {
+        const eyebrow = document.createElement('div');
+        eyebrow.className = 'lp-section-eyebrow';
+        eyebrow.innerHTML = `<span class="lp-num">${num}</span><span>Section ${num}</span>`;
+        h.parentElement?.insertBefore(eyebrow, h);
+      }
+
       return { id, text: h.textContent?.trim() || '' };
     });
     setToc(items);
