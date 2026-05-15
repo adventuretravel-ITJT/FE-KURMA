@@ -21,9 +21,16 @@ export default function LegalContentWithTOC({ html }: { html: string }) {
 
       const prev = h.previousElementSibling;
       if (!prev || !prev.classList.contains('lp-section-eyebrow')) {
+        // If a <p> sits immediately before this h2, treat it as the eyebrow label
+        // (legacy content format where eyebrow was typed as a plain paragraph)
+        let label = `Section ${num}`;
+        if (prev && prev.tagName === 'P') {
+          label = prev.textContent?.trim() || label;
+          prev.parentElement?.removeChild(prev);
+        }
         const eyebrow = document.createElement('div');
         eyebrow.className = 'lp-section-eyebrow';
-        eyebrow.innerHTML = `<span class="lp-num">${num}</span><span>Section ${num}</span>`;
+        eyebrow.innerHTML = `<span class="lp-num">${num}</span><span>${label}</span>`;
         h.parentElement?.insertBefore(eyebrow, h);
       }
 
@@ -62,7 +69,10 @@ export default function LegalContentWithTOC({ html }: { html: string }) {
                 className={activeId === item.id ? 'active' : ''}
                 onClick={e => {
                   e.preventDefault();
-                  document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  const el = document.getElementById(item.id);
+                  if (!el) return;
+                  const top = el.getBoundingClientRect().top + window.scrollY - 88;
+                  window.scrollTo({ top, behavior: 'smooth' });
                 }}
               >
                 <span className="lp-num">{String(i + 1).padStart(2, '0')}</span>
