@@ -173,6 +173,7 @@
   font-family: var(--lp-serif); font-size: 32px; font-weight: 600;
   line-height: 1.15; letter-spacing: -0.2px; color: var(--lp-primary-deep); margin-bottom: 24px;
 }
+.lp-content h2 { scroll-margin-top: 88px; }
 .lp-content p { font-family: var(--lp-sans); font-size: 16px; line-height: 1.7; color: var(--lp-ink); margin-bottom: 16px; }
 .lp-content p:last-child { margin-bottom: 0; }
 .lp-content strong { font-weight: 600; color: var(--lp-primary-deep); }

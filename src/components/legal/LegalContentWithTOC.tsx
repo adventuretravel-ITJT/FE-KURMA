@@ -69,10 +69,8 @@ export default function LegalContentWithTOC({ html }: { html: string }) {
                 className={activeId === item.id ? 'active' : ''}
                 onClick={e => {
                   e.preventDefault();
-                  const el = document.getElementById(item.id);
-                  if (!el) return;
-                  const top = el.getBoundingClientRect().top + window.scrollY - 88;
-                  window.scrollTo({ top, behavior: 'smooth' });
+                  const h2 = contentRef.current?.querySelector<HTMLElement>(`h2[id="${item.id}"]`);
+                  h2?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
               >
                 <span className="lp-num">{String(i + 1).padStart(2, '0')}</span>
