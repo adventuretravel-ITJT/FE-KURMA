@@ -2,28 +2,26 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-interface TocItem { id: string; text: string }
+interface TocItem { text: string }
 
 export default function LegalContentWithTOC({ html }: { html: string }) {
-  const contentRef            = useRef<HTMLDivElement>(null);
-  const [toc, setToc]         = useState<TocItem[]>([]);
-  const [activeId, setActiveId] = useState('');
+  const contentRef  = useRef<HTMLDivElement>(null);
+  const [toc, setToc] = useState<TocItem[]>([]);
+  const [activeIdx, setActiveIdx] = useState(0);
 
-  // Build TOC by scanning h2 elements after render.
-  // If an h2 has no lp-section-eyebrow sibling before it, inject one automatically.
+  // Collect h2 headings, inject eyebrow divs for legacy HTML
   useEffect(() => {
     if (!contentRef.current) return;
     const headings = Array.from(contentRef.current.querySelectorAll('h2'));
+    if (headings.length === 0) return;
+
     const items: TocItem[] = headings.map((h, i) => {
-      const id  = `s${String(i + 1).padStart(2, '0')}`;
       const num = String(i + 1).padStart(2, '0');
-      h.id = id;
 
       const prev = h.previousElementSibling;
       if (!prev || !prev.classList.contains('lp-section-eyebrow')) {
-        // If a <p> sits immediately before this h2, treat it as the eyebrow label
-        // (legacy content format where eyebrow was typed as a plain paragraph)
         let label = `Section ${num}`;
+        // Legacy format: preceding <p> was used as eyebrow label — absorb & remove it
         if (prev && prev.tagName === 'P') {
           label = prev.textContent?.trim() || label;
           prev.parentElement?.removeChild(prev);
@@ -34,27 +32,33 @@ export default function LegalContentWithTOC({ html }: { html: string }) {
         h.parentElement?.insertBefore(eyebrow, h);
       }
 
-      return { id, text: h.textContent?.trim() || '' };
+      return { text: h.textContent?.trim() || '' };
     });
+
     setToc(items);
   }, [html]);
 
-  // Scroll spy — highlight active TOC item
+  // Scroll spy — highlight active TOC item by index
   useEffect(() => {
     if (toc.length === 0) return;
     const onScroll = () => {
       if (!contentRef.current) return;
       const headings = Array.from(contentRef.current.querySelectorAll('h2'));
-      let current = headings[0]?.id ?? '';
-      for (const h of headings) {
-        if (h.getBoundingClientRect().top <= 128) current = h.id;
+      let idx = 0;
+      for (let i = 0; i < headings.length; i++) {
+        if (headings[i].getBoundingClientRect().top <= 128) idx = i;
       }
-      setActiveId(current);
+      setActiveIdx(idx);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, [toc]);
+
+  function scrollToHeading(i: number) {
+    const headings = contentRef.current?.querySelectorAll('h2');
+    headings?.[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   return (
     <div className="lp-layout">
@@ -63,15 +67,11 @@ export default function LegalContentWithTOC({ html }: { html: string }) {
         <div className="lp-toc-eyebrow">Table of Contents</div>
         <ul className="lp-toc-list">
           {toc.map((item, i) => (
-            <li key={item.id}>
+            <li key={i}>
               <a
-                href={`#${item.id}`}
-                className={activeId === item.id ? 'active' : ''}
-                onClick={e => {
-                  e.preventDefault();
-                  const h2 = contentRef.current?.querySelector<HTMLElement>(`h2[id="${item.id}"]`);
-                  h2?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
+                href={`#s${String(i + 1).padStart(2, '0')}`}
+                className={activeIdx === i ? 'active' : ''}
+                onClick={e => { e.preventDefault(); scrollToHeading(i); }}
               >
                 <span className="lp-num">{String(i + 1).padStart(2, '0')}</span>
                 {item.text}
