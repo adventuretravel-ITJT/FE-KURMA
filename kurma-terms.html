@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms of Service · KurmaGo</title>
+<meta name="description" content="KurmaGo Terms of Service — the agreement that governs your use of our travel planning and connectivity platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1E6091;
+  --primary-deep: #0A3D62;
+  --primary-bright: #2E86AB;
+  --primary-tint: #A8DADC;
+  --ink: #0D1B2A;
+  --ink-muted-72: #3A4A5C;
+  --ink-muted-56: #5C6B7A;
+  --ink-muted-40: #8A95A2;
+  --canvas: #F5F1E8;
+  --canvas-paper: #FFFFFF;
+  --surface-mist: #E8F4F8;
+  --hairline: #E5DFD0;
+  --accent-coral: #FF6B6B;
+  --accent-coral-soft: #FFE5E5;
+  --focus-ring: rgba(46, 134, 171, 0.32);
+  --serif: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --content-max: 760px;
+  --toc-width: 240px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { font-family: var(--sans); font-size: 16px; line-height: 1.6; color: var(--ink); background-color: var(--canvas); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--focus-ring); border-radius: 4px; }
+
+.topbar { position: sticky; top: 0; z-index: 50; background-color: var(--canvas); border-bottom: 1px solid var(--hairline); height: 64px; display: flex; align-items: center; padding: 0 24px; }
+.topbar-inner { width: 100%; max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+.wordmark { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--primary-deep); letter-spacing: -0.3px; display: inline-flex; align-items: baseline; position: relative; }
+.wordmark .accent-dot { position: absolute; top: 2px; left: -8px; width: 5px; height: 5px; border-radius: 50%; background: var(--primary-deep); }
+.wordmark em { font-style: italic; color: var(--primary-bright); font-weight: 600; }
+.wordmark .period { color: var(--primary-deep); }
+.back-link { font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--ink-muted-72); display: inline-flex; align-items: center; gap: 6px; }
+.back-link:hover { color: var(--primary); text-decoration: none; }
+.back-link svg { width: 14px; height: 14px; }
+
+.hero { padding: 96px 24px 64px; background-color: var(--canvas); position: relative; overflow: hidden; }
+.hero-inner { max-width: 1280px; margin: 0 auto; position: relative; }
+.hero-eyebrow { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.5px; line-height: 1.2; margin-bottom: 24px; }
+.hero-title { font-family: var(--serif); font-size: 64px; font-weight: 600; line-height: 1.05; letter-spacing: -0.5px; color: var(--primary-deep); max-width: 760px; margin-bottom: 24px; }
+.hero-lead { font-family: var(--sans); font-size: 18px; line-height: 1.55; color: var(--ink-muted-72); max-width: 640px; margin-bottom: 40px; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 32px; padding-top: 24px; border-top: 1px solid var(--hairline); max-width: 640px; }
+.hero-meta-item .label { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; display: block; }
+.hero-meta-item .value { font-family: var(--sans); font-size: 14px; color: var(--ink); font-weight: 500; }
+.decorative-numeral { position: absolute; font-family: var(--serif); font-size: 240px; font-weight: 400; line-height: 1; color: var(--primary-tint); opacity: 0.5; top: -20px; right: -40px; pointer-events: none; user-select: none; z-index: 0; }
+.hero-eyebrow, .hero-title, .hero-lead, .hero-meta { position: relative; z-index: 1; }
+
+.disclaimer { background-color: var(--surface-mist); border-left: 4px solid var(--primary); border-radius: 8px; padding: 20px 24px; max-width: 1232px; margin: 0 auto 48px; }
+.disclaimer .label { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
+.disclaimer p { font-size: 14px; color: var(--primary-deep); line-height: 1.55; }
+
+.layout { max-width: 1280px; margin: 0 auto; padding: 0 24px 96px; display: grid; grid-template-columns: var(--toc-width) 1fr; gap: 64px; align-items: start; }
+.toc { position: sticky; top: 96px; max-height: calc(100vh - 120px); overflow-y: auto; padding-right: 8px; }
+.toc-eyebrow { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 16px; padding-left: 16px; }
+.toc-list { list-style: none; }
+.toc-list li { margin-bottom: 2px; }
+.toc-list a { display: block; font-family: var(--sans); font-size: 14px; line-height: 1.5; color: var(--ink-muted-56); padding: 8px 16px; border-left: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+.toc-list a:hover { color: var(--primary); text-decoration: none; border-left-color: var(--primary-tint); }
+.toc-list a.active { color: var(--primary-deep); font-weight: 500; border-left-color: var(--primary); }
+.toc-list .num { display: inline-block; width: 24px; font-variant-numeric: tabular-nums; color: var(--ink-muted-40); }
+.toc-mobile { display: none; }
+
+.content { max-width: var(--content-max); }
+.section { padding: 48px 0; border-bottom: 1px solid var(--hairline); }
+.section:last-child { border-bottom: none; }
+.section:first-child { padding-top: 16px; }
+.section-eyebrow { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; display: flex; align-items: baseline; gap: 12px; }
+.section-eyebrow .num { font-family: var(--serif); font-style: italic; font-size: 20px; font-weight: 400; color: var(--primary); letter-spacing: 0; text-transform: none; }
+.section-title { font-family: var(--serif); font-size: 32px; font-weight: 600; line-height: 1.15; letter-spacing: -0.2px; color: var(--primary-deep); margin-bottom: 24px; }
+
+.content p { font-family: var(--sans); font-size: 16px; line-height: 1.7; color: var(--ink); margin-bottom: 16px; }
+.content p:last-child { margin-bottom: 0; }
+.content strong { font-weight: 600; color: var(--primary-deep); }
+.content ul, .content ol { margin: 16px 0 16px 24px; padding-left: 8px; }
+.content li { font-family: var(--sans); font-size: 16px; line-height: 1.7; color: var(--ink); margin-bottom: 10px; padding-left: 8px; }
+.content li::marker { color: var(--primary); }
+.content h3 { font-family: var(--serif); font-size: 21px; font-weight: 600; line-height: 1.3; color: var(--primary-deep); margin: 32px 0 12px; }
+
+.callout { background-color: var(--canvas-paper); border-left: 4px solid var(--primary); border-radius: 8px; padding: 20px 24px; margin: 24px 0; box-shadow: 0 0 0 1px var(--hairline); }
+.callout .label { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px; }
+.callout p { font-size: 14px; margin-bottom: 0; color: var(--ink-muted-72); line-height: 1.6; }
+.callout-warning { background-color: var(--accent-coral-soft); border-left-color: var(--accent-coral); }
+.callout-warning .label { color: var(--accent-coral); }
+.callout-mist { background-color: var(--surface-mist); box-shadow: none; }
+
+.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+.tier-card { background-color: var(--canvas-paper); border-radius: 12px; padding: 20px; box-shadow: 0 0 0 1px var(--hairline); }
+.tier-card h4 { font-family: var(--serif); font-size: 18px; font-weight: 600; color: var(--primary-deep); margin-bottom: 8px; }
+.tier-card .tier-eyebrow { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 6px; }
+.tier-card p { font-size: 13px; line-height: 1.55; color: var(--ink-muted-72); margin-bottom: 0; }
+
+.footer { background-color: var(--canvas); border-top: 1px solid var(--hairline); padding: 64px 24px 48px; }
+.footer-inner { max-width: 1280px; margin: 0 auto; }
+.footer-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 32px; padding-bottom: 48px; border-bottom: 1px solid var(--hairline); }
+.footer-brand .tagline { font-family: var(--sans); font-size: 10px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.2px; margin-top: 12px; }
+.footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
+.footer-col h4 { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
+.footer-col ul { list-style: none; }
+.footer-col li { margin-bottom: 8px; }
+.footer-col a { font-family: var(--sans); font-size: 14px; color: var(--ink-muted-72); line-height: 1.6; }
+.footer-col a:hover { color: var(--primary); text-decoration: none; }
+.footer-bottom { padding-top: 32px; font-family: var(--sans); font-size: 12px; color: var(--ink-muted-40); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (max-width: 1023px) {
+  .layout { grid-template-columns: 1fr; gap: 32px; }
+  .toc { display: none; }
+  .toc-mobile { display: block; background-color: var(--canvas-paper); border-radius: 12px; box-shadow: 0 0 0 1px var(--hairline); overflow: hidden; margin-bottom: 8px; }
+  .toc-mobile-trigger { width: 100%; background: none; border: none; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--primary-deep); text-align: left; }
+  .toc-mobile-trigger .label-prefix { font-size: 10px; font-weight: 600; color: var(--primary-bright); text-transform: uppercase; letter-spacing: 1.2px; display: block; margin-bottom: 4px; }
+  .toc-mobile-trigger .chevron { transition: transform 0.2s; color: var(--ink-muted-56); }
+  .toc-mobile.open .chevron { transform: rotate(180deg); }
+  .toc-mobile-list { list-style: none; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .toc-mobile.open .toc-mobile-list { max-height: 1000px; border-top: 1px solid var(--hairline); }
+  .toc-mobile-list li { border-bottom: 1px solid var(--hairline); }
+  .toc-mobile-list li:last-child { border-bottom: none; }
+  .toc-mobile-list a { display: flex; align-items: baseline; gap: 12px; padding: 14px 20px; font-family: var(--sans); font-size: 14px; color: var(--ink-muted-72); }
+  .toc-mobile-list a:hover { background-color: var(--surface-mist); text-decoration: none; }
+  .toc-mobile-list .num { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--primary); width: 28px; flex-shrink: 0; }
+  .tier-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 767px) {
+  .hero { padding: 56px 20px 48px; }
+  .hero-title { font-size: 40px; }
+  .hero-lead { font-size: 16px; }
+  .hero-meta { gap: 24px; }
+  .decorative-numeral { font-size: 140px; right: -20px; top: 0; }
+  .topbar { padding: 0 20px; }
+  .layout { padding: 0 20px 64px; }
+  .section { padding: 32px 0; }
+  .section-title { font-size: 26px; }
+  .footer { padding: 48px 20px 32px; }
+  .footer-links { gap: 32px; }
+  .disclaimer { margin-left: 20px; margin-right: 20px; }
+}
+@media (max-width: 419px) {
+  .hero-title { font-size: 34px; }
+  .section-title { font-size: 22px; }
+  .hero-meta { flex-direction: column; gap: 16px; }
+}
+@media print {
+  .topbar, .footer, .toc, .toc-mobile, .disclaimer { display: none !important; }
+  .hero { padding: 24px 0; }
+  .hero-title { color: #000; font-size: 28px; }
+  .layout { display: block; padding: 0; }
+  .section { page-break-inside: avoid; padding: 24px 0; }
+  body { background: white; color: #000; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="wordmark" aria-label="KurmaGo Home">
+      <span class="accent-dot" aria-hidden="true"></span>Kurma<em>Go</em><span class="period">.</span>
+    </a>
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Back to Home
+    </a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="decorative-numeral" aria-hidden="true">02</div>
+    <div class="hero-eyebrow">Legal · KurmaGo</div>
+    <h1 class="hero-title">Terms of Service</h1>
+    <p class="hero-lead">
+      These Terms of Service constitute a legally binding agreement between you and KurmaGo that governs your access to and use of our platform, applications, and related services.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="label">Effective Date</span>
+        <span class="value">[Effective Date]</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Last Updated</span>
+        <span class="value">[Last Updated]</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Version</span>
+        <span class="value">1.0</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer" role="note">
+  <div class="label">Internal Note — Remove Before Publication</div>
+  <p>This document is a <strong>draft template</strong> prepared based on the scope of the KurmaGo product. Prior to publication, it must be reviewed by qualified legal counsel and adapted to the company's final corporate structure, jurisdiction, and operational policies.</p>
+</div>
+
+<div class="layout">
+
+  <div class="toc-mobile" id="tocMobile">
+    <button class="toc-mobile-trigger" aria-expanded="false" aria-controls="tocMobileList" id="tocMobileTrigger">
+      <span>
+        <span class="label-prefix">Table of Contents</span>
+        <span>Jump to a section</span>
+      </span>
+      <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
+    <ul class="toc-mobile-list" id="tocMobileList">
+      <li><a href="#s01"><span class="num">01</span><span>Acceptance of Terms</span></a></li>
+      <li><a href="#s02"><span class="num">02</span><span>The Service</span></a></li>
+      <li><a href="#s03"><span class="num">03</span><span>User Accounts</span></a></li>
+      <li><a href="#s04"><span class="num">04</span><span>Subscription Plans</span></a></li>
+      <li><a href="#s05"><span class="num">05</span><span>Payment &amp; Renewal</span></a></li>
+      <li><a href="#s06"><span class="num">06</span><span>eSIM Services</span></a></li>
+      <li><a href="#s07"><span class="num">07</span><span>AI-Generated Content</span></a></li>
+      <li><a href="#s08"><span class="num">08</span><span>Intellectual Property</span></a></li>
+      <li><a href="#s09"><span class="num">09</span><span>User Content</span></a></li>
+      <li><a href="#s10"><span class="num">10</span><span>Prohibited Uses</span></a></li>
+      <li><a href="#s11"><span class="num">11</span><span>Termination</span></a></li>
+      <li><a href="#s12"><span class="num">12</span><span>Disclaimer of Warranties</span></a></li>
+      <li><a href="#s13"><span class="num">13</span><span>Limitation of Liability</span></a></li>
+      <li><a href="#s14"><span class="num">14</span><span>Governing Law</span></a></li>
+      <li><a href="#s15"><span class="num">15</span><span>Changes to Terms</span></a></li>
+      <li><a href="#s16"><span class="num">16</span><span>Contact</span></a></li>
+    </ul>
+  </div>
+
+  <aside class="toc" aria-label="Table of contents">
+    <div class="toc-eyebrow">Table of Contents</div>
+    <ul class="toc-list">
+      <li><a href="#s01"><span class="num">01</span>Acceptance of Terms</a></li>
+      <li><a href="#s02"><span class="num">02</span>The Service</a></li>
+      <li><a href="#s03"><span class="num">03</span>User Accounts</a></li>
+      <li><a href="#s04"><span class="num">04</span>Subscription Plans</a></li>
+      <li><a href="#s05"><span class="num">05</span>Payment &amp; Renewal</a></li>
+      <li><a href="#s06"><span class="num">06</span>eSIM Services</a></li>
+      <li><a href="#s07"><span class="num">07</span>AI-Generated Content</a></li>
+      <li><a href="#s08"><span class="num">08</span>Intellectual Property</a></li>
+      <li><a href="#s09"><span class="num">09</span>User Content</a></li>
+      <li><a href="#s10"><span class="num">10</span>Prohibited Uses</a></li>
+      <li><a href="#s11"><span class="num">11</span>Termination</a></li>
+      <li><a href="#s12"><span class="num">12</span>Disclaimer of Warranties</a></li>
+      <li><a href="#s13"><span class="num">13</span>Limitation of Liability</a></li>
+      <li><a href="#s14"><span class="num">14</span>Governing Law</a></li>
+      <li><a href="#s15"><span class="num">15</span>Changes to Terms</a></li>
+      <li><a href="#s16"><span class="num">16</span>Contact</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+
+    <section class="section" id="s01">
+      <div class="section-eyebrow"><span class="num">01</span><span>Section One</span></div>
+      <h2 class="section-title">Acceptance of Terms</h2>
+      <p>These Terms of Service ("Terms") constitute a legally binding agreement between you ("User", "you", or "your") and <strong>[Legal Entity Name, e.g., PT Kurma Guide Indonesia]</strong> ("KurmaGo", "we", "our", or "us") governing your access to and use of the kurma.guide website, our mobile applications, and all related features and services (collectively, the "Service").</p>
+      <p>By registering for, accessing, or using the Service, you represent and warrant that:</p>
+      <ul>
+        <li>You are at least <strong>eighteen (18) years of age</strong>, or you have obtained the consent of a parent or legal guardian.</li>
+        <li>You have the legal capacity to enter into a binding agreement.</li>
+        <li>You have read, understood, and agree to be bound by these Terms and our <a href="kurma-privacy.html">Privacy Policy</a>.</li>
+      </ul>
+      <p>If you do not agree to these Terms, you must not access or use the Service.</p>
+    </section>
+
+    <section class="section" id="s02">
+      <div class="section-eyebrow"><span class="num">02</span><span>Section Two</span></div>
+      <h2 class="section-title">The Service</h2>
+      <p>KurmaGo is a web-based travel planning and connectivity platform that provides, among other features:</p>
+      <ul>
+        <li>Creation and management of multi-day travel itineraries with places, activities, and transportation legs.</li>
+        <li>A curated database of destinations and city guides maintained by the KurmaGo team.</li>
+        <li>A multi-currency budget tracker with automatic conversion (IDR, JPY, USD, SGD, EUR).</li>
+        <li>The ability to purchase eSIM packages for connectivity while traveling, through partner providers.</li>
+        <li>Artificial intelligence features that assist in drafting, optimizing, and personalizing itineraries (Pro plan).</li>
+        <li>Storage of booking references, documents, vouchers, and tickets related to your trips.</li>
+        <li>Sharing of itineraries with companions through view-only links.</li>
+      </ul>
+      <p>The scope of destinations, features, and availability may change from time to time. We will use reasonable efforts to inform you of material changes through email or in-Service notifications.</p>
+    </section>
+
+    <section class="section" id="s03">
+      <div class="section-eyebrow"><span class="num">03</span><span>Section Three</span></div>
+      <h2 class="section-title">User Accounts</h2>
+      <h3>3.1 Registration</h3>
+      <p>To use most features of the Service, you must create an account using Email and Password authentication, Google Sign-In, or Apple Sign-In. You agree to provide accurate, complete, and current information at the time of registration and to update such information as needed.</p>
+
+      <h3>3.2 Account Security</h3>
+      <p>You are solely responsible for all activity that occurs under your account. You agree to:</p>
+      <ul>
+        <li>Maintain the confidentiality of your password and authentication credentials.</li>
+        <li>Use a strong password that is not reused from other services.</li>
+        <li>Promptly notify us at <a href="mailto:security@kurma.guide">security@kurma.guide</a> if you suspect unauthorized access to your account.</li>
+      </ul>
+      <p>We are not liable for any loss or damage arising from your failure to maintain the security of your account.</p>
+
+      <h3>3.3 Third-Party Authentication</h3>
+      <p>If you choose to sign in via Google or Apple, your use of those authentication services is subject to the respective terms and conditions of each provider. We access only the data you authorize to be shared, namely your name, email address, and profile picture.</p>
+    </section>
+
+    <section class="section" id="s04">
+      <div class="section-eyebrow"><span class="num">04</span><span>Section Four</span></div>
+      <h2 class="section-title">Subscription Plans</h2>
+      <p>The Service is offered in three tiers:</p>
+
+      <div class="tier-grid">
+        <div class="tier-card">
+          <div class="tier-eyebrow">Free Forever</div>
+          <h4>Free</h4>
+          <p>Up to 3 active trips, manual itinerary building, basic place database access, view-only sharing, and eSIM purchasing.</p>
+        </div>
+        <div class="tier-card">
+          <div class="tier-eyebrow">Subscription</div>
+          <h4>Pro</h4>
+          <p>Unlimited trips, AI Itinerary Draft (10 generations per month), AI Place Suggestions, AI Budget Estimate, AI Day Optimizer, and collaborative editing.</p>
+        </div>
+        <div class="tier-card">
+          <div class="tier-eyebrow">Custom Pricing</div>
+          <h4>Enterprise</h4>
+          <p>Team workspace, unlimited AI generation, custom place curation, advanced access controls, bulk eSIM purchasing, and analytics and reporting.</p>
+        </div>
+      </div>
+
+      <p>Detailed pricing, quota limits, and the features included in each plan are available on the Service's <a href="#">Pricing</a> page and may change from time to time with prior notice.</p>
+
+      <h3>4.1 Pro Trial</h3>
+      <p>New accounts are eligible for a <strong>thirty (30) day Pro trial</strong> without requiring a credit card. Upon expiration of the trial period, the account will automatically revert to the Free plan unless you choose to subscribe.</p>
+    </section>
+
+    <section class="section" id="s05">
+      <div class="section-eyebrow"><span class="num">05</span><span>Section Five</span></div>
+      <h2 class="section-title">Payment and Auto-Renewal</h2>
+      <h3>5.1 Billing</h3>
+      <p>Pro Subscriptions are billed periodically (monthly or annually) in accordance with the plan you select. Payments are made in advance through PCI-DSS certified payment gateways.</p>
+
+      <h3>5.2 Auto-Renewal</h3>
+      <p>Unless you cancel before the next billing period, your subscription will automatically renew at the rate then in effect. You may cancel at any time through your account settings; cancellation takes effect at the end of the current billing period.</p>
+
+      <h3>5.3 Refunds</h3>
+      <p>Except as required by applicable law, payments made are non-refundable. For exceptional circumstances, you may contact <a href="mailto:billing@kurma.guide">billing@kurma.guide</a> and your request will be evaluated under our refund policy.</p>
+
+      <h3>5.4 Price Changes</h3>
+      <p>We may change subscription pricing with at least <strong>thirty (30) days' prior written notice</strong> via email. If you do not agree to the new pricing, you may cancel your subscription before the new rate takes effect.</p>
+
+      <h3>5.5 Taxes</h3>
+      <p>Prices displayed may be inclusive or exclusive of value-added tax (VAT) depending on your billing location and applicable tax regulations. Applicable taxes will be added at checkout.</p>
+    </section>
+
+    <section class="section" id="s06">
+      <div class="section-eyebrow"><span class="num">06</span><span>Section Six</span></div>
+      <h2 class="section-title">eSIM Services</h2>
+      <p>KurmaGo facilitates the purchase of eSIM packages through partner connectivity providers. eSIM Services are subject to the following additional terms:</p>
+      <ul>
+        <li>You are responsible for ensuring that your device is <strong>eSIM-compatible and carrier-unlocked</strong> prior to purchase. A list of compatible devices is provided on the purchase page.</li>
+        <li>The eSIM activation code will be delivered via email upon successful payment confirmation. Please ensure your email is active and check your spam folder if necessary.</li>
+        <li>Once an eSIM has been activated on a device, the package is <strong>non-refundable, non-transferable, and non-exchangeable</strong>.</li>
+        <li>The quality, speed, and availability of service depend on local carriers in your destination and are beyond the control of KurmaGo.</li>
+        <li>The validity period of each package is calculated from the date of first activation, and there is no automatic renewal for eSIM packages.</li>
+      </ul>
+      <div class="callout callout-mist">
+        <div class="label">Important</div>
+        <p>To avoid disputes, we strongly recommend testing eSIM activation while at home prior to your departure, following the instructions provided in your confirmation email.</p>
+      </div>
+    </section>
+
+    <section class="section" id="s07">
+      <div class="section-eyebrow"><span class="num">07</span><span>Section Seven</span></div>
+      <h2 class="section-title">AI-Generated Content</h2>
+      <p>The Service includes artificial intelligence features that assist in drafting itineraries, suggesting places, and estimating budgets. You acknowledge and agree to the following limitations:</p>
+      <ul>
+        <li>Content generated by AI is intended as a <strong>starting point that you may edit</strong>, not as final, locked content.</li>
+        <li>The accuracy of information (operating hours, prices, reservation status, transportation availability) is <strong>subject to change</strong> and is not guaranteed by KurmaGo. Always verify through official sources before making bookings.</li>
+        <li>AI budget estimates are based on historical data and current exchange rates; actual costs may differ.</li>
+        <li>AI suggestions do not substitute for professional advice on safety, health, legal, or regulatory matters.</li>
+        <li>You are solely responsible for travel decisions made based on AI-generated suggestions.</li>
+      </ul>
+      <div class="callout callout-warning">
+        <div class="label">Warning</div>
+        <p>For matters such as visa requirements, health protocols, travel restrictions, or immigration rules, always consult official government sources of the destination country, not AI feature suggestions.</p>
+      </div>
+    </section>
+
+    <section class="section" id="s08">
+      <div class="section-eyebrow"><span class="num">08</span><span>Section Eight</span></div>
+      <h2 class="section-title">Intellectual Property</h2>
+      <p>All content on the Service — including but not limited to the name "KurmaGo", the logo, wordmark, designs, illustrations, source code, the structure of the curated places database, city guides, curated photographs, and editorial text — is the property of <strong>[Legal Entity Name]</strong> or its licensors and is protected by applicable copyright, trademark, and other intellectual property laws.</p>
+      <p>We grant you a limited, non-exclusive, non-transferable license to use the Service in accordance with these Terms. You <strong>may not</strong>:</p>
+      <ul>
+        <li>Reproduce, modify, distribute, or create derivative works of KurmaGo content without prior written authorization.</li>
+        <li>Reverse engineer, decompile, or attempt to access the source code of the Service.</li>
+        <li>Use robots, scrapers, or other automated tools to extract data from the Service.</li>
+        <li>Use KurmaGo trademarks or visual identity for any purpose without prior written consent.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="s09">
+      <div class="section-eyebrow"><span class="num">09</span><span>Section Nine</span></div>
+      <h2 class="section-title">User Content</h2>
+      <p>You retain full ownership of the content you upload or create within the Service, including itineraries, notes, photographs, and travel documents ("User Content").</p>
+      <p>By uploading User Content, you grant KurmaGo a non-exclusive, royalty-free, worldwide license to:</p>
+      <ul>
+        <li>Store, display, and process User Content solely for the purpose of operating and providing the Service to you.</li>
+        <li>Process User Content through third-party AI providers when you use AI features.</li>
+        <li>Share User Content according to your instructions, such as via view-only links you generate.</li>
+      </ul>
+      <p>You represent and warrant that you possess all necessary rights to the User Content you upload, and that such content does not infringe upon the rights of any third party.</p>
+    </section>
+
+    <section class="section" id="s10">
+      <div class="section-eyebrow"><span class="num">10</span><span>Section Ten</span></div>
+      <h2 class="section-title">Prohibited Uses</h2>
+      <p>When using the Service, you <strong>may not</strong>:</p>
+      <ul>
+        <li>Use the Service for any unlawful purpose or in violation of applicable laws.</li>
+        <li>Upload content that infringes on third-party rights, including intellectual property or privacy rights.</li>
+        <li>Upload content that is defamatory, threatening, harassing, hateful, or pornographic in nature.</li>
+        <li>Attempt to disrupt, damage, or unreasonably burden the Service infrastructure (e.g., DDoS attacks, brute-force attempts, or unauthorized fuzzing).</li>
+        <li>Access another user's account without authorization or engage in social engineering to obtain credentials.</li>
+        <li>Sell, lease, or transfer access to your account to a third party.</li>
+        <li>Use AI features to create misleading, unlawful, or reputation-damaging content.</li>
+        <li>Misuse eSIM features, including the unauthorized resale of activation codes purchased through the Service.</li>
+      </ul>
+      <p>Violation of these provisions may result in suspension or termination of your account without prior notice, depending on the severity of the violation.</p>
+    </section>
+
+    <section class="section" id="s11">
+      <div class="section-eyebrow"><span class="num">11</span><span>Section Eleven</span></div>
+      <h2 class="section-title">Termination</h2>
+      <h3>11.1 Termination by You</h3>
+      <p>You may terminate your account at any time through the account settings menu. Upon termination, your data will be handled in accordance with the retention periods described in our <a href="kurma-privacy.html">Privacy Policy</a>.</p>
+
+      <h3>11.2 Termination by Us</h3>
+      <p>We reserve the right to suspend or terminate your account if:</p>
+      <ul>
+        <li>You materially breach these Terms.</li>
+        <li>Your account exhibits suspicious activity or potentially harms other users.</li>
+        <li>It is necessary to comply with a legal order or request from a competent authority.</li>
+        <li>Your account remains inactive for more than <strong>twenty-four (24) consecutive months</strong>.</li>
+      </ul>
+      <p>Except in cases of material breach, we will provide notice and a reasonable opportunity to respond before terminating your account.</p>
+    </section>
+
+    <section class="section" id="s12">
+      <div class="section-eyebrow"><span class="num">12</span><span>Section Twelve</span></div>
+      <h2 class="section-title">Disclaimer of Warranties</h2>
+      <p>The Service is provided on an <strong>"as is"</strong> and <strong>"as available"</strong> basis, without warranties of any kind, whether express or implied, to the maximum extent permitted by applicable law.</p>
+      <p>Without limiting the foregoing, we specifically do not warrant that:</p>
+      <ul>
+        <li>The Service will always be available, timely, secure, or error-free.</li>
+        <li>Results obtained from use of the Service will be accurate or reliable for any particular purpose.</li>
+        <li>The quality of any product, service, or information obtained through the Service will meet your expectations.</li>
+        <li>Any errors in the Service will be corrected within any specific timeframe.</li>
+      </ul>
+      <p>Our internal availability target is <strong>99.5% per month</strong>; however, this is not a contractual guarantee.</p>
+    </section>
+
+    <section class="section" id="s13">
+      <div class="section-eyebrow"><span class="num">13</span><span>Section Thirteen</span></div>
+      <h2 class="section-title">Limitation of Liability</h2>
+      <p>To the maximum extent permitted by applicable law, KurmaGo, together with its directors, employees, partners, and affiliates, <strong>shall not be liable</strong> for:</p>
+      <ul>
+        <li>Indirect, incidental, special, consequential, or punitive damages.</li>
+        <li>Loss of profits, revenue, business opportunities, or goodwill.</li>
+        <li>Losses arising from travel decisions made based on information or suggestions from the Service, including AI suggestions.</li>
+        <li>Losses caused by errors, delays, or cancellations of third parties (airlines, hotels, restaurants, transportation operators, eSIM partners).</li>
+        <li>Loss of internet access, eSIM failure, or quality of connectivity at destinations.</li>
+        <li>Losses caused by security breaches outside our reasonable control.</li>
+      </ul>
+      <p>Our total aggregate liability for all claims arising out of or relating to these Terms and the Service <strong>shall not exceed the amount you paid to us during the twelve (12) months preceding the event giving rise to the claim</strong>, or IDR 1,000,000 (one million Indonesian Rupiah), whichever is greater.</p>
+    </section>
+
+    <section class="section" id="s14">
+      <div class="section-eyebrow"><span class="num">14</span><span>Section Fourteen</span></div>
+      <h2 class="section-title">Governing Law and Dispute Resolution</h2>
+      <p>These Terms shall be governed by and construed in accordance with the laws of the <strong>Republic of Indonesia</strong>, without regard to conflict of law principles.</p>
+      <p>Any dispute arising out of or in connection with these Terms or the Service shall first be resolved through good-faith negotiation. If such negotiation does not result in a resolution within <strong>thirty (30) days</strong>, the dispute shall be resolved through:</p>
+      <ul>
+        <li>The <strong>District Court of [South Jakarta / appropriate jurisdiction]</strong>; or</li>
+        <li>The <strong>Indonesian National Arbitration Board (BANI)</strong> in Jakarta, in accordance with BANI's then-current rules and procedures, as agreed by both parties.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="s15">
+      <div class="section-eyebrow"><span class="num">15</span><span>Section Fifteen</span></div>
+      <h2 class="section-title">Changes to These Terms</h2>
+      <p>We may update these Terms from time to time to reflect changes in the Service, applicable laws, or our business practices. If we make material changes, we will notify you via email or through a prominent notice on the Service at least <strong>fourteen (14) days</strong> before the changes take effect.</p>
+      <p>Your continued use of the Service after the changes take effect constitutes your acceptance of the updated Terms. If you do not agree to the changes, you may terminate your account before the changes take effect.</p>
+    </section>
+
+    <section class="section" id="s16">
+      <div class="section-eyebrow"><span class="num">16</span><span>Section Sixteen</span></div>
+      <h2 class="section-title">Contact</h2>
+      <p>For any questions, clarifications, or formal notices regarding these Terms, please contact:</p>
+      <div class="callout">
+        <div class="label">KurmaGo Legal Team</div>
+        <p>
+          <strong>[Legal Entity Name]</strong><br>
+          [Full registered address]<br>
+          Legal email: <a href="mailto:legal@kurma.guide">legal@kurma.guide</a><br>
+          Billing email: <a href="mailto:billing@kurma.guide">billing@kurma.guide</a><br>
+          General inquiries: <a href="mailto:hello@kurma.guide">hello@kurma.guide</a>
+        </p>
+      </div>
+      <p>We will respond to your inquiries within a reasonable time, typically within <strong>five (5) business days</strong>.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="wordmark" aria-label="KurmaGo Home">
+          <span class="accent-dot" aria-hidden="true"></span>Kurma<em>Go</em><span class="period">.</span>
+        </a>
+        <div class="tagline">Plan Smart · Go Beyond</div>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">Destinations</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Help Center</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="kurma-privacy.html">Privacy Policy</a></li>
+            <li><a href="kurma-terms.html">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 [Legal Entity Name]. All rights reserved.</span>
+      <span>Crafted with care from Indonesia.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    var trigger = document.getElementById('tocMobileTrigger');
+    var wrap = document.getElementById('tocMobile');
+    if (trigger && wrap) {
+      trigger.addEventListener('click', function() {
+        var isOpen = wrap.classList.toggle('open');
+        trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+      wrap.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+          wrap.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+  })();
+
+  (function() {
+    var sections = document.querySelectorAll('.section');
+    var tocLinks = document.querySelectorAll('.toc-list a');
+    if (!('IntersectionObserver' in window) || sections.length === 0) return;
+    var byId = {};
+    tocLinks.forEach(function(a) {
+      var href = a.getAttribute('href');
+      if (href && href.charAt(0) === '#') byId[href.slice(1)] = a;
+    });
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        var id = entry.target.id;
+        var link = byId[id];
+        if (!link) return;
+        if (entry.isIntersecting) {
+          tocLinks.forEach(function(l) { l.classList.remove('active'); });
+          link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+    sections.forEach(function(s) { observer.observe(s); });
+  })();
+</script>
+
+</body>
+</html>

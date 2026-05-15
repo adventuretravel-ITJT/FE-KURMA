@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import '../legal.css'
+import LegalContentWithTOC from '@/components/legal/LegalContentWithTOC'
 
 const API = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
 
@@ -37,6 +38,18 @@ function parseSections(content: string): LegalSection[] | null {
     }
   } catch { /* legacy HTML */ }
   return null
+}
+
+function sectionsToHtml(sections: LegalSection[]): string {
+  return sections.map((s, i) => {
+    const id  = `s${String(i + 1).padStart(2, '0')}`
+    const num = String(i + 1).padStart(2, '0')
+    return `<section class="lp-section" id="${id}">
+      <div class="lp-section-eyebrow"><span class="lp-num">${num}</span><span>${s.eyebrow || `Section ${num}`}</span></div>
+      <h2 class="lp-section-title">${s.title}</h2>
+      ${s.content}
+    </section>`
+  }).join('')
 }
 
 const TOC_ITEMS: [string, string][] = [
@@ -114,6 +127,9 @@ function LegalFooter() {
 export default async function TermsPage() {
   const page     = await fetchLegalPage('terms-of-service')
   const sections = page ? parseSections(page.content) : null
+  const dbHtml   = page
+    ? (sections ? sectionsToHtml(sections) : page.content)
+    : null
 
   return (
     <div className="legal-root">
@@ -152,47 +168,9 @@ export default async function TermsPage() {
         </div>
       </section>
 
-      {page ? (
-        /* ── DB content ──────────────────────────────────────────────────────── */
-        sections ? (
-          <div className="lp-layout">
-            <aside className="lp-toc" aria-label="Table of contents">
-              <div className="lp-toc-eyebrow">Table of Contents</div>
-              <ul className="lp-toc-list">
-                {sections.map((s, i) => {
-                  const n = String(i + 1).padStart(2, '0')
-                  return (
-                    <li key={i}>
-                      <a href={`#s${n}`}>
-                        <span className="lp-num">{n}</span>{s.title}
-                      </a>
-                    </li>
-                  )
-                })}
-              </ul>
-            </aside>
-            <main className="lp-content">
-              {sections.map((s, i) => {
-                const id  = `s${String(i + 1).padStart(2, '0')}`
-                const num = String(i + 1).padStart(2, '0')
-                return (
-                  <section key={i} className="lp-section" id={id}>
-                    <div className="lp-section-eyebrow">
-                      <span className="lp-num">{num}</span>
-                      <span>{s.eyebrow || `Section ${num}`}</span>
-                    </div>
-                    <h2 className="lp-section-title">{s.title}</h2>
-                    <div dangerouslySetInnerHTML={{ __html: s.content }} />
-                  </section>
-                )
-              })}
-            </main>
-          </div>
-        ) : (
-          <div className="lp-layout" style={{ gridTemplateColumns: '1fr' }}>
-            <main className="lp-content" dangerouslySetInnerHTML={{ __html: page.content }} />
-          </div>
-        )
+      {dbHtml ? (
+        /* ── DB content — TOC auto-generated from h2 elements ────────────────── */
+        <LegalContentWithTOC html={dbHtml} />
       ) : (
         /* ── Static fallback ─────────────────────────────────────────────────── */
         <>
