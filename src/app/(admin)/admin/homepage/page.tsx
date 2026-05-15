@@ -455,6 +455,7 @@ export default function HomepagePage() {
     if (!section) return;
 
     setSaving(true);
+    setError(null);
     try {
       const fields = section.fields.map((f, i) => ({
         key:   f.key,

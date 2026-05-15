@@ -117,10 +117,13 @@ function DeleteConfirm({ trip, onClose, onDeleted }: { trip: Trip; onClose: () =
     setLoading(true); setError('');
     try {
       const res = await fetch(`${API}/api/admin/trips/${trip.id}`, { method: 'DELETE', headers: authHeaders() });
-      if (!res.ok) throw new Error('Delete failed');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || `Delete failed (${res.status})`);
+      }
       onDeleted();
-    } catch {
-      setError('Failed to delete trip. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete trip. Please try again.');
       setLoading(false);
     }
   }

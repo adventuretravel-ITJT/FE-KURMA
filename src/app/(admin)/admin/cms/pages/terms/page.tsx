@@ -37,7 +37,7 @@ export default function TermsEditor() {
   const load = useCallback(async () => {
     setLoading(true); setError('');
     try {
-      const res  = await fetch(`${API}/api/admin/legal-pages?search=${SLUG}`, { headers: authHeaders() });
+      const res  = await fetch(`${API}/api/admin/legal-pages`, { headers: authHeaders() });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message ?? 'Gagal memuat');
       const found: LegalPage | undefined = (data.data ?? []).find((p: LegalPage) => p.slug === SLUG);

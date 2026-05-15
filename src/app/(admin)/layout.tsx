@@ -57,6 +57,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const originalFetch = useRef<typeof fetch | null>(null);
+  const isRefreshing = useRef(false);
 
   useEffect(() => {
     async function checkAndRefresh() {
@@ -90,15 +91,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     }
     document.addEventListener('visibilitychange', onVisibilityChange);
 
-    // Intercept all fetch calls — on 401 try refresh once, redirect if it fails
+    // Intercept all fetch calls — on 401 try refresh once, redirect if it fails.
+    // isRefreshing prevents recursive calls when tryRefreshToken itself hits 401.
     originalFetch.current = window.fetch;
     window.fetch = async (...args: Parameters<typeof fetch>) => {
       const res = await originalFetch.current!(...args);
-      if (res.status === 401) {
-        const refreshed = await tryRefreshToken();
-        if (!refreshed) {
-          clearAuth();
-          router.replace('/auth');
+      if (res.status === 401 && !isRefreshing.current) {
+        isRefreshing.current = true;
+        try {
+          const refreshed = await tryRefreshToken();
+          if (!refreshed) {
+            clearAuth();
+            router.replace('/auth');
+          }
+        } finally {
+          isRefreshing.current = false;
         }
       }
       return res;
