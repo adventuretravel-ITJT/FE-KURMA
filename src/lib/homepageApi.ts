@@ -5,7 +5,7 @@ const BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://l
 export async function fetchHomepageContent(): Promise<HomepageContentMap> {
   try {
     const res = await fetch(`${BASE}/api/homepage-contents`, {
-      next: { revalidate: 60 },
+      cache: 'no-store',
     });
     if (!res.ok) return {};
     const json = await res.json();
