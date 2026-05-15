@@ -93,7 +93,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
     // Intercept all fetch calls — on 401 try refresh once, redirect if it fails.
     // isRefreshing prevents recursive calls when tryRefreshToken itself hits 401.
-    originalFetch.current = window.fetch;
+    originalFetch.current = window.fetch.bind(window);
     window.fetch = async (...args: Parameters<typeof fetch>) => {
       const res = await originalFetch.current!(...args);
       if (res.status === 401 && !isRefreshing.current) {
