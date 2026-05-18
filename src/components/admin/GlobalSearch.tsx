@@ -233,7 +233,18 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
               <X size={13} />
             </button>
           )}
-          <kbd style={kbdStyle}>Esc</kbd>
+          <button
+            onClick={onClose}
+            style={{
+              width: 26, height: 26, borderRadius: 6,
+              border: '1px solid #e1e3e5',
+              background: 'transparent', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#8a8a8a', flexShrink: 0,
+            }}
+          >
+            <X size={13} />
+          </button>
         </div>
 
         {/* Filter tabs — chip style */}
@@ -368,24 +379,10 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
             <kbd style={kbdStyle}>Enter</kbd> buka
           </span>
           {results.length > 0 && (
-            <span style={{ fontWeight: 500 }}>
+            <span style={{ marginLeft: 'auto', fontWeight: 500 }}>
               {results.length} hasil
             </span>
           )}
-          <button
-            onClick={onClose}
-            style={{
-              marginLeft: 'auto',
-              display: 'flex', alignItems: 'center', gap: 5,
-              padding: '4px 10px', borderRadius: 6,
-              border: '1px solid #d2d5d8',
-              background: '#ffffff', cursor: 'pointer',
-              fontSize: 11, fontWeight: 500, color: '#616161',
-              fontFamily: 'inherit',
-            }}
-          >
-            <X size={11} /> Tutup
-          </button>
         </div>
       </div>
 
