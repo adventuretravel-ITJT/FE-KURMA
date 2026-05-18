@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { Briefcase, Search, RefreshCw, Trash2, AlertCircle, MapPin, User, Calendar, X } from 'lucide-react';
+import {
+  Briefcase, Search, RefreshCw, Trash2, AlertCircle,
+  MapPin, User, Calendar, X, LayoutTemplate, CheckCircle2,
+} from 'lucide-react';
 import { PageHeader } from '@/components/admin/ui/PageHeader';
 import { Badge, STATUS_CONFIG } from '@/components/admin/ui/Badge';
 
@@ -43,6 +46,17 @@ interface Trip {
   user: TripUser | null;
 }
 
+interface Template {
+  id: number;
+  title: string;
+  destination: string;
+  destination_flag: string | null;
+  travel_type: string;
+  duration_days: number;
+  description: string | null;
+  is_published: boolean;
+}
+
 const STATUS_LABELS: Record<string, string> = { draft: 'Draft', active: 'Active', completed: 'Completed' };
 const TYPE_LABELS:   Record<string, string> = { solo: 'Solo', couple: 'Couple', family: 'Family', group: 'Group' };
 const TYPE_COLORS:   Record<string, { bg: string; color: string }> = {
@@ -52,7 +66,7 @@ const TYPE_COLORS:   Record<string, { bg: string; color: string }> = {
   group:  { bg: '#F0FDF4', color: '#166534' },
 };
 
-// ── Status update modal ───────────────────────────────────────────────────────
+// ── Status modal ──────────────────────────────────────────────────────────────
 
 function StatusModal({ trip, onClose, onUpdated }: { trip: Trip; onClose: () => void; onUpdated: () => void }) {
   const [status, setStatus] = useState<Trip['status']>(trip.status);
@@ -84,9 +98,7 @@ function StatusModal({ trip, onClose, onUpdated }: { trip: Trip; onClose: () => 
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a' }}><X size={16} /></button>
         </div>
         <p style={{ fontSize: 12.5, color: '#616161', marginBottom: 16 }}>Trip: <strong style={{ color: '#1a1a1a' }}>{trip.name}</strong></p>
-
         {error && <p style={{ fontSize: 12, color: '#DC2626', marginBottom: 12 }}>{error}</p>}
-
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
           {(['draft', 'active', 'completed'] as const).map(s => (
             <label key={s} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', border: `1.5px solid ${status === s ? '#2c6ecb' : '#e1e3e5'}`, borderRadius: 10, cursor: 'pointer', background: status === s ? '#ebf5ff' : '#fff', transition: 'all .15s' }}>
@@ -95,12 +107,187 @@ function StatusModal({ trip, onClose, onUpdated }: { trip: Trip; onClose: () => 
             </label>
           ))}
         </div>
-
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
           <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Cancel</button>
           <button onClick={handleSave} disabled={saving} style={{ padding: '9px 18px', background: '#2c6ecb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? .7 : 1 }}>
             {saving ? 'Saving…' : 'Update'}
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Apply Template modal ──────────────────────────────────────────────────────
+
+function ApplyTemplateModal({ trip, onClose, onApplied }: { trip: Trip; onClose: () => void; onApplied: () => void }) {
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [selected, setSelected]   = useState<Template | null>(null);
+  const [applying, setApplying]   = useState(false);
+  const [error, setError]         = useState('');
+  const [done, setDone]           = useState(false);
+
+  useEffect(() => {
+    fetch(`${API}/api/admin/templates?published=1&per_page=100`, { headers: authHeaders() })
+      .then(r => r.json())
+      .then(d => setTemplates(d.data ?? []))
+      .catch(() => setError('Failed to load templates'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Templates matching the trip's destination first, then rest
+  const matched = templates.filter(t =>
+    t.destination.toLowerCase() === trip.destination.toLowerCase()
+  );
+  const others = templates.filter(t =>
+    t.destination.toLowerCase() !== trip.destination.toLowerCase()
+  );
+  const sorted = [...matched, ...others];
+
+  async function handleApply() {
+    if (!selected) return;
+    setApplying(true); setError('');
+    try {
+      const res = await fetch(`${API}/api/admin/trips/${trip.id}/apply-template`, {
+        method: 'PATCH', headers: authHeaders(),
+        body: JSON.stringify({ template_id: selected.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Apply failed');
+      setDone(true);
+      setTimeout(() => { onApplied(); onClose(); }, 1200);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setApplying(false);
+    }
+  }
+
+  const travelTypeColor = TYPE_COLORS[trip.travel_type] ?? { bg: '#f4f6f8', color: '#616161' };
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
+      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 560, maxHeight: '88vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(26,26,26,.18)' }} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div style={{ padding: '20px 24px', borderBottom: '1px solid #e4e7eb', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexShrink: 0 }}>
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', marginBottom: 4 }}>Apply Template</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#616161' }}>
+              <span>Trip:</span>
+              <strong style={{ color: '#1a1a1a' }}>{trip.name}</strong>
+              <span style={{ color: '#8a8a8a' }}>·</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                <User size={11} color="#8a8a8a" />{trip.user?.name ?? 'Unknown user'}
+              </span>
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', padding: 4 }}><X size={16} /></button>
+        </div>
+
+        {/* Trip info strip */}
+        <div style={{ padding: '10px 24px', background: '#f4f6f8', borderBottom: '1px solid #e4e7eb', display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, color: '#616161', flexShrink: 0 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={11} />{trip.destination}</span>
+          <span style={{ color: '#d2d5d8' }}>·</span>
+          <span style={{ padding: '2px 8px', borderRadius: 20, fontSize: 11, fontWeight: 600, ...travelTypeColor }}>{TYPE_LABELS[trip.travel_type]}</span>
+          {trip.start_date && <><span style={{ color: '#d2d5d8' }}>·</span><span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Calendar size={11} />{fmtDate(trip.start_date)}</span></>}
+        </div>
+
+        {/* Warning */}
+        <div style={{ margin: '14px 24px 0', padding: '10px 14px', background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 8, fontSize: 12, color: '#854D0E', flexShrink: 0 }}>
+          ⚠️ Menerapkan template akan <strong>mengganti</strong> itinerary yang sudah ada pada trip ini.
+        </div>
+
+        {/* Template list */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 24px' }}>
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {[1, 2, 3].map(i => <div key={i} style={{ height: 72, background: '#f4f6f8', borderRadius: 10, animation: 'pulse 1.5s infinite' }} />)}
+            </div>
+          ) : error ? (
+            <p style={{ fontSize: 13, color: '#DC2626' }}>{error}</p>
+          ) : sorted.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8a8a8a' }}>
+              <LayoutTemplate size={32} style={{ margin: '0 auto 10px', opacity: .3 }} />
+              <p style={{ fontSize: 13, fontWeight: 600 }}>Belum ada template yang published</p>
+            </div>
+          ) : (
+            <>
+              {matched.length > 0 && (
+                <p style={{ fontSize: 10, fontWeight: 600, color: '#8a8a8a', letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 8 }}>
+                  Cocok untuk {trip.destination}
+                </p>
+              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {sorted.map((t, i) => {
+                  const isSelected = selected?.id === t.id;
+                  const isOtherSection = matched.length > 0 && i === matched.length;
+                  const typeColor = TYPE_COLORS[t.travel_type] ?? { bg: '#f4f6f8', color: '#616161' };
+                  return (
+                    <div key={t.id}>
+                      {isOtherSection && (
+                        <p style={{ fontSize: 10, fontWeight: 600, color: '#8a8a8a', letterSpacing: '.06em', textTransform: 'uppercase', margin: '12px 0 8px' }}>
+                          Destinasi lain
+                        </p>
+                      )}
+                      <div
+                        onClick={() => setSelected(isSelected ? null : t)}
+                        style={{
+                          display: 'flex', alignItems: 'flex-start', gap: 12,
+                          padding: '12px 14px', borderRadius: 10, cursor: 'pointer',
+                          border: `1.5px solid ${isSelected ? '#2c6ecb' : '#e1e3e5'}`,
+                          background: isSelected ? '#ebf5ff' : '#fff',
+                          transition: 'all .15s',
+                        }}
+                        onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = '#f4f6f8' }}
+                        onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = '#fff' }}
+                      >
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: isSelected ? '#1a4d8f' : '#1a1a1a' }}>{t.title}</span>
+                            <span style={{ padding: '2px 7px', borderRadius: 20, fontSize: 10.5, fontWeight: 600, ...typeColor }}>{TYPE_LABELS[t.travel_type] ?? t.travel_type}</span>
+                          </div>
+                          <div style={{ display: 'flex', gap: 10, fontSize: 11.5, color: '#616161' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><MapPin size={10} />{t.destination}</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Calendar size={10} />{t.duration_days} hari</span>
+                          </div>
+                          {t.description && (
+                            <p style={{ fontSize: 11.5, color: '#8a8a8a', marginTop: 4, lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as React.CSSProperties['WebkitBoxOrient'] }}>
+                              {t.description}
+                            </p>
+                          )}
+                        </div>
+                        {isSelected && (
+                          <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#2c6ecb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                            <svg viewBox="0 0 12 12" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" style={{ width: 8, height: 8 }}><path d="M2 6l3 3 5-5" /></svg>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: '16px 24px', borderTop: '1px solid #e4e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          {error && !loading && <p style={{ fontSize: 12, color: '#DC2626' }}>{error}</p>}
+          {done && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#008060', fontWeight: 600 }}>
+              <CheckCircle2 size={15} /> Template berhasil diterapkan!
+            </div>
+          )}
+          {!done && <span style={{ fontSize: 12.5, color: '#8a8a8a' }}>{selected ? `"${selected.title}" dipilih` : 'Pilih template di atas'}</span>}
+          <div style={{ display: 'flex', gap: 10, marginLeft: 'auto' }}>
+            <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Batal</button>
+            <button onClick={handleApply} disabled={!selected || applying || done}
+              style={{ padding: '9px 18px', background: selected ? '#2c6ecb' : '#e1e3e5', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: selected ? '#fff' : '#8a8a8a', cursor: selected && !applying ? 'pointer' : 'default', transition: 'all .15s' }}>
+              {applying ? 'Menerapkan…' : 'Terapkan Template'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -160,7 +347,7 @@ export default function AdminTripsPage() {
   const [search, setSearch]     = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [filterType,   setFilterType]   = useState('');
-  const [modal, setModal]       = useState<'status' | 'delete' | null>(null);
+  const [modal, setModal]       = useState<'status' | 'template' | 'delete' | null>(null);
   const [selected, setSelected] = useState<Trip | null>(null);
 
   const load = useCallback(async () => {
@@ -183,10 +370,11 @@ export default function AdminTripsPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  function openStatus(t: Trip) { setSelected(t); setModal('status'); }
-  function openDelete(t: Trip) { setSelected(t); setModal('delete'); }
-  function closeModal() { setModal(null); setSelected(null); }
-  function handleDone() { closeModal(); load(); }
+  function openStatus(t: Trip)   { setSelected(t); setModal('status'); }
+  function openTemplate(t: Trip) { setSelected(t); setModal('template'); }
+  function openDelete(t: Trip)   { setSelected(t); setModal('delete'); }
+  function closeModal()          { setModal(null); setSelected(null); }
+  function handleDone()          { closeModal(); load(); }
 
   const selectStyle: React.CSSProperties = {
     padding: '8px 12px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13,
@@ -267,7 +455,7 @@ export default function AdminTripsPage() {
         <div style={{ background: '#fff', border: '1px solid #e1e3e5', borderRadius: 12, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: '#F9F7F4' }}>
+              <tr style={{ background: '#f4f6f8' }}>
                 {['Trip', 'User', 'Dates', 'Type', 'Status', 'Created', 'Actions'].map(h => (
                   <th key={h} style={{ padding: '11px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#8a8a8a', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid #e1e3e5', whiteSpace: 'nowrap' }}>{h}</th>
                 ))}
@@ -334,6 +522,11 @@ export default function AdminTripsPage() {
 
                     <td style={{ padding: '12px 14px' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
+                        <button onClick={() => openTemplate(trip)}
+                          title="Apply template ke trip ini"
+                          style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 10px', border: '1px solid #e1e3e5', borderRadius: 7, fontSize: 11.5, fontWeight: 600, color: '#616161', background: '#fff', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                          <LayoutTemplate size={12} /> Template
+                        </button>
                         <button onClick={() => openStatus(trip)}
                           style={{ padding: '6px 10px', border: '1px solid #e1e3e5', borderRadius: 7, fontSize: 11.5, fontWeight: 600, color: '#2c6ecb', background: '#fff', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                           Status
@@ -352,8 +545,9 @@ export default function AdminTripsPage() {
         </div>
       )}
 
-      {modal === 'status' && selected && <StatusModal trip={selected} onClose={closeModal} onUpdated={handleDone} />}
-      {modal === 'delete' && selected && <DeleteConfirm trip={selected} onClose={closeModal} onDeleted={handleDone} />}
+      {modal === 'status'   && selected && <StatusModal trip={selected} onClose={closeModal} onUpdated={handleDone} />}
+      {modal === 'template' && selected && <ApplyTemplateModal trip={selected} onClose={closeModal} onApplied={handleDone} />}
+      {modal === 'delete'   && selected && <DeleteConfirm trip={selected} onClose={closeModal} onDeleted={handleDone} />}
     </div>
   );
 }
