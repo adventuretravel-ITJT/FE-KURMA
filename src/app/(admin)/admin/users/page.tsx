@@ -192,7 +192,7 @@ export default function UsersPage() {
   const unverifiedCount = users.filter((u) => !u.email_verified_at).length;
 
   return (
-    <div style={{ padding: 32 }}>
+    <div className="p-4 lg:p-8">
       <PageHeader
         icon={<Users size={20} />}
         title="Customer List"

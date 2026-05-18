@@ -76,8 +76,8 @@ function ChartTip({ active, payload, label }: {
 
 function LoadingSkeleton() {
   return (
-    <div style={{ padding: 32 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="p-4 lg:p-8">
+      <div className="flex flex-col gap-6">
 
         {/* header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -89,21 +89,21 @@ function LoadingSkeleton() {
         </div>
 
         {/* stat cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} style={{ height: 108, background: '#E5DFD0', borderRadius: 12 }} />
           ))}
         </div>
 
         {/* charts */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div style={{ height: 280, background: '#E5DFD0', borderRadius: 12 }} />
           <div style={{ height: 280, background: '#E5DFD0', borderRadius: 12 }} />
         </div>
         <div style={{ height: 280, background: '#E5DFD0', borderRadius: 12 }} />
 
         {/* recent */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div style={{ height: 360, background: '#E5DFD0', borderRadius: 12 }} />
           <div style={{ height: 360, background: '#E5DFD0', borderRadius: 12 }} />
         </div>
@@ -130,7 +130,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
     : 0;
 
   return (
-    <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="p-4 lg:p-8 flex flex-col gap-6">
 
       {/* ── Header ── */}
       <PageHeader
@@ -154,7 +154,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
       />
 
       {/* ── Stat cards ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Users}     label="Total Users"    value={stats.users.total}    sub={`+${stats.users.new_this_month} this month`}                      color="#1E6091" />
         <StatCard icon={UserCheck} label="Verified Users" value={stats.users.verified} sub={`${verifiedPct}% of total`}                                       color="#2E86AB" />
         <StatCard icon={MapPin}    label="Total Trips"    value={stats.trips.total}    sub={`+${stats.trips.new_this_month} this month`}                       color="#2E8B57" />
@@ -162,7 +162,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
       </div>
 
       {/* ── Charts: signups + donut (2 col) ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {/* Signups area chart */}
         <Card>
@@ -257,7 +257,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
         <div style={{ padding: 20 }}>
 
           {/* Progress bars */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, marginBottom: 20 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
             {([
               { key: 'draft',     Icon: FileEdit,     label: 'Draft',     value: stats.trips.draft     },
               { key: 'active',    Icon: Clock,        label: 'Active',    value: stats.trips.active    },
@@ -307,7 +307,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
       </Card>
 
       {/* ── Recent activity ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {/* Recent Users */}
         <Card>

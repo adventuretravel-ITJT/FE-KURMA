@@ -1,7 +1,9 @@
 'use client';
 
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Menu } from 'lucide-react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
@@ -58,6 +60,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const originalFetch = useRef<typeof fetch | null>(null);
   const isRefreshing = useRef(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     async function checkAndRefresh() {
@@ -120,8 +123,28 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="bg-[var(--kg-canvas)] min-h-screen">
-      <AdminSidebar />
-      <main className="min-h-screen" style={{ marginLeft: 'var(--sidebar)' }}>
+      {/* Mobile top bar — visible on < lg */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[var(--kg-paper)] border-b border-[var(--kg-hairline)] flex items-center px-4 gap-3 z-30">
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="p-2 rounded-lg text-[var(--kg-ink-56)] hover:bg-[var(--kg-canvas)] transition-colors"
+          aria-label="Buka menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+        <Link href="/admin/overview" className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--kg-primary)] to-[var(--kg-primary-bright)] flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+            K
+          </div>
+          <p className="font-serif text-[16px] font-medium text-[var(--kg-ink)] tracking-[-0.03em] leading-none">
+            Kurma<em className="font-light italic text-[var(--kg-primary)]">Go.</em>
+          </p>
+        </Link>
+      </header>
+
+      <AdminSidebar mobileOpen={mobileMenuOpen} onMobileClose={() => setMobileMenuOpen(false)} />
+
+      <main className="min-h-screen pt-14 lg:pt-0 lg:ml-[var(--sidebar)]">
         {children}
       </main>
     </div>

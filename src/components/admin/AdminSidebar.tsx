@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -114,13 +114,20 @@ const navGroups: NavGroup[] = [
   },
 ];
 
+interface AdminSidebarProps {
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
+
 function isChildActive(children: NavChild[], pathname: string | null) {
   if (!pathname) return false;
   return children.some((c) => pathname === c.href || pathname.startsWith(c.href + '/'));
 }
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const onCloseRef = useRef(onMobileClose);
+  useEffect(() => { onCloseRef.current = onMobileClose; });
 
   const defaultExpanded = navGroups
     .flatMap((g) => g.items)
@@ -129,6 +136,15 @@ export default function AdminSidebar() {
 
   const [expanded, setExpanded]       = useState<string[]>(defaultExpanded);
   const [searchOpen, setSearchOpen]   = useState(false);
+
+  // Close mobile sidebar on navigation
+  const prevPathname = useRef(pathname);
+  useEffect(() => {
+    if (prevPathname.current !== pathname) {
+      prevPathname.current = pathname;
+      onCloseRef.current();
+    }
+  }, [pathname]);
 
   // Ctrl+K / Cmd+K global shortcut
   useEffect(() => {
@@ -149,7 +165,20 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 w-[var(--sidebar)] h-screen bg-[var(--kg-paper)] border-r border-[var(--kg-hairline)] flex flex-col z-50">
+    <>
+      {/* Mobile backdrop */}
+      <div
+        className={`fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity duration-300 ${
+          mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={onMobileClose}
+        aria-hidden="true"
+      />
+
+      {/* Sidebar */}
+      <aside className={`fixed left-0 top-0 w-[var(--sidebar)] h-screen bg-[var(--kg-paper)] border-r border-[var(--kg-hairline)] flex flex-col z-50 transition-transform duration-300 lg:translate-x-0 ${
+        mobileOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
       {/* Logo */}
       <div className="px-5 py-4 border-b border-[var(--kg-hairline)]">
         <Link href="/admin/overview" className="flex items-center gap-2.5">
@@ -285,5 +314,6 @@ export default function AdminSidebar() {
 
       <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </aside>
+    </>
   );
 }

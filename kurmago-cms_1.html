@@ -1,0 +1,3783 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KurmaGo CMS — Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   KURMAGO CMS — SHOPIFY-INSPIRED REFRESH
+   Compact · Inter font · Neutral palette · Dark sidebar
+   ============================================================ */
+:root {
+  /* Surfaces (neutral grey, Shopify Polaris-style) */
+  --canvas: #f1f1f1;
+  --canvas-paper: #ffffff;
+  --surface-mist: #f4f6f8;
+  --surface-mist-deep: #e4e7eb;
+  --surface-deep: #1a1a1a;
+  --surface-deep-2: #303030;
+
+  /* Sidebar (dark Shopify admin) */
+  --sidebar-bg: #1a1a1a;
+  --sidebar-fg: #ebebeb;
+  --sidebar-fg-muted: #b5b5b5;
+  --sidebar-fg-dim: #8a8a8a;
+  --sidebar-hover: rgba(255, 255, 255, 0.07);
+  --sidebar-active: rgba(255, 255, 255, 0.12);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+
+  /* Ink (text) */
+  --ink: #1a1a1a;
+  --ink-72: #303030;
+  --ink-56: #616161;
+  --ink-40: #8a8a8a;
+
+  /* Primary (kept ocean tones for KurmaGo identity, but tonalized) */
+  --primary: #1a1a1a;          /* Shopify-style dark primary buttons */
+  --primary-deep: #303030;
+  --primary-bright: #2c6ecb;   /* Accents / charts */
+  --primary-tint: #d9e8f5;
+  --primary-link: #005bd3;     /* Link blue */
+
+  /* Hairlines */
+  --hairline: #e1e3e5;
+  --hairline-mist: #d2d5d8;
+  --hairline-dark: rgba(255, 255, 255, 0.08);
+  --divider-soft: #ebebeb;
+
+  /* Accents */
+  --coral: #d72c0d;
+  --coral-soft: #fef2ee;
+  --success: #008060;
+  --success-soft: #e3f1df;
+  --warning: #b98900;
+  --warning-soft: #fff5e1;
+  --focus-ring: rgba(0, 91, 211, 0.28);
+
+  /* Radii — tighter */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --r-pill: 9999px;
+
+  /* Spacing — tighter */
+  --s-xxs: 4px;
+  --s-xs: 6px;
+  --s-sm: 8px;
+  --s-md: 12px;
+  --s-lg: 16px;
+  --s-xl: 20px;
+  --s-xxl: 32px;
+
+  /* Shadows — subtle */
+  --sh-1: 0 1px 0 rgba(0, 0, 0, 0.04);
+  --sh-2: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --sh-3: 0 8px 24px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --ring-hairline: inset 0 0 0 1px var(--hairline);
+
+  /* Typography — Inter throughout (no serif) */
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-72);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv11', 'ss01';
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font-family: inherit; }
+a { color: var(--primary-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+.app {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+/* SIDEBAR — dark Shopify-style */
+.sidebar {
+  background: var(--sidebar-bg);
+  color: var(--sidebar-fg);
+  border-right: none;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+.sidebar-brand {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+.sidebar-brand-mark {
+  width: 26px; height: 26px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(135deg, #2c6ecb, #1a4d8f);
+  color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.sidebar-brand-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.1px;
+}
+.sidebar-brand-sub {
+  font-size: 10px;
+  color: var(--sidebar-fg-dim);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+.sidebar-role {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+.sidebar-role-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--sidebar-fg-dim);
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+.sidebar-role-current {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  margin-left: -4px;
+  width: calc(100% + 8px);
+  transition: background 0.12s;
+}
+.sidebar-role-current:hover { background: var(--sidebar-hover); }
+.sidebar-role-avatar {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  display: grid; place-items: center;
+  font-weight: 600;
+  font-size: 10px;
+}
+.sidebar-role-info { flex: 1; min-width: 0; }
+.sidebar-role-name { font-size: 12px; font-weight: 600; color: #fff; line-height: 1.3; }
+.sidebar-role-tier { font-size: 11px; color: var(--sidebar-fg-muted); line-height: 1.3; }
+.sidebar-role-caret { color: var(--sidebar-fg-dim); font-size: 10px; display: flex; }
+.sidebar-role-caret svg { width: 12px; height: 12px; }
+
+.sidebar-nav { flex: 1; padding: 8px 8px 16px; }
+.sidebar-section {
+  margin-top: 12px;
+}
+.sidebar-section:first-child { margin-top: 4px; }
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--sidebar-fg-dim);
+  padding: 4px 10px;
+  margin-bottom: 2px;
+}
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sidebar-fg);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  transition: background 0.12s, color 0.12s;
+  margin-bottom: 1px;
+}
+.sidebar-link:hover { background: var(--sidebar-hover); color: #fff; }
+.sidebar-link.active {
+  background: var(--sidebar-active);
+  color: #fff;
+  font-weight: 600;
+}
+.sidebar-link.active::before { display: none; }
+.sidebar-link.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.sidebar-link.disabled:hover { background: transparent; color: var(--sidebar-fg); }
+.sidebar-link-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  color: currentColor;
+  opacity: 0.85;
+}
+.sidebar-link.active .sidebar-link-icon { opacity: 1; }
+.sidebar-link-icon svg { width: 16px; height: 16px; }
+.sidebar-link-label { flex: 1; }
+.sidebar-link-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+.sidebar-link.disabled .sidebar-link-badge {
+  background: rgba(255,255,255,0.08);
+  color: var(--sidebar-fg-dim);
+}
+
+.sidebar-footer {
+  padding: 8px;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+/* MAIN AREA */
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--canvas);
+}
+
+/* TOPBAR */
+.topbar {
+  height: 52px;
+  background: var(--canvas-paper);
+  border-bottom: 1px solid var(--hairline);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-search {
+  flex: 1;
+  max-width: 420px;
+  position: relative;
+}
+.topbar-search input {
+  width: 100%;
+  height: 32px;
+  background: var(--canvas);
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  padding: 6px 14px 6px 34px;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+}
+.topbar-search input:hover { background: var(--surface-mist); }
+.topbar-search input:focus {
+  background: var(--canvas-paper);
+  border-color: var(--primary-link);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.topbar-search input::placeholder { color: var(--ink-40); }
+.topbar-search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-40);
+  pointer-events: none;
+  display: flex;
+}
+.topbar-search-icon svg { width: 14px; height: 14px; }
+.topbar-actions { display: flex; align-items: center; gap: 4px; }
+.topbar-icon-btn {
+  width: 32px; height: 32px;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--ink-72);
+  display: grid; place-items: center;
+  position: relative;
+  transition: color 0.12s, background 0.12s;
+}
+.topbar-icon-btn:hover { color: var(--ink); background: var(--surface-mist); }
+.topbar-icon-btn svg { width: 16px; height: 16px; }
+.topbar-icon-btn .badge-dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+  border: 2px solid var(--canvas-paper);
+}
+
+.topbar-divider {
+  width: 1px; height: 20px;
+  background: var(--hairline);
+  margin: 0 4px;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
+  padding: 20px 24px;
+  max-width: 1280px;
+  width: 100%;
+}
+
+/* PAGE HEADER */
+.page-head { margin-bottom: 18px; }
+.page-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-56);
+  margin-bottom: 3px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+  line-height: 1.3;
+}
+.page-title em { font-style: normal; font-weight: 600; color: var(--ink); }
+.page-lead {
+  font-size: 13px;
+  color: var(--ink-56);
+  margin-top: 4px;
+  max-width: 680px;
+  line-height: 1.5;
+}
+.page-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.page-head-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s, box-shadow 0.12s, border-color 0.12s;
+  outline: none;
+  border: 1px solid transparent;
+}
+.btn:focus-visible { box-shadow: 0 0 0 3px var(--focus-ring); }
+.btn svg { width: 14px; height: 14px; }
+.btn-primary {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-primary:hover { background: #000; }
+.btn-ghost {
+  background: var(--canvas-paper);
+  color: var(--ink);
+  border-color: var(--hairline);
+  box-shadow: var(--sh-1);
+}
+.btn-ghost:hover { background: var(--surface-mist); border-color: var(--hairline-mist); }
+.btn-text {
+  background: transparent;
+  color: var(--primary-link);
+  padding: 4px 8px;
+}
+.btn-text:hover { background: var(--surface-mist); text-decoration: none; }
+.btn-danger { background: var(--coral); color: #fff; }
+.btn-danger:hover { background: #b52410; }
+.btn-danger-ghost {
+  background: var(--canvas-paper);
+  color: var(--coral);
+  border-color: var(--hairline);
+}
+.btn-danger-ghost:hover { background: var(--coral-soft); border-color: var(--coral); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-sm svg { width: 12px; height: 12px; }
+.btn-icon { padding: 6px; }
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-2), var(--ring-hairline);
+  padding: 16px;
+}
+.card-elevated {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), var(--ring-hairline);
+  padding: 16px;
+}
+.card-mist {
+  background: var(--surface-mist);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  box-shadow: var(--ring-hairline);
+}
+.card-accent {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  box-shadow: var(--ring-hairline);
+  padding: 14px 16px;
+  border-left: 3px solid var(--primary-bright);
+}
+.card-deep {
+  background: var(--surface-deep);
+  color: #fff;
+  border-radius: var(--r-lg);
+  padding: 18px;
+}
+
+/* ============================================================
+   STAT CARDS
+   ============================================================ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  box-shadow: var(--ring-hairline);
+  padding: 14px 16px;
+  position: relative;
+  transition: box-shadow 0.12s;
+}
+.stat-card:hover { box-shadow: var(--sh-2), var(--ring-hairline); }
+.stat-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.stat-card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-56);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.stat-card-menu {
+  background: transparent;
+  color: var(--ink-40);
+  padding: 2px 4px;
+  font-size: 12px;
+  border-radius: var(--r-xs);
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s, background 0.12s;
+}
+.stat-card:hover .stat-card-menu { opacity: 1; }
+.stat-card-menu:hover { color: var(--ink); background: var(--surface-mist); }
+.stat-card-menu svg { width: 14px; height: 14px; }
+.stat-card-value {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+.stat-card-delta {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.stat-card-delta svg { width: 12px; height: 12px; }
+.stat-card-delta.up { color: var(--success); }
+.stat-card-delta.down { color: var(--coral); }
+.stat-card-delta.flat { color: var(--ink-56); }
+.stat-card-sublabel { color: var(--ink-56); font-size: 11px; }
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.table-wrap {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  box-shadow: var(--ring-hairline);
+  overflow: hidden;
+}
+.table-toolbar {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--hairline);
+}
+.table-scroll { overflow-x: auto; }
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+.data-table thead th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-56);
+  padding: 10px 14px;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--hairline);
+  white-space: nowrap;
+}
+.data-table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--divider-soft);
+  vertical-align: middle;
+  font-size: 13px;
+  color: var(--ink);
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr {
+  transition: background 0.1s;
+  cursor: pointer;
+}
+.data-table tbody tr:hover { background: var(--surface-mist); }
+.data-table tbody tr.selected { background: var(--surface-mist); }
+.data-table .col-checkbox { width: 36px; padding-left: 16px; }
+.data-table .col-actions { width: 64px; text-align: right; }
+
+.user-cell {
+  display: flex; align-items: center; gap: 10px;
+}
+.user-cell-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--surface-mist-deep);
+  color: var(--ink);
+  display: grid; place-items: center;
+  font-weight: 600;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.user-cell-info { min-width: 0; }
+.user-cell-name { font-weight: 600; color: var(--ink); font-size: 13px; }
+.user-cell-email { font-size: 11px; color: var(--ink-56); }
+
+/* ============================================================
+   BADGES, CHIPS, PILLS
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  background: var(--surface-mist);
+  color: var(--ink-72);
+}
+.badge.tier-free { background: var(--surface-mist); color: var(--ink-72); }
+.badge.tier-premium { background: #ebf5ff; color: #0044a4; }
+.badge.tier-vip { background: #e3f1df; color: #006b4f; }
+.badge.tier-admin { background: #fef2ee; color: #b52410; }
+.badge.success { background: var(--success-soft); color: #006b4f; }
+.badge.warning { background: var(--warning-soft); color: #8c6700; }
+.badge.error { background: var(--coral-soft); color: #b52410; }
+.badge.neutral { background: var(--canvas); color: var(--ink-56); border: 1px solid var(--hairline); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--r-md);
+  background: var(--canvas-paper);
+  border: 1px solid var(--hairline);
+  color: var(--ink-72);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--hairline-mist); color: var(--ink); background: var(--surface-mist); }
+.chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.chip.active:hover { background: #000; }
+.chip-close { color: inherit; opacity: 0.7; }
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+.input,
+.select,
+.textarea {
+  width: 100%;
+  background: var(--canvas-paper);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 7px 12px;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--primary-link);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.input::placeholder, .textarea::placeholder { color: var(--ink-40); }
+.textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+.field { margin-bottom: 14px; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.field-help {
+  font-size: 11px;
+  color: var(--ink-56);
+  margin-top: 4px;
+}
+.field-error {
+  font-size: 11px;
+  color: var(--coral);
+  margin-top: 4px;
+}
+
+/* SEARCH */
+.search-wrap { position: relative; flex: 1; max-width: 320px; }
+.search-wrap input {
+  width: 100%;
+  height: 32px;
+  background: var(--canvas-paper);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 6px 12px 6px 32px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.search-wrap input:focus {
+  border-color: var(--primary-link);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+.search-wrap-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-40);
+  pointer-events: none;
+  display: flex;
+}
+.search-wrap-icon svg { width: 14px; height: 14px; }
+
+/* TOGGLE */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle-slider {
+  width: 32px; height: 18px;
+  background: var(--ink-40);
+  border-radius: var(--r-pill);
+  position: relative;
+  transition: background 0.16s;
+}
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.16s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.toggle input:checked + .toggle-slider { background: var(--success); }
+.toggle input:checked + .toggle-slider::after { transform: translateX(14px); }
+.toggle-label { margin-left: 8px; font-size: 13px; color: var(--ink); }
+
+/* CHECKBOX */
+.checkbox {
+  appearance: none;
+  width: 16px; height: 16px;
+  border: 1px solid var(--ink-40);
+  border-radius: 3px;
+  background: var(--canvas-paper);
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: background 0.12s, border-color 0.12s;
+  vertical-align: middle;
+}
+.checkbox:checked {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.checkbox:checked::after {
+  content: '';
+  width: 4px; height: 7px;
+  border: 1.5px solid #fff;
+  border-top: 0; border-left: 0;
+  transform: rotate(45deg) translateY(-1px);
+}
+.checkbox:focus-visible { box-shadow: 0 0 0 3px var(--focus-ring); }
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-56);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--ink); }
+.tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  font-weight: 600;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+  overflow-y: auto;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-3);
+  width: 100%;
+  max-width: 540px;
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+}
+.modal.lg { max-width: 780px; }
+.modal.xl { max-width: 1040px; }
+.modal-head {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--hairline);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.1px;
+}
+.modal-sub {
+  font-size: 12px;
+  color: var(--ink-56);
+  margin-top: 2px;
+}
+.modal-close {
+  width: 28px; height: 28px;
+  border-radius: var(--r-sm);
+  display: grid; place-items: center;
+  color: var(--ink-56);
+  flex-shrink: 0;
+}
+.modal-close:hover { background: var(--surface-mist); color: var(--ink); }
+.modal-close svg { width: 14px; height: 14px; }
+.modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-foot {
+  padding: 12px 20px;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: var(--canvas);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+
+/* ============================================================
+   DROPDOWN
+   ============================================================ */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: var(--canvas-paper);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-3);
+  border: 1px solid var(--hairline);
+  min-width: 200px;
+  padding: 4px;
+  z-index: 100;
+  display: none;
+}
+.dropdown-menu.open { display: block; }
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.dropdown-item:hover { background: var(--surface-mist); }
+.dropdown-item.danger { color: var(--coral); }
+.dropdown-item.danger:hover { background: var(--coral-soft); }
+.dropdown-divider { height: 1px; background: var(--hairline); margin: 4px 2px; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+#toast-rail {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+}
+.toast {
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  box-shadow: var(--sh-3);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  animation: toastIn 0.2s ease-out;
+  font-size: 13px;
+}
+.toast.success { background: var(--success); }
+.toast.error { background: var(--coral); }
+.toast-close {
+  color: rgba(255,255,255,0.7);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.toast-close:hover { color: #fff; }
+.toast-close svg { width: 14px; height: 14px; }
+@keyframes toastIn {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================================
+   GRID UTILITIES
+   ============================================================ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.gap-xs { gap: 6px; }
+.gap-sm { gap: 8px; }
+.gap-md { gap: 12px; }
+.gap-lg { gap: 16px; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1; }
+.text-center { text-align: center; }
+.muted { color: var(--ink-56); }
+.muted-lg { color: var(--ink-40); }
+.mt-xs { margin-top: 6px; }
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 12px; }
+.mt-lg { margin-top: 16px; }
+.mt-xl { margin-top: 24px; }
+.mb-md { margin-bottom: 12px; }
+.mb-lg { margin-bottom: 16px; }
+.mb-xl { margin-bottom: 24px; }
+.hidden { display: none !important; }
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+}
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--canvas);
+  padding: 2px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--hairline);
+  color: var(--ink-72);
+}
+.mono { font-family: var(--font-mono); font-size: 12px; }
+
+/* ============================================================
+   CHARTS
+   ============================================================ */
+.chart-card {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  box-shadow: var(--ring-hairline);
+  padding: 16px;
+}
+.chart-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+.chart-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.chart-sub { font-size: 12px; color: var(--ink-56); margin-top: 2px; }
+
+/* ACTIVITY FEED */
+.activity-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.activity-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--divider-soft);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--primary-bright);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.activity-dot.signup { background: var(--success); }
+.activity-dot.upgrade { background: var(--primary-link); }
+.activity-dot.share { background: var(--primary-bright); }
+.activity-dot.alert { background: var(--coral); }
+.activity-text { color: var(--ink); flex: 1; }
+.activity-text strong { font-weight: 600; }
+.activity-time { color: var(--ink-56); font-size: 12px; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1280px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 1024px) {
+  .app { grid-template-columns: 56px 1fr; }
+  .sidebar { width: 56px; }
+  .sidebar-brand-name,
+  .sidebar-brand-sub,
+  .sidebar-role,
+  .sidebar-section-label,
+  .sidebar-link-label,
+  .sidebar-link-badge { display: none; }
+  .sidebar-link { justify-content: center; padding: 8px; }
+  .content { padding: 16px; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    width: 220px;
+    z-index: 150;
+    transition: left 0.2s;
+  }
+  .sidebar.open { left: 0; }
+  .sidebar.open .sidebar-brand-name,
+  .sidebar.open .sidebar-brand-sub,
+  .sidebar.open .sidebar-role,
+  .sidebar.open .sidebar-section-label,
+  .sidebar.open .sidebar-link-label,
+  .sidebar.open .sidebar-link-badge { display: revert; }
+  .sidebar.open .sidebar-link { justify-content: flex-start; padding: 7px 10px; }
+  .topbar { padding: 0 14px; }
+  .content { padding: 14px; }
+  .stat-grid, .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .page-title { font-size: 18px; }
+  .topbar-search { max-width: none; }
+}
+
+/* PRO TIP: Funnel diagram */
+.funnel-stage {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+}
+.funnel-bar {
+  height: 44px;
+  background: var(--surface-mist);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  position: relative;
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 13px;
+}
+.funnel-bar.s1 { background: var(--surface-mist-deep); width: 100%; }
+.funnel-bar.s2 { background: #d0d8e2; width: 78%; }
+.funnel-bar.s3 { background: #a8b5c7; width: 54%; }
+.funnel-bar.s4 { background: #7a8aa3; width: 32%; color: #fff; }
+.funnel-bar.s5 { background: var(--ink); width: 14%; color: #fff; }
+.funnel-meta {
+  font-size: 12px;
+  color: var(--ink-72);
+  flex-shrink: 0;
+  min-width: 130px;
+}
+.funnel-meta strong { color: var(--ink); display: block; font-size: 14px; font-family: var(--font-display); font-weight: 600; }
+.funnel-drop {
+  font-size: 12px;
+  color: var(--coral);
+  margin-left: auto;
+  font-weight: 600;
+}
+
+/* PERMISSION MATRIX */
+.perm-matrix th, .perm-matrix td { text-align: center; }
+.perm-matrix th:first-child, .perm-matrix td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+.perm-matrix .p-icon {
+  font-size: 14px;
+  display: inline-block;
+  width: 20px;
+  text-align: center;
+}
+
+/* SEGMENT CARDS */
+.segment-card {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  box-shadow: var(--ring-hairline);
+  border-left: 3px solid var(--primary-bright);
+}
+.segment-card.newbie { border-color: var(--primary-bright); }
+.segment-card.power { border-color: var(--success); }
+.segment-card.dormant { border-color: var(--ink-40); }
+.segment-card.expiry { border-color: var(--warning); }
+
+/* MEDIA LIBRARY GRID */
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.media-tile {
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-md);
+  background: var(--surface-mist);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--hairline);
+  transition: border-color 0.12s, transform 0.12s;
+}
+.media-tile:hover { border-color: var(--ink-40); transform: translateY(-1px); }
+.media-tile-img {
+  width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.media-tile-name {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff;
+  font-size: 11px;
+  padding: 12px 10px 8px;
+  font-weight: 500;
+}
+.media-tile-icon {
+  color: var(--ink-56);
+  font-size: 26px;
+}
+
+/* ITINERARY BUILDER */
+.itin-day {
+  background: var(--canvas-paper);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--ring-hairline);
+}
+.itin-day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--hairline);
+}
+.itin-day-num {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.itin-stop {
+  display: flex;
+  gap: 14px;
+  padding: 10px;
+  border-radius: var(--r-sm);
+  align-items: center;
+  margin-bottom: 2px;
+}
+.itin-stop:hover { background: var(--surface-mist); }
+.itin-stop-time {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 500;
+  min-width: 50px;
+}
+.itin-stop-name { font-weight: 600; flex: 1; font-size: 13px; }
+.itin-stop-meta { font-size: 12px; color: var(--ink-56); }
+.itin-stop-handle {
+  color: var(--ink-40);
+  cursor: grab;
+}
+
+/* LINK INLINE */
+.inline-link {
+  color: var(--primary-link);
+  font-weight: 500;
+  font-size: 13px;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+}
+.inline-link:hover { text-decoration: underline; }
+
+/* EMPTY STATE */
+.empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--ink-56);
+}
+.empty-icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--surface-mist);
+  color: var(--ink-56);
+  display: grid; place-items: center;
+  margin: 0 auto 10px;
+}
+
+/* AUDIT LOG ENTRY */
+.audit-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--divider-soft);
+  display: grid;
+  grid-template-columns: 130px 1fr 180px;
+  gap: 16px;
+  align-items: flex-start;
+}
+.audit-row:last-child { border-bottom: none; }
+.audit-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-56);
+}
+.audit-action { font-weight: 600; color: var(--ink); margin-bottom: 4px; font-size: 13px; }
+.audit-payload {
+  background: var(--canvas);
+  border-radius: var(--r-sm);
+  padding: 6px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-72);
+  margin-top: 4px;
+  border-left: 2px solid var(--primary-bright);
+}
+.audit-payload .old { color: var(--coral); text-decoration: line-through; }
+.audit-payload .arrow { color: var(--ink-40); margin: 0 6px; }
+.audit-payload .new { color: var(--success); font-weight: 600; }
+.audit-actor {
+  font-size: 12px;
+  color: var(--ink-56);
+}
+.audit-actor strong { color: var(--ink); display: block; }
+@media (max-width: 768px) {
+  .audit-row { grid-template-columns: 1fr; gap: 6px; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Sidebar + Main rendered by JS -->
+</div>
+
+<!-- Modal mount -->
+<div class="modal-backdrop" id="modal-root"></div>
+
+<!-- Toast rail -->
+<div id="toast-rail"></div>
+
+<script>
+/* ===========================================================
+   KURMAGO CMS — APP STATE & VIEW ROUTER
+   ===========================================================
+   Uses array-based HTML construction (h.push() + h.join(''))
+   to avoid backslash-newline string concatenation issues
+   that have caused circular debugging in past iterations.
+   =========================================================== */
+
+/* ----------- ICON LIBRARY (inline SVG) ------------ */
+const I = {
+  dashboard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  template: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>',
+  cms: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  marketing: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+  affiliate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M5 21v-2a4 4 0 0 1 4-4h0"/><path d="m16 11 2 2 4-4"/><path d="M16 21v-2a4 4 0 0 1 4-4"/></svg>',
+  finance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+  zap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  question: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  filter: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  more: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+  caretDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>',
+  caretUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>',
+  arrowUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
+  arrowDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+  warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>',
+};
+
+/* ----------- ROLE PERMISSIONS (from docx matrix) ------------ */
+// Levels: full = ✅, view = 👁️, none = ❌
+const ROLES = {
+  super: { name: 'Super Admin', initials: 'SA', tier: 'Full Access', color: '#0A3D62' },
+  cs: { name: 'CS / Support', initials: 'CS', tier: 'Customer Service', color: '#2E86AB' },
+  editor: { name: 'Editor (Ops Konten)', initials: 'EO', tier: 'Content Operations', color: '#2D7D5E' },
+  marketing: { name: 'Marketing', initials: 'MK', tier: 'Growth & Acquisition', color: '#C77B2C' },
+};
+
+const PERMS = {
+  overview:    { super: 'full', cs: 'view', editor: 'view', marketing: 'view' },
+  users:       { super: 'full', cs: 'full', editor: 'view', marketing: 'view' },
+  destinations:{ super: 'full', cs: 'view', editor: 'full', marketing: 'view' },
+  templates:   { super: 'full', cs: 'view', editor: 'full', marketing: 'view' },
+  cms:         { super: 'full', cs: 'none', editor: 'full', marketing: 'full' },
+  marketing:   { super: 'full', cs: 'none', editor: 'none', marketing: 'full' },
+  affiliate:   { super: 'full', cs: 'none', editor: 'none', marketing: 'full' },
+  finance:     { super: 'full', cs: 'view', editor: 'none', marketing: 'view' },
+  moderation:  { super: 'full', cs: 'full', editor: 'none', marketing: 'none' },
+  config:      { super: 'full', cs: 'none', editor: 'none', marketing: 'none' },
+  settings:    { super: 'full', cs: 'none', editor: 'none', marketing: 'none' },
+};
+
+/* ----------- NAV STRUCTURE ------------ */
+const NAV = [
+  { section: 'Dashboard', items: [
+    { id: 'overview', label: 'Overview', icon: I.dashboard, permKey: 'overview' },
+  ]},
+  { section: 'Users', items: [
+    { id: 'users', label: 'User Management', icon: I.users, permKey: 'users' },
+  ]},
+  { section: 'Content', items: [
+    { id: 'destinations', label: 'Destinations', icon: I.globe, permKey: 'destinations' },
+    { id: 'templates', label: 'Master Templates', icon: I.template, permKey: 'templates' },
+    { id: 'cms', label: 'CMS Manager', icon: I.cms, permKey: 'cms' },
+  ]},
+  { section: 'Growth', items: [
+    { id: 'marketing', label: 'Marketing Tools', icon: I.marketing, permKey: 'marketing' },
+    { id: 'affiliate', label: 'Affiliate Manager', icon: I.affiliate, permKey: 'affiliate' },
+  ]},
+  { section: 'Operations', items: [
+    { id: 'finance', label: 'Finance & Billing', icon: I.finance, permKey: 'finance' },
+    { id: 'moderation', label: 'Moderation', icon: I.shield, permKey: 'moderation', badge: '3' },
+  ]},
+  { section: 'System', items: [
+    { id: 'config', label: 'Core Config', icon: I.zap, permKey: 'config' },
+    { id: 'settings', label: 'Settings & RBAC', icon: I.settings, permKey: 'settings' },
+  ]},
+];
+
+/* ----------- APP STATE ------------ */
+const state = {
+  view: 'overview',
+  role: 'super',
+  sidebarOpen: false,
+  modal: null,
+  modalData: null,
+  // User Management state
+  userSearch: '',
+  userFilters: { tier: null, activity: null, origin: null, engagement: null },
+  userSelection: new Set(),
+  userColumns: { tier: true, origin: true, trips: true, lastActive: true, expiry: true },
+  // Subview tabs
+  cmsTab: 'blog',
+  marketingTab: 'vouchers',
+  affiliateTab: 'list',
+  financeTab: 'payments',
+  settingsTab: 'admins',
+  configTab: 'subscription',
+  destTab: 'cities',
+  // Stat metric switching
+  statMetrics: { revenue: 'mrr', growth: 'new-users' },
+  // Maintenance toggle
+  maintenanceMode: false,
+};
+
+/* =================================================================
+   MOCK DATA (~10-20 rows per module — enough for demo, not bloated)
+   ================================================================= */
+const MOCK = {
+  users: [
+    { id: 'U1042', name: 'Budi Santoso', email: 'budi.s@gmail.com', tier: 'premium', origin: 'JapanTrips', trips: 7, lastActive: '2h', expiry: '2026-08-12', joined: '2025-11-03', phone: '+62 812-3456-7890' },
+    { id: 'U1041', name: 'Siska Wulandari', email: 'siska.w@outlook.com', tier: 'premium', origin: 'Organik', trips: 4, lastActive: '5h', expiry: '2026-06-22', joined: '2025-12-18', phone: '+62 813-9876-5432' },
+    { id: 'U1040', name: 'Duloh Hartono', email: 'duloh@gmail.com', tier: 'free', origin: 'Affiliate: @travelbug', trips: 2, lastActive: '1d', expiry: null, joined: '2026-01-04', phone: null },
+    { id: 'U1039', name: 'Agus Priyanto', email: 'agus.p@yahoo.com', tier: 'free', origin: 'Organik', trips: 0, lastActive: '14d', expiry: null, joined: '2026-04-21', phone: null },
+    { id: 'U1038', name: 'Rini Marlina', email: 'rini.m@gmail.com', tier: 'premium', origin: 'Organik', trips: 12, lastActive: '30m', expiry: '2026-12-01', joined: '2025-08-14', phone: '+62 821-1234-5678' },
+    { id: 'U1037', name: 'Hendra Wijaya', email: 'hendra.w@gmail.com', tier: 'free', origin: 'JapanTrips', trips: 1, lastActive: '32d', expiry: null, joined: '2026-03-15', phone: null },
+    { id: 'U1036', name: 'Maya Anggraini', email: 'maya.a@gmail.com', tier: 'vip', origin: 'Internal: VVIP', trips: 18, lastActive: '1h', expiry: '2027-01-15', joined: '2024-06-20', phone: '+62 877-2233-4455' },
+    { id: 'U1035', name: 'Tono Suparto', email: 'tono.s@gmail.com', tier: 'free', origin: 'Affiliate: @japanhacks', trips: 3, lastActive: '4d', expiry: null, joined: '2026-02-08', phone: null },
+    { id: 'U1034', name: 'Dewi Lestari', email: 'dewi.l@hotmail.com', tier: 'premium', origin: 'Organik', trips: 6, lastActive: '1d', expiry: '2026-05-19', joined: '2025-10-30', phone: '+62 856-7788-9900' },
+    { id: 'U1033', name: 'Ahmad Fauzi', email: 'ahmad.f@gmail.com', tier: 'free', origin: 'Organik', trips: 0, lastActive: '45d', expiry: null, joined: '2026-03-25', phone: null },
+    { id: 'U1032', name: 'Putri Handayani', email: 'putri.h@gmail.com', tier: 'premium', origin: 'JapanTrips', trips: 9, lastActive: '6h', expiry: '2026-05-15', joined: '2025-11-25', phone: '+62 819-5566-7788' },
+    { id: 'U1031', name: 'Yusuf Iskandar', email: 'yusuf.i@gmail.com', tier: 'free', origin: 'Organik', trips: 2, lastActive: '8d', expiry: null, joined: '2026-04-02', phone: null },
+  ],
+
+  destinations: [
+    { country: 'Jepang', code: 'JP', cities: ['Tokyo', 'Kyoto', 'Osaka', 'Nara', 'Hokkaido', 'Fukuoka'], status: 'active', trips: 487 },
+    { country: 'Korea Selatan', code: 'KR', cities: ['Seoul', 'Busan', 'Jeju'], status: 'active', trips: 142 },
+    { country: 'China', code: 'CN', cities: ['Beijing', 'Shanghai', 'Hong Kong'], status: 'beta', trips: 38 },
+    { country: 'Thailand', code: 'TH', cities: ['Bangkok', 'Chiang Mai', 'Phuket'], status: 'coming', trips: 0 },
+  ],
+
+  cities: [
+    { name: 'Tokyo', country: 'Jepang', lat: 35.6762, lng: 139.6503, mustEat: 8, tipsCount: 12, lastEdit: '2 hari lalu' },
+    { name: 'Kyoto', country: 'Jepang', lat: 35.0116, lng: 135.7681, mustEat: 6, tipsCount: 8, lastEdit: '1 minggu lalu' },
+    { name: 'Osaka', country: 'Jepang', lat: 34.6937, lng: 135.5023, mustEat: 9, tipsCount: 7, lastEdit: '3 hari lalu' },
+    { name: 'Seoul', country: 'Korea Selatan', lat: 37.5665, lng: 126.9780, mustEat: 5, tipsCount: 6, lastEdit: '5 hari lalu' },
+    { name: 'Busan', country: 'Korea Selatan', lat: 35.1796, lng: 129.0756, mustEat: 3, tipsCount: 4, lastEdit: '2 minggu lalu' },
+    { name: 'Beijing', country: 'China', lat: 39.9042, lng: 116.4074, mustEat: 4, tipsCount: 5, lastEdit: '1 bulan lalu' },
+  ],
+
+  templates: [
+    { id: 'T01', name: 'Tokyo Klasik 5 Hari', destination: 'Tokyo', days: 5, public: true, duplicates: 234, author: 'Ops: Tania' },
+    { id: 'T02', name: 'Sakura Hunt 7 Hari', destination: 'Tokyo + Kyoto', days: 7, public: true, duplicates: 178, author: 'Ops: Tania' },
+    { id: 'T03', name: 'Kansai Foodie 6 Hari', destination: 'Osaka + Kyoto + Nara', days: 6, public: true, duplicates: 156, author: 'Ops: Reza' },
+    { id: 'T04', name: 'VVIP JapanTrips Tokyo', destination: 'Tokyo', days: 5, public: false, duplicates: 12, author: 'Internal: Maya' },
+    { id: 'T05', name: 'Hokkaido Winter Snow', destination: 'Sapporo + Otaru', days: 6, public: true, duplicates: 89, author: 'Ops: Reza' },
+    { id: 'T06', name: 'Seoul Pertama Kali 4 Hari', destination: 'Seoul', days: 4, public: true, duplicates: 67, author: 'Ops: Tania' },
+  ],
+
+  blogs: [
+    { id: 'B01', title: '7 Spot Sakura Tersembunyi di Tokyo', slug: '7-spot-sakura-tokyo', category: 'Tokyo', status: 'published', author: 'Tania', views: 2341, date: '2026-04-12' },
+    { id: 'B02', title: 'Cara Pakai JR Pass: Panduan Lengkap 2026', slug: 'cara-pakai-jr-pass-2026', category: 'Tips', status: 'published', author: 'Reza', views: 5872, date: '2026-03-28' },
+    { id: 'B03', title: 'Itinerary Osaka 4 Hari untuk Pemula', slug: 'osaka-4-hari-pemula', category: 'Osaka', status: 'published', author: 'Tania', views: 1923, date: '2026-04-05' },
+    { id: 'B04', title: 'Etika Onsen yang Wajib Lo Tau', slug: 'etika-onsen-pemula', category: 'Budaya', status: 'draft', author: 'Reza', views: 0, date: '2026-05-04' },
+    { id: 'B05', title: 'Seoul vs Tokyo: Mana yang Cocok Buat Lo?', slug: 'seoul-vs-tokyo', category: 'Korea', status: 'published', author: 'Tania', views: 3210, date: '2026-04-22' },
+    { id: 'B06', title: 'Aplikasi Wajib Sebelum ke Jepang', slug: 'aplikasi-wajib-jepang', category: 'Tips', status: 'review', author: 'Reza', views: 0, date: '2026-05-08' },
+  ],
+
+  pages: [
+    { id: 'P01', title: 'Promo Sakura 2026', slug: '/promo-sakura', status: 'live', visits: 8923, conversion: '4.2%' },
+    { id: 'P02', title: 'Founding Member Lifetime', slug: '/founding-member', status: 'live', visits: 12456, conversion: '7.8%' },
+    { id: 'P03', title: 'eSIM + Itinerary Bundle', slug: '/esim-bundle', status: 'draft', visits: 0, conversion: '—' },
+  ],
+
+  vouchers: [
+    { code: 'JEPANGHEMAT', discount: '20%', usedBy: 142, limit: 500, expiry: '2026-06-30', status: 'active' },
+    { code: 'SAKURA2026', discount: 'Rp 50.000', usedBy: 89, limit: 200, expiry: '2026-04-30', status: 'expired' },
+    { code: 'NEWBIE15', discount: '15%', usedBy: 234, limit: '∞', expiry: 'Tanpa batas', status: 'active' },
+    { code: 'INFLUX20', discount: '20%', usedBy: 12, limit: 100, expiry: '2026-12-31', status: 'active' },
+    { code: 'COMEBACK30', discount: '30%', usedBy: 47, limit: 250, expiry: '2026-07-15', status: 'active' },
+  ],
+
+  affiliates: [
+    { id: 'A01', name: '@travelbug.id', email: 'travelbug@email.com', clicks: 4892, conversions: 142, rate: '2.9%', balance: 'Rp 4.260.000', status: 'active' },
+    { id: 'A02', name: '@japanhacks', email: 'jh@email.com', clicks: 2103, conversions: 78, rate: '3.7%', balance: 'Rp 2.340.000', status: 'active' },
+    { id: 'A03', name: 'Travel Vlogger Andra', email: 'andra@email.com', clicks: 6721, conversions: 198, rate: '2.9%', balance: 'Rp 5.940.000', status: 'pending_payout' },
+    { id: 'A04', name: '@kyotostories', email: 'kyoto@email.com', clicks: 892, conversions: 24, rate: '2.7%', balance: 'Rp 720.000', status: 'active' },
+  ],
+
+  payments: [
+    { id: 'TX-9248', user: 'Budi Santoso', amount: 'Rp 299.000', gateway: 'Midtrans', fee: 'Rp 8.971', net: 'Rp 290.029', status: 'success', date: '2026-05-08 14:23' },
+    { id: 'TX-9247', user: 'Rini Marlina', amount: 'Rp 599.000', gateway: 'Stripe', fee: 'Rp 23.961', net: 'Rp 575.039', status: 'success', date: '2026-05-08 13:11' },
+    { id: 'TX-9246', user: 'Maya Anggraini', amount: 'Rp 1.299.000', gateway: 'Manual Transfer', fee: 'Rp 0', net: 'Rp 1.299.000', status: 'success', date: '2026-05-08 11:45' },
+    { id: 'TX-9245', user: 'Putri Handayani', amount: 'Rp 299.000', gateway: 'Midtrans', fee: 'Rp 8.971', net: 'Rp 290.029', status: 'pending', date: '2026-05-08 10:32' },
+    { id: 'TX-9244', user: 'Dewi Lestari', amount: 'Rp 299.000', gateway: 'Xendit', fee: 'Rp 9.567', net: 'Rp 289.433', status: 'refunded', date: '2026-05-07 16:08' },
+    { id: 'TX-9243', user: 'Siska Wulandari', amount: 'Rp 599.000', gateway: 'Midtrans', fee: 'Rp 17.971', net: 'Rp 581.029', status: 'success', date: '2026-05-07 09:15' },
+  ],
+
+  reports: [
+    { id: 'R01', tripTitle: 'Tokyo Hidden Spots — Budi', sharedBy: 'Budi Santoso', reportedBy: '3 orang', reason: 'Konten tidak pantas', date: '2026-05-08 09:12', status: 'open' },
+    { id: 'R02', tripTitle: 'Osaka Foodie — Rini', sharedBy: 'Rini Marlina', reportedBy: '1 orang', reason: 'Spam / Iklan', date: '2026-05-07 14:30', status: 'open' },
+    { id: 'R03', tripTitle: 'Korea Style Trip — Tono', sharedBy: 'Tono Suparto', reportedBy: '2 orang', reason: 'Informasi salah', date: '2026-05-06 11:08', status: 'open' },
+  ],
+
+  admins: [
+    { name: 'Andy Pradana', email: 'andy@kurma.guide', role: 'super', status: 'active', lastLogin: '2 menit lalu', mfa: true },
+    { name: 'Tania Kusuma', email: 'tania@kurma.guide', role: 'editor', status: 'active', lastLogin: '1 jam lalu', mfa: true },
+    { name: 'Reza Adi', email: 'reza@kurma.guide', role: 'editor', status: 'active', lastLogin: '3 jam lalu', mfa: false },
+    { name: 'Jessi Lim', email: 'jessi@kurma.guide', role: 'cs', status: 'active', lastLogin: '15 menit lalu', mfa: true },
+    { name: 'Akbar Ramadhan', email: 'akbar@kurma.guide', role: 'marketing', status: 'active', lastLogin: '5 jam lalu', mfa: true },
+    { name: 'Duloh Hartono', email: 'duloh@kurma.guide', role: 'cs', status: 'suspended', lastLogin: '7 hari lalu', mfa: false },
+  ],
+
+  auditLogs: [
+    { time: '2026-05-08 14:23:45', actor: 'Andy Pradana', actorRole: 'Super Admin', ip: '103.47.xx.xx · Chrome/Mac', action: 'UPDATE', module: 'Core Config — Pricing', target: 'Subscription Tier: Premium', oldVal: 'Rp 500.000', newVal: 'Rp 299.000' },
+    { time: '2026-05-08 13:48:12', actor: 'Tania Kusuma', actorRole: 'Editor (Ops)', ip: '110.22.xx.xx · Chrome/Win', action: 'CREATE', module: 'Master Templates', target: 'Template: Tokyo Klasik 5 Hari', oldVal: null, newVal: 'New template created' },
+    { time: '2026-05-08 12:15:33', actor: 'Akbar Ramadhan', actorRole: 'Marketing', ip: '180.55.xx.xx · Safari/iOS', action: 'CREATE', module: 'Marketing — Vouchers', target: 'Voucher: COMEBACK30', oldVal: null, newVal: '30% off, expires 2026-07-15' },
+    { time: '2026-05-08 11:02:08', actor: 'Jessi Lim', actorRole: 'CS', ip: '125.18.xx.xx · Chrome/Win', action: 'UPDATE', module: 'User Management', target: 'User #U1038 — Rini Marlina', oldVal: 'Free', newVal: 'Premium (Manual Override · Reason: payment gateway error)' },
+    { time: '2026-05-08 10:34:21', actor: 'Andy Pradana', actorRole: 'Super Admin', ip: '103.47.xx.xx · Chrome/Mac', action: 'UPDATE', module: 'Settings — RBAC', target: 'Role: Editor (Ops)', oldVal: 'CMS: View Only', newVal: 'CMS: Full Access' },
+    { time: '2026-05-08 09:12:55', actor: 'Akbar Ramadhan', actorRole: 'Marketing', ip: '180.55.xx.xx · Safari/iOS', action: 'EXPORT', module: 'User Management', target: 'Filter: Free + Last Active > 30d', oldVal: null, newVal: '47 rows exported to CSV' },
+    { time: '2026-05-07 16:48:02', actor: 'Reza Adi', actorRole: 'Editor (Ops)', ip: '202.88.xx.xx · Firefox/Win', action: 'UPDATE', module: 'Destination — Tokyo', oldVal: 'Must-Eat: 7 entries', newVal: 'Must-Eat: 8 entries (added Ichiran Shibuya)', target: 'City: Tokyo' },
+    { time: '2026-05-07 14:22:18', actor: 'Andy Pradana', actorRole: 'Super Admin', ip: '103.47.xx.xx · Chrome/Mac', action: 'DELETE', module: 'CMS — Blog', target: 'Post: Tokyo Spring 2025 (draft)', oldVal: 'Draft post', newVal: 'Permanently deleted' },
+  ],
+
+  webhooks: [
+    { time: '14:23:01', endpoint: 'POST /webhook/japantrips/grant', status: 200, latency: '124ms', payload: 'user_id=U1042, tier=premium' },
+    { time: '13:11:48', endpoint: 'POST /webhook/midtrans/notify', status: 200, latency: '89ms', payload: 'order_id=ORDER-9248' },
+    { time: '12:08:22', endpoint: 'POST /webhook/japantrips/grant', status: 500, latency: '5012ms', payload: 'user_id=U1041 — TIMEOUT' },
+    { time: '11:45:15', endpoint: 'POST /webhook/stripe/notify', status: 200, latency: '156ms', payload: 'pi_3OabcXYZ' },
+    { time: '10:23:09', endpoint: 'POST /webhook/japantrips/grant', status: 200, latency: '102ms', payload: 'user_id=U1040, tier=premium' },
+  ],
+
+  recentActivity: [
+    { type: 'signup', text: '<strong>Hendra Wijaya</strong> baru saja mendaftar dari JapanTrips', time: '2 menit lalu' },
+    { type: 'upgrade', text: '<strong>Siska Wulandari</strong> upgrade ke <strong>Premium</strong>', time: '5 menit lalu' },
+    { type: 'share', text: '<strong>Maya Anggraini</strong> membagikan itinerary <em>"Hokkaido Winter"</em>', time: '12 menit lalu' },
+    { type: 'signup', text: '<strong>Yusuf Iskandar</strong> baru saja mendaftar (Organik)', time: '23 menit lalu' },
+    { type: 'alert', text: 'Webhook JapanTrips error untuk <strong>Putri H.</strong> — perlu cek manual', time: '34 menit lalu' },
+    { type: 'upgrade', text: '<strong>Budi Santoso</strong> perpanjang Premium 12 bulan', time: '1 jam lalu' },
+    { type: 'share', text: '<strong>Rini Marlina</strong> membagikan itinerary <em>"Osaka Foodie"</em>', time: '1 jam lalu' },
+    { type: 'signup', text: '<strong>Ahmad Fauzi</strong> baru saja mendaftar', time: '2 jam lalu' },
+  ],
+
+  segments: [
+    { name: 'Newbie', count: 234, desc: 'Baru daftar < 24 jam', cta: 'Kirim email tutorial', cls: 'newbie' },
+    { name: 'Power User', count: 87, desc: 'Bikin > 5 hari itinerary tapi masih Free', cta: 'Push upgrade Premium', cls: 'power' },
+    { name: 'Dormant', count: 412, desc: 'Belum login > 30 hari', cta: 'Kirim email comeback + 30% off', cls: 'dormant' },
+    { name: 'Premium Expiry (3d)', count: 28, desc: 'Premium habis dalam 3 hari', cta: 'Reminder renewal', cls: 'expiry' },
+  ],
+
+  notifications: [
+    { name: 'Welcome Series — Day 1', trigger: 'Saat user baru mendaftar', channel: 'Email', status: 'active', sent: 1247 },
+    { name: 'Checkout Abandoned', trigger: '2 jam diam di halaman checkout', channel: 'Email + Push', status: 'active', sent: 89 },
+    { name: 'Day 3 Itinerary Help', trigger: 'User stuck di Day 3 > 24 jam', channel: 'Email', status: 'active', sent: 156 },
+    { name: 'Premium Expiry Reminder', trigger: '3 hari sebelum expired', channel: 'Email + WA', status: 'active', sent: 28 },
+    { name: 'Comeback Promo', trigger: 'Dormant > 30 hari', channel: 'Email', status: 'paused', sent: 0 },
+  ],
+};
+
+/* =================================================================
+   UTILITIES
+   ================================================================= */
+function el(id) { return document.getElementById(id); }
+
+function escapeHTML(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"']/g, function(c) {
+    return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+  });
+}
+
+function toast(message, kind) {
+  kind = kind || 'default';
+  const rail = el('toast-rail');
+  const t = document.createElement('div');
+  t.className = 'toast ' + (kind === 'success' ? 'success' : kind === 'error' ? 'error' : '');
+  t.innerHTML = '<div>' + escapeHTML(message) + '</div><button class="toast-close" data-action="toast-close">' + I.close + '</button>';
+  rail.appendChild(t);
+  setTimeout(function() {
+    t.style.transition = 'opacity 0.2s, transform 0.2s';
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(8px)';
+    setTimeout(function() { t.remove(); }, 200);
+  }, 3500);
+}
+
+function getInitials(name) {
+  return name.split(' ').slice(0, 2).map(function(n) { return n[0]; }).join('').toUpperCase();
+}
+
+function tierBadge(tier) {
+  const map = {
+    free: { cls: 'tier-free', label: 'Free' },
+    premium: { cls: 'tier-premium', label: 'Premium' },
+    vip: { cls: 'tier-vip', label: 'VIP' },
+    admin: { cls: 'tier-admin', label: 'Admin' },
+  };
+  const m = map[tier] || map.free;
+  return '<span class="badge ' + m.cls + '">' + m.label + '</span>';
+}
+
+function permIcon(level) {
+  if (level === 'full') return '<span class="p-icon" style="color: var(--success)" title="Full access">✓</span>';
+  if (level === 'view') return '<span class="p-icon" style="color: var(--warning)" title="View only">◐</span>';
+  return '<span class="p-icon" style="color: var(--ink-40)" title="No access">✕</span>';
+}
+
+function canAccess(viewKey) {
+  const perm = PERMS[viewKey];
+  if (!perm) return 'full';
+  return perm[state.role] || 'none';
+}
+
+/* =================================================================
+   SIDEBAR + TOPBAR
+   ================================================================= */
+function renderSidebar() {
+  const role = ROLES[state.role];
+  const h = [];
+  h.push('<aside class="sidebar' + (state.sidebarOpen ? ' open' : '') + '" id="sidebar">');
+
+  // Brand
+  h.push('<div class="sidebar-brand">');
+  h.push('<div class="sidebar-brand-mark">K</div>');
+  h.push('<div>');
+  h.push('<div class="sidebar-brand-name">KurmaGo</div>');
+  h.push('<div class="sidebar-brand-sub">Admin CMS</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  // Role indicator
+  h.push('<div class="sidebar-role">');
+  h.push('<div class="sidebar-role-label">Logged in as</div>');
+  h.push('<button class="sidebar-role-current" data-action="open-role-switch">');
+  h.push('<div class="sidebar-role-avatar">' + role.initials + '</div>');
+  h.push('<div class="sidebar-role-info">');
+  h.push('<div class="sidebar-role-name">' + escapeHTML(role.name) + '</div>');
+  h.push('<div class="sidebar-role-tier">' + escapeHTML(role.tier) + '</div>');
+  h.push('</div>');
+  h.push('<div class="sidebar-role-caret">' + I.caretDown + '</div>');
+  h.push('</button>');
+  h.push('</div>');
+
+  // Nav
+  h.push('<nav class="sidebar-nav">');
+  for (let s = 0; s < NAV.length; s++) {
+    const section = NAV[s];
+    h.push('<div class="sidebar-section">');
+    h.push('<div class="sidebar-section-label">' + escapeHTML(section.section) + '</div>');
+    for (let i = 0; i < section.items.length; i++) {
+      const item = section.items[i];
+      const access = canAccess(item.permKey);
+      const isActive = state.view === item.id;
+      const isDisabled = access === 'none';
+      const cls = ['sidebar-link'];
+      if (isActive) cls.push('active');
+      if (isDisabled) cls.push('disabled');
+      const dataAction = isDisabled ? 'noop' : 'navigate';
+      h.push('<button class="' + cls.join(' ') + '" data-action="' + dataAction + '" data-view="' + item.id + '" title="' + (isDisabled ? 'No access for this role' : '') + '">');
+      h.push('<span class="sidebar-link-icon">' + item.icon + '</span>');
+      h.push('<span class="sidebar-link-label">' + escapeHTML(item.label) + '</span>');
+      if (item.badge) {
+        h.push('<span class="sidebar-link-badge">' + escapeHTML(item.badge) + '</span>');
+      }
+      if (access === 'view') {
+        h.push('<span class="sidebar-link-badge" style="background: var(--warning-soft); color: var(--warning)" title="View only">◐</span>');
+      }
+      h.push('</button>');
+    }
+    h.push('</div>');
+  }
+  h.push('</nav>');
+
+  // Footer
+  h.push('<div class="sidebar-footer">');
+  h.push('<button class="sidebar-link" data-action="open-help">');
+  h.push('<span class="sidebar-link-icon">' + I.question + '</span>');
+  h.push('<span class="sidebar-link-label">Help & Docs</span>');
+  h.push('</button>');
+  h.push('</div>');
+
+  h.push('</aside>');
+  return h.join('');
+}
+
+function renderTopbar() {
+  const h = [];
+  h.push('<header class="topbar">');
+  h.push('<button class="topbar-icon-btn" data-action="toggle-sidebar" style="display:none" id="hamburger-btn">' + I.menu + '</button>');
+  h.push('<div class="topbar-search">');
+  h.push('<span class="topbar-search-icon">' + I.search + '</span>');
+  h.push('<input type="text" placeholder="Cari user, itinerary, blog post..." />');
+  h.push('</div>');
+  h.push('<div class="topbar-actions">');
+  h.push('<button class="topbar-icon-btn" data-action="show-help" title="Help">' + I.question + '</button>');
+  h.push('<button class="topbar-icon-btn" data-action="show-notifs" title="Notifications">' + I.bell + '<span class="badge-dot"></span></button>');
+  h.push('<div class="topbar-divider"></div>');
+  h.push('<button class="topbar-icon-btn" data-action="open-role-switch" title="Switch role">');
+  h.push('<div style="width: 28px; height: 28px; border-radius: 50%; background: ' + ROLES[state.role].color + '; color: var(--primary-tint); display: grid; place-items: center; font-weight: 600; font-size: 11px">' + ROLES[state.role].initials + '</div>');
+  h.push('</button>');
+  h.push('</div>');
+  h.push('</header>');
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: OVERVIEW / HOME
+   ================================================================= */
+function renderOverview() {
+  const h = [];
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Dashboard</div>');
+  h.push('<h1 class="page-title">Selamat datang, <em>Andy</em>.</h1>');
+  h.push('<p class="page-lead">Helicopter view kesehatan KurmaGo hari ini — Sabtu, 9 Mei 2026.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  h.push('<button class="btn btn-ghost btn-sm">' + I.download + '<span>Export Report</span></button>');
+  h.push('<button class="btn btn-primary btn-sm">' + I.plus + '<span>Quick Action</span></button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  // === GROUP 1: User & Growth (Marketing focus) ===
+  h.push('<div class="eyebrow mb-md" style="margin-top: 8px">User & Growth · Fokus Marketing</div>');
+  h.push('<div class="stat-grid">');
+  h.push(statCard('Total User Aktif', '12,847', 'up', '+8.2% bulan ini', null, 'total-users'));
+  h.push(statCard('New Users (Week)', '342', 'up', '+12% vs minggu lalu', 'WoW Growth', 'new-users'));
+  h.push(statCard('Daily Active Users', '2,184', 'up', '+4.1% vs kemarin', 'DAU/MAU: 17%', 'dau'));
+  h.push(statCard('Source Mix', '61% / 39%', 'flat', 'JapanTrips / Organik', 'Sumber traffic', 'source'));
+  h.push('</div>');
+
+  // === GROUP 2: Product Engagement (Ops & Product) ===
+  h.push('<div class="eyebrow mb-md mt-xl">Product Engagement · Fokus Ops & Product</div>');
+  h.push('<div class="stat-grid">');
+  h.push(statCard('Total Itineraries', '8,492', 'up', '+247 minggu ini', null, 'itin'));
+  h.push(statCard('Shared Links Active', '1,238', 'up', '+18% MoM', 'Indikator viralitas', 'shared'));
+  h.push(statCard('Storage Used', '47.2 GB', 'flat', '<span class="muted">/ 100 GB capacity</span>', '47% terpakai', 'storage'));
+  h.push(statCard('Avg Days/Trip', '5.4 hari', 'up', '+0.3 vs bulan lalu', null, 'avgdays'));
+  h.push('</div>');
+
+  // === GROUP 3: Financial & SaaS Health (CEO & Finance) ===
+  h.push('<div class="eyebrow mb-md mt-xl">Financial & SaaS Health · Fokus CEO & Finance</div>');
+  h.push('<div class="stat-grid">');
+  h.push(statCard('MRR', 'Rp 142.8 Jt', 'up', '+11.4% MoM', 'Monthly Recurring Revenue', 'mrr'));
+  h.push(statCard('Conversion Rate', '4.7%', 'up', '+0.3pp vs bulan lalu', 'Free → Premium', 'conv'));
+  h.push(statCard('Churn Rate', '2.1%', 'down', '-0.4pp vs bulan lalu', 'Sehat di bawah 3%', 'churn'));
+  h.push(statCard('LTV', 'Rp 1.84 Jt', 'up', '+5.2% MoM', 'Lifetime Value', 'ltv'));
+  h.push('</div>');
+
+  // === Charts row ===
+  h.push('<div class="grid-2 mt-xl" style="grid-template-columns: 1.6fr 1fr; gap: 20px">');
+
+  // Line chart card
+  h.push('<div class="chart-card">');
+  h.push('<div class="chart-head">');
+  h.push('<div>');
+  h.push('<div class="chart-title">Pertumbuhan User Baru</div>');
+  h.push('<div class="chart-sub">30 hari terakhir · split per source</div>');
+  h.push('</div>');
+  h.push('<div class="flex gap-xs">');
+  h.push('<button class="chip active">30D</button>');
+  h.push('<button class="chip">7D</button>');
+  h.push('<button class="chip">90D</button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push(renderLineChart());
+  h.push('</div>');
+
+  // Pie chart card
+  h.push('<div class="chart-card">');
+  h.push('<div class="chart-head">');
+  h.push('<div>');
+  h.push('<div class="chart-title">Destinasi Terpopuler</div>');
+  h.push('<div class="chart-sub">Itinerary dibikin · minggu ini</div>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push(renderDonutChart());
+  h.push('</div>');
+
+  h.push('</div>');
+
+  // === Activity feed + Quick actions ===
+  h.push('<div class="grid-2 mt-xl" style="grid-template-columns: 1.6fr 1fr; gap: 20px">');
+
+  // Activity feed
+  h.push('<div class="chart-card">');
+  h.push('<div class="chart-head">');
+  h.push('<div>');
+  h.push('<div class="chart-title">Recent Activity</div>');
+  h.push('<div class="chart-sub">Real-time feed pergerakan user</div>');
+  h.push('</div>');
+  h.push('<button class="btn-text btn">View all</button>');
+  h.push('</div>');
+  h.push('<ul class="activity-list">');
+  for (let i = 0; i < MOCK.recentActivity.length; i++) {
+    const a = MOCK.recentActivity[i];
+    h.push('<li class="activity-item">');
+    h.push('<span class="activity-dot ' + a.type + '"></span>');
+    h.push('<span class="activity-text">' + a.text + '</span>');
+    h.push('<span class="activity-time">' + a.time + '</span>');
+    h.push('</li>');
+  }
+  h.push('</ul>');
+  h.push('</div>');
+
+  // Quick actions / health card
+  h.push('<div class="flex-col gap-md">');
+  h.push('<div class="card-deep">');
+  h.push('<div class="eyebrow" style="color: var(--primary-tint); margin-bottom: 12px">System Status</div>');
+  h.push('<div style="display: flex; flex-direction: column; gap: 12px">');
+  h.push('<div class="flex justify-between items-center"><span style="font-size: 13px">Webhook JapanTrips</span><span class="badge success" style="background: var(--success); color: #fff">Healthy · 200ms</span></div>');
+  h.push('<div class="flex justify-between items-center"><span style="font-size: 13px">Payment Gateway (Midtrans)</span><span class="badge success" style="background: var(--success); color: #fff">Operational</span></div>');
+  h.push('<div class="flex justify-between items-center"><span style="font-size: 13px">Storage</span><span class="badge warning" style="background: var(--warning); color: #fff">47% — Watch</span></div>');
+  h.push('<div class="flex justify-between items-center"><span style="font-size: 13px">CDN / Image Service</span><span class="badge success" style="background: var(--success); color: #fff">Healthy</span></div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="card-mist">');
+  h.push('<div class="eyebrow mb-md">Quick Actions</div>');
+  h.push('<div class="flex-col gap-xs">');
+  h.push('<button class="inline-link" data-action="navigate" data-view="users">→ Lihat 47 user yang Last Active > 30d</button>');
+  h.push('<button class="inline-link" data-action="navigate" data-view="moderation">→ 3 itinerary perlu di-review</button>');
+  h.push('<button class="inline-link" data-action="navigate" data-view="finance">→ 1 manual transaction perlu diinput</button>');
+  h.push('<button class="inline-link" data-action="navigate" data-view="affiliate">→ 2 affiliate siap payout</button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('</div>');
+
+  return h.join('');
+}
+
+function statCard(label, value, deltaKind, delta, sub, key) {
+  const arrow = deltaKind === 'up' ? I.arrowUp : deltaKind === 'down' ? I.arrowDown : '';
+  const h = [];
+  h.push('<div class="stat-card">');
+  h.push('<div class="stat-card-head">');
+  h.push('<div class="stat-card-label">' + escapeHTML(label) + '</div>');
+  h.push('<button class="stat-card-menu" data-action="stat-menu" data-key="' + (key || '') + '">' + I.more + '</button>');
+  h.push('</div>');
+  h.push('<div class="stat-card-value">' + value + '</div>');
+  h.push('<div class="stat-card-delta ' + deltaKind + '">');
+  if (arrow) h.push('<span style="display:inline-flex;width:14px;height:14px">' + arrow + '</span>');
+  h.push('<span>' + delta + '</span>');
+  h.push('</div>');
+  if (sub) h.push('<div class="stat-card-sublabel mt-xs" style="font-size: 12px">' + sub + '</div>');
+  h.push('</div>');
+  return h.join('');
+}
+
+function renderLineChart() {
+  // Simple SVG line chart — 30 day data, split JapanTrips vs Organic
+  const w = 600, hgt = 200, pad = 30;
+  const days = 30;
+  // Generate two series with mild trend
+  const seedJT = [82, 91, 88, 95, 102, 98, 110, 115, 108, 122, 118, 134, 128, 145, 138, 152, 158, 165, 172, 168, 180, 188, 192, 201, 198, 215, 224, 232, 245, 258];
+  const seedOR = [42, 48, 52, 49, 58, 62, 67, 71, 74, 78, 82, 88, 91, 95, 102, 108, 112, 118, 124, 128, 134, 138, 145, 148, 156, 162, 168, 175, 182, 188];
+  const max = Math.max.apply(null, seedJT.concat(seedOR)) * 1.1;
+
+  function pathFor(arr, color) {
+    let d = '';
+    for (let i = 0; i < arr.length; i++) {
+      const x = pad + (i / (days - 1)) * (w - pad * 2);
+      const y = hgt - pad - (arr[i] / max) * (hgt - pad * 2);
+      d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' ';
+    }
+    return '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
+  }
+
+  function areaFor(arr, color) {
+    let d = '';
+    for (let i = 0; i < arr.length; i++) {
+      const x = pad + (i / (days - 1)) * (w - pad * 2);
+      const y = hgt - pad - (arr[i] / max) * (hgt - pad * 2);
+      d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1) + ' ';
+    }
+    d += 'L' + (w - pad) + ',' + (hgt - pad) + ' L' + pad + ',' + (hgt - pad) + ' Z';
+    return '<path d="' + d + '" fill="' + color + '" fill-opacity="0.08"/>';
+  }
+
+  const h = [];
+  h.push('<div style="width:100%; overflow-x:auto">');
+  h.push('<svg viewBox="0 0 ' + w + ' ' + hgt + '" style="width:100%; height: 220px; min-width: 400px">');
+  // grid
+  for (let i = 0; i < 4; i++) {
+    const y = pad + (i / 3) * (hgt - pad * 2);
+    h.push('<line x1="' + pad + '" x2="' + (w - pad) + '" y1="' + y + '" y2="' + y + '" stroke="#E5DFD0" stroke-width="1" stroke-dasharray="2,4"/>');
+  }
+  h.push(areaFor(seedJT, '#1E6091'));
+  h.push(pathFor(seedJT, '#1E6091'));
+  h.push(areaFor(seedOR, '#2E86AB'));
+  h.push(pathFor(seedOR, '#2E86AB'));
+  // x labels
+  const labels = ['10 Apr', '17 Apr', '24 Apr', '1 Mei', '8 Mei'];
+  for (let i = 0; i < labels.length; i++) {
+    const x = pad + (i / (labels.length - 1)) * (w - pad * 2);
+    h.push('<text x="' + x + '" y="' + (hgt - 8) + '" text-anchor="middle" font-size="10" fill="#5C6B7A" font-family="Plus Jakarta Sans">' + labels[i] + '</text>');
+  }
+  h.push('</svg>');
+  h.push('</div>');
+  // legend
+  h.push('<div class="flex gap-md" style="margin-top: 8px; font-size: 12px; color: var(--ink-72)">');
+  h.push('<span class="flex items-center gap-xs"><span style="width:10px;height:10px;border-radius:2px;background:#1E6091"></span> JapanTrips Auto-Assign</span>');
+  h.push('<span class="flex items-center gap-xs"><span style="width:10px;height:10px;border-radius:2px;background:#2E86AB"></span> Organik</span>');
+  h.push('</div>');
+  return h.join('');
+}
+
+function renderDonutChart() {
+  const slices = [
+    { label: 'Tokyo', value: 38, color: '#0A3D62' },
+    { label: 'Osaka', value: 24, color: '#1E6091' },
+    { label: 'Kyoto', value: 18, color: '#2E86AB' },
+    { label: 'Seoul', value: 12, color: '#A8DADC' },
+    { label: 'Lainnya', value: 8, color: '#D6E9EF' },
+  ];
+  const total = slices.reduce(function(a, b) { return a + b.value; }, 0);
+  const cx = 90, cy = 90, r = 70, ir = 44;
+  let acc = 0;
+  const paths = [];
+
+  function polar(angle, radius) {
+    const a = (angle - 90) * Math.PI / 180;
+    return [cx + radius * Math.cos(a), cy + radius * Math.sin(a)];
+  }
+
+  for (let i = 0; i < slices.length; i++) {
+    const s = slices[i];
+    const start = (acc / total) * 360;
+    acc += s.value;
+    const end = (acc / total) * 360;
+    const large = (end - start) > 180 ? 1 : 0;
+    const [x1, y1] = polar(start, r);
+    const [x2, y2] = polar(end, r);
+    const [x3, y3] = polar(end, ir);
+    const [x4, y4] = polar(start, ir);
+    const d = 'M' + x1.toFixed(2) + ',' + y1.toFixed(2)
+      + ' A' + r + ',' + r + ' 0 ' + large + ' 1 ' + x2.toFixed(2) + ',' + y2.toFixed(2)
+      + ' L' + x3.toFixed(2) + ',' + y3.toFixed(2)
+      + ' A' + ir + ',' + ir + ' 0 ' + large + ' 0 ' + x4.toFixed(2) + ',' + y4.toFixed(2)
+      + ' Z';
+    paths.push('<path d="' + d + '" fill="' + s.color + '"/>');
+  }
+
+  const h = [];
+  h.push('<div class="flex items-center gap-lg">');
+  h.push('<svg viewBox="0 0 180 180" style="width: 160px; height: 160px; flex-shrink:0">');
+  h.push(paths.join(''));
+  h.push('<text x="90" y="86" text-anchor="middle" font-family="Inter" font-size="22" font-weight="600" fill="#0A3D62">8,492</text>');
+  h.push('<text x="90" y="104" text-anchor="middle" font-family="Plus Jakarta Sans" font-size="10" fill="#5C6B7A" letter-spacing="1.2">TOTAL TRIPS</text>');
+  h.push('</svg>');
+  h.push('<div class="flex-col gap-xs flex-1">');
+  for (let i = 0; i < slices.length; i++) {
+    const s = slices[i];
+    const pct = ((s.value / total) * 100).toFixed(0);
+    h.push('<div class="flex items-center gap-xs" style="font-size: 13px">');
+    h.push('<span style="width:10px;height:10px;border-radius:2px;background:' + s.color + ';flex-shrink:0"></span>');
+    h.push('<span style="flex:1">' + s.label + '</span>');
+    h.push('<span style="color: var(--ink-72); font-weight: 600">' + pct + '%</span>');
+    h.push('</div>');
+  }
+  h.push('</div>');
+  h.push('</div>');
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: USER MANAGEMENT
+   ================================================================= */
+function renderUsers() {
+  const filtered = filterUsers();
+  const cols = state.userColumns;
+  const h = [];
+
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Users · Customer Service</div>');
+  h.push('<h1 class="page-title">User <em>Management</em></h1>');
+  h.push('<p class="page-lead">Tabel berisi ' + MOCK.users.length.toLocaleString() + '+ user. Filter, segment, lalu bulk action atau export.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  h.push('<button class="btn btn-ghost btn-sm" data-action="open-modal" data-modal="user-export">' + I.download + '<span>Export CSV</span></button>');
+  h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="user-bulk">' + I.bell + '<span>Bulk Notify (' + state.userSelection.size + ')</span></button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  // Filter chips
+  h.push('<div class="card mb-md" style="padding: 18px 20px">');
+  h.push('<div class="flex items-center gap-sm" style="flex-wrap: wrap">');
+  // Search
+  h.push('<div class="search-wrap" style="max-width: 320px; flex: 1">');
+  h.push('<span class="search-wrap-icon">' + I.search + '</span>');
+  h.push('<input type="text" id="user-search" placeholder="Cari nama, email, atau judul trip..." value="' + escapeHTML(state.userSearch) + '" data-action="user-search-input"/>');
+  h.push('</div>');
+  // Tier filter
+  h.push(filterChip('tier', null, 'Semua Tier'));
+  h.push(filterChip('tier', 'free', 'Free'));
+  h.push(filterChip('tier', 'premium', 'Premium'));
+  h.push(filterChip('tier', 'vip', 'VIP'));
+  h.push('<div style="width: 1px; height: 24px; background: var(--hairline)"></div>');
+  // Activity filter
+  h.push(filterChip('activity', 'dormant', 'Last Active > 30d'));
+  h.push(filterChip('activity', 'recent', 'Active 24h'));
+  h.push('<div style="width: 1px; height: 24px; background: var(--hairline)"></div>');
+  // Origin
+  h.push(filterChip('origin', 'japantrips', 'JapanTrips'));
+  h.push(filterChip('origin', 'organik', 'Organik'));
+  h.push(filterChip('origin', 'affiliate', 'Affiliate'));
+  h.push('<div style="width: 1px; height: 24px; background: var(--hairline)"></div>');
+  h.push(filterChip('engagement', 'zero', 'Total Trips = 0'));
+  h.push(filterChip('engagement', 'power', 'Power User (>3)'));
+
+  h.push('<div style="margin-left: auto" class="dropdown">');
+  h.push('<button class="btn btn-text btn-sm" data-action="toggle-dropdown" data-dd="cols">Hide/Show columns ' + I.caretDown + '</button>');
+  h.push('<div class="dropdown-menu" id="dd-cols">');
+  const colsList = [
+    { key: 'tier', label: 'Tier' },
+    { key: 'origin', label: 'Origin' },
+    { key: 'trips', label: 'Total Trips' },
+    { key: 'lastActive', label: 'Last Active' },
+    { key: 'expiry', label: 'Subscription Expiry' },
+  ];
+  for (let i = 0; i < colsList.length; i++) {
+    const c = colsList[i];
+    h.push('<label class="dropdown-item">');
+    h.push('<input type="checkbox" class="checkbox" ' + (cols[c.key] ? 'checked' : '') + ' data-action="toggle-col" data-col="' + c.key + '"/>');
+    h.push('<span>' + c.label + '</span>');
+    h.push('</label>');
+  }
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('</div>');
+  h.push('</div>');
+
+  // Active filters indicator
+  const activeFilters = Object.keys(state.userFilters).filter(function(k) { return state.userFilters[k]; });
+  if (activeFilters.length > 0 || state.userSearch) {
+    h.push('<div class="muted mb-md" style="font-size: 13px">');
+    h.push('Menampilkan <strong>' + filtered.length + '</strong> dari ' + MOCK.users.length + ' user');
+    if (activeFilters.length || state.userSearch) {
+      h.push(' · <button class="inline-link" data-action="clear-filters">Reset filter</button>');
+    }
+    h.push('</div>');
+  }
+
+  // Table
+  h.push('<div class="table-wrap">');
+  h.push('<div class="table-toolbar">');
+  h.push('<div class="flex items-center gap-sm">');
+  h.push('<input type="checkbox" class="checkbox" data-action="select-all" ' + (state.userSelection.size === filtered.length && filtered.length > 0 ? 'checked' : '') + '/>');
+  h.push('<span class="muted" style="font-size: 13px">' + (state.userSelection.size > 0 ? state.userSelection.size + ' dipilih' : 'Pilih semua') + '</span>');
+  if (state.userSelection.size > 0) {
+    h.push('<div style="width: 1px; height: 20px; background: var(--hairline); margin: 0 8px"></div>');
+    h.push('<button class="btn btn-text btn-sm">Send notification</button>');
+    h.push('<button class="btn btn-text btn-sm">Export selected</button>');
+    h.push('<button class="btn btn-text btn-sm" style="color: var(--coral)">Suspend</button>');
+  }
+  h.push('</div>');
+  h.push('<span class="muted" style="font-size: 12px">Klik baris untuk detail user</span>');
+  h.push('</div>');
+
+  h.push('<div class="table-scroll">');
+  h.push('<table class="data-table">');
+  h.push('<thead><tr>');
+  h.push('<th class="col-checkbox"></th>');
+  h.push('<th>User</th>');
+  if (cols.tier) h.push('<th>Tier</th>');
+  if (cols.origin) h.push('<th>Origin</th>');
+  if (cols.trips) h.push('<th>Trips</th>');
+  if (cols.lastActive) h.push('<th>Last Active</th>');
+  if (cols.expiry) h.push('<th>Sub Expiry</th>');
+  h.push('<th class="col-actions"></th>');
+  h.push('</tr></thead>');
+  h.push('<tbody>');
+
+  if (filtered.length === 0) {
+    h.push('<tr><td colspan="9"><div class="empty"><div class="empty-icon">' + I.search + '</div>Tidak ada user yang cocok dengan filter ini.<br/><button class="inline-link mt-xs" data-action="clear-filters">Reset filter</button></div></td></tr>');
+  } else {
+    for (let i = 0; i < filtered.length; i++) {
+      const u = filtered[i];
+      const isSelected = state.userSelection.has(u.id);
+      h.push('<tr class="' + (isSelected ? 'selected' : '') + '" data-action="open-user" data-user-id="' + u.id + '">');
+      h.push('<td class="col-checkbox" onclick="event.stopPropagation()"><input type="checkbox" class="checkbox" ' + (isSelected ? 'checked' : '') + ' data-action="select-user" data-user-id="' + u.id + '"/></td>');
+      h.push('<td><div class="user-cell">');
+      h.push('<div class="user-cell-avatar">' + getInitials(u.name) + '</div>');
+      h.push('<div class="user-cell-info">');
+      h.push('<div class="user-cell-name">' + escapeHTML(u.name) + '</div>');
+      h.push('<div class="user-cell-email">' + escapeHTML(u.email) + ' · ' + u.id + '</div>');
+      h.push('</div>');
+      h.push('</div></td>');
+      if (cols.tier) h.push('<td>' + tierBadge(u.tier) + '</td>');
+      if (cols.origin) h.push('<td><span style="font-size: 13px">' + escapeHTML(u.origin) + '</span></td>');
+      if (cols.trips) h.push('<td><strong style="color: ' + (u.trips === 0 ? 'var(--ink-40)' : u.trips > 3 ? 'var(--success)' : 'var(--ink)') + '">' + u.trips + '</strong></td>');
+      if (cols.lastActive) {
+        const lac = u.lastActive;
+        const isOld = /\d+d|\d{2,}d/.test(lac) && parseInt(lac) > 30;
+        h.push('<td><span style="color: ' + (isOld ? 'var(--coral)' : 'var(--ink-72)') + '; font-size: 13px">' + lac + ' lalu</span></td>');
+      }
+      if (cols.expiry) h.push('<td><span style="font-size: 13px; color: var(--ink-72)">' + (u.expiry || '—') + '</span></td>');
+      h.push('<td class="col-actions" onclick="event.stopPropagation()"><button class="topbar-icon-btn" style="width: 32px; height: 32px" data-action="open-user" data-user-id="' + u.id + '">' + I.eye + '</button></td>');
+      h.push('</tr>');
+    }
+  }
+
+  h.push('</tbody></table></div>');
+
+  // Pagination
+  h.push('<div style="padding: 16px 20px; border-top: 1px solid var(--hairline); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-56)">');
+  h.push('<span>Menampilkan ' + filtered.length + ' user · Halaman 1 dari ' + Math.ceil(MOCK.users.length / 20) + '</span>');
+  h.push('<div class="flex gap-xs">');
+  h.push('<button class="chip" disabled style="opacity: 0.5">← Prev</button>');
+  h.push('<button class="chip">Next →</button>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('</div>');
+  return h.join('');
+}
+
+function filterChip(group, value, label) {
+  const isActive = state.userFilters[group] === value;
+  return '<button class="chip ' + (isActive ? 'active' : '') + '" data-action="user-filter" data-group="' + group + '" data-value="' + (value || '') + '">' + escapeHTML(label) + '</button>';
+}
+
+function filterUsers() {
+  let list = MOCK.users.slice();
+  const f = state.userFilters;
+  if (f.tier) list = list.filter(function(u) { return u.tier === f.tier; });
+  if (f.activity === 'dormant') list = list.filter(function(u) { return /\d+d/.test(u.lastActive) && parseInt(u.lastActive) > 14; });
+  if (f.activity === 'recent') list = list.filter(function(u) { return /h|m/.test(u.lastActive) && !/\d+d/.test(u.lastActive); });
+  if (f.origin === 'japantrips') list = list.filter(function(u) { return u.origin.toLowerCase().includes('japantrips'); });
+  if (f.origin === 'organik') list = list.filter(function(u) { return u.origin.toLowerCase().includes('organik'); });
+  if (f.origin === 'affiliate') list = list.filter(function(u) { return u.origin.toLowerCase().includes('affiliate'); });
+  if (f.engagement === 'zero') list = list.filter(function(u) { return u.trips === 0; });
+  if (f.engagement === 'power') list = list.filter(function(u) { return u.trips > 3; });
+  const q = state.userSearch.trim().toLowerCase();
+  if (q) {
+    list = list.filter(function(u) {
+      return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.id.toLowerCase().includes(q);
+    });
+  }
+  return list;
+}
+
+/* =================================================================
+   VIEW: DESTINATIONS & CITY GUIDE
+   ================================================================= */
+function renderDestinations() {
+  const tab = state.destTab;
+  const h = [];
+
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Content · Operations</div>');
+  h.push('<h1 class="page-title">Destination & <em>City Guide</em></h1>');
+  h.push('<p class="page-lead">Dapur konten Tim Ops. Yang lo edit di sini muncul otomatis di Right Panel aplikasi user.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  if (tab === 'cities') {
+    h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="city-add">' + I.plus + '<span>Tambah Kota</span></button>');
+  } else {
+    h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="country-add">' + I.plus + '<span>Tambah Negara</span></button>');
+  }
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  // Tabs
+  h.push('<div class="tabs">');
+  h.push('<button class="tab ' + (tab === 'countries' ? 'active' : '') + '" data-action="dest-tab" data-tab="countries">Countries (' + MOCK.destinations.length + ')</button>');
+  h.push('<button class="tab ' + (tab === 'cities' ? 'active' : '') + '" data-action="dest-tab" data-tab="cities">Cities (' + MOCK.cities.length + ')</button>');
+  h.push('</div>');
+
+  if (tab === 'countries') {
+    h.push('<div class="grid-2">');
+    for (let i = 0; i < MOCK.destinations.length; i++) {
+      const c = MOCK.destinations[i];
+      h.push('<div class="card" style="display: flex; gap: 18px; align-items: center">');
+      h.push('<div style="width: 56px; height: 56px; border-radius: var(--r-sm); background: var(--surface-mist); color: var(--primary-deep); display: grid; place-items: center; font-family: var(--font-display); font-size: 22px; font-weight: 600; flex-shrink: 0">' + c.code + '</div>');
+      h.push('<div style="flex: 1">');
+      h.push('<div class="flex items-center gap-xs" style="margin-bottom: 6px">');
+      h.push('<h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--primary-deep)">' + escapeHTML(c.country) + '</h3>');
+      if (c.status === 'active') h.push('<span class="badge success">Active</span>');
+      if (c.status === 'beta') h.push('<span class="badge warning">Beta</span>');
+      if (c.status === 'coming') h.push('<span class="badge neutral">Coming Soon</span>');
+      h.push('</div>');
+      h.push('<div class="muted" style="font-size: 13px">' + c.cities.length + ' kota · ' + c.trips + ' itinerary dibikin</div>');
+      h.push('<div style="margin-top: 8px; display: flex; gap: 4px; flex-wrap: wrap">');
+      for (let j = 0; j < c.cities.length; j++) {
+        h.push('<span class="badge neutral" style="font-size: 10px; text-transform: none; letter-spacing: 0">' + escapeHTML(c.cities[j]) + '</span>');
+      }
+      h.push('</div>');
+      h.push('</div>');
+      h.push('<button class="btn btn-text btn-sm">' + I.edit + '</button>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+  } else {
+    h.push('<div class="card mb-md" style="padding: 14px 18px">');
+    h.push('<div class="flex items-center gap-sm">');
+    h.push('<div class="search-wrap" style="max-width: 360px"><span class="search-wrap-icon">' + I.search + '</span><input type="text" placeholder="Cari kota..." /></div>');
+    h.push('<select class="select" style="max-width: 200px; height: 38px"><option>Semua negara</option><option>Jepang</option><option>Korea Selatan</option><option>China</option></select>');
+    h.push('</div>');
+    h.push('</div>');
+
+    h.push('<div class="table-wrap">');
+    h.push('<div class="table-scroll">');
+    h.push('<table class="data-table">');
+    h.push('<thead><tr><th>Kota</th><th>Negara</th><th>Koordinat</th><th>Must-Eat</th><th>Local Tips</th><th>Last Edit</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.cities.length; i++) {
+      const ct = MOCK.cities[i];
+      h.push('<tr data-action="open-modal" data-modal="city-edit" data-city="' + escapeHTML(ct.name) + '">');
+      h.push('<td><strong>' + escapeHTML(ct.name) + '</strong></td>');
+      h.push('<td><span class="muted" style="font-size: 13px">' + escapeHTML(ct.country) + '</span></td>');
+      h.push('<td><span class="mono">' + ct.lat + ', ' + ct.lng + '</span></td>');
+      h.push('<td><span class="badge">' + ct.mustEat + ' resto</span></td>');
+      h.push('<td><span class="badge">' + ct.tipsCount + ' tips</span></td>');
+      h.push('<td><span class="muted" style="font-size: 13px">' + escapeHTML(ct.lastEdit) + '</span></td>');
+      h.push('<td class="col-actions"><button class="topbar-icon-btn" style="width: 32px; height: 32px">' + I.edit + '</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: MASTER TEMPLATES
+   ================================================================= */
+function renderTemplates() {
+  const h = [];
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Content · Pabrik Itinerary</div>');
+  h.push('<h1 class="page-title">Master <em>Templates</em></h1>');
+  h.push('<p class="page-lead">Itinerary "master file" buat user yang malas mulai dari nol. Public bisa di-duplicate, Internal cuma buat VVIP.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  h.push('<button class="btn btn-ghost btn-sm">' + I.copy + '<span>Import dari User Trip</span></button>');
+  h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="template-builder">' + I.plus + '<span>Template Baru</span></button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="card mb-md" style="padding: 14px 18px">');
+  h.push('<div class="flex items-center gap-sm" style="flex-wrap: wrap">');
+  h.push('<div class="search-wrap" style="max-width: 360px"><span class="search-wrap-icon">' + I.search + '</span><input type="text" placeholder="Cari template..." /></div>');
+  h.push('<button class="chip active">Semua</button>');
+  h.push('<button class="chip">Public Only</button>');
+  h.push('<button class="chip">Internal (VVIP)</button>');
+  h.push('<select class="select" style="max-width: 180px; height: 38px; margin-left: auto"><option>Sort: Most duplicated</option><option>Newest</option><option>A-Z</option></select>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="grid-3">');
+  for (let i = 0; i < MOCK.templates.length; i++) {
+    const t = MOCK.templates[i];
+    h.push('<div class="card" style="display: flex; flex-direction: column; gap: 10px; cursor: pointer" data-action="open-modal" data-modal="template-builder" data-template-id="' + t.id + '">');
+    h.push('<div class="flex justify-between items-center" style="align-items: flex-start">');
+    h.push('<span class="badge ' + (t.public ? 'success' : 'tier-vip') + '">' + (t.public ? 'Public' : 'Internal · VVIP') + '</span>');
+    h.push('<button class="topbar-icon-btn" style="width: 28px; height: 28px" onclick="event.stopPropagation()">' + I.more + '</button>');
+    h.push('</div>');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--primary-deep); line-height: 1.25">' + escapeHTML(t.name) + '</h3>');
+    h.push('<div class="muted" style="font-size: 13px">' + escapeHTML(t.destination) + ' · ' + t.days + ' hari</div>');
+    h.push('<div style="height: 1px; background: var(--hairline); margin: 4px 0"></div>');
+    h.push('<div class="flex justify-between items-center" style="font-size: 12px; color: var(--ink-56)">');
+    h.push('<span>' + escapeHTML(t.author) + '</span>');
+    h.push('<span><strong style="color: var(--ink); font-family: var(--font-display); font-size: 14px">' + t.duplicates + '</strong> duplicates</span>');
+    h.push('</div>');
+    h.push('</div>');
+  }
+  h.push('</div>');
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: CMS MANAGER
+   ================================================================= */
+function renderCMS() {
+  const tab = state.cmsTab;
+  const h = [];
+
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">CMS · Marketing & SEO</div>');
+  h.push('<h1 class="page-title">CMS <em>Manager</em></h1>');
+  h.push('<p class="page-lead">Mesin SEO. Marketing bisa bikin halaman & artikel tanpa ngantri ke IT.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  if (tab === 'blog') h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="blog-edit">' + I.plus + '<span>New Blog Post</span></button>');
+  if (tab === 'pages') h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="page-edit">' + I.plus + '<span>New Landing Page</span></button>');
+  if (tab === 'media') h.push('<button class="btn btn-primary btn-sm">' + I.plus + '<span>Upload Media</span></button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="tabs">');
+  h.push('<button class="tab ' + (tab === 'blog' ? 'active' : '') + '" data-action="cms-tab" data-tab="blog">Blog Posts (' + MOCK.blogs.length + ')</button>');
+  h.push('<button class="tab ' + (tab === 'pages' ? 'active' : '') + '" data-action="cms-tab" data-tab="pages">Static Pages (' + MOCK.pages.length + ')</button>');
+  h.push('<button class="tab ' + (tab === 'media' ? 'active' : '') + '" data-action="cms-tab" data-tab="media">Media Library</button>');
+  h.push('</div>');
+
+  if (tab === 'blog') {
+    h.push('<div class="table-wrap">');
+    h.push('<div class="table-toolbar">');
+    h.push('<div class="search-wrap"><span class="search-wrap-icon">' + I.search + '</span><input type="text" placeholder="Cari post..." /></div>');
+    h.push('<div class="flex gap-xs">');
+    h.push('<button class="chip active">Semua</button>');
+    h.push('<button class="chip">Published</button>');
+    h.push('<button class="chip">Draft</button>');
+    h.push('<button class="chip">In Review</button>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('<div class="table-scroll">');
+    h.push('<table class="data-table">');
+    h.push('<thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Author</th><th>Views</th><th>Date</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.blogs.length; i++) {
+      const b = MOCK.blogs[i];
+      h.push('<tr data-action="open-modal" data-modal="blog-edit" data-blog-id="' + b.id + '">');
+      h.push('<td><strong>' + escapeHTML(b.title) + '</strong><div class="muted" style="font-size: 12px; font-family: var(--font-mono); margin-top: 2px">/blog/' + escapeHTML(b.slug) + '</div></td>');
+      h.push('<td><span class="badge neutral" style="text-transform: none; letter-spacing: 0">' + escapeHTML(b.category) + '</span></td>');
+      const sBadge = b.status === 'published' ? '<span class="badge success">Published</span>' : b.status === 'draft' ? '<span class="badge neutral">Draft</span>' : '<span class="badge warning">In Review</span>';
+      h.push('<td>' + sBadge + '</td>');
+      h.push('<td><span style="font-size: 13px">' + escapeHTML(b.author) + '</span></td>');
+      h.push('<td><strong>' + b.views.toLocaleString() + '</strong></td>');
+      h.push('<td><span class="muted" style="font-size: 13px">' + b.date + '</span></td>');
+      h.push('<td class="col-actions"><button class="topbar-icon-btn" style="width: 32px; height: 32px">' + I.edit + '</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  if (tab === 'pages') {
+    h.push('<div class="grid-3">');
+    for (let i = 0; i < MOCK.pages.length; i++) {
+      const p = MOCK.pages[i];
+      h.push('<div class="card-accent" data-action="open-modal" data-modal="page-edit" data-page-id="' + p.id + '" style="cursor: pointer">');
+      h.push('<div class="flex justify-between items-center mb-md">');
+      h.push('<span class="badge ' + (p.status === 'live' ? 'success' : 'neutral') + '">' + (p.status === 'live' ? 'Live' : 'Draft') + '</span>');
+      h.push('<button class="topbar-icon-btn" style="width: 28px; height: 28px">' + I.external + '</button>');
+      h.push('</div>');
+      h.push('<h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--primary-deep); margin-bottom: 6px">' + escapeHTML(p.title) + '</h3>');
+      h.push('<div class="muted mono" style="font-size: 12px; margin-bottom: 16px">' + escapeHTML(p.slug) + '</div>');
+      h.push('<div class="flex justify-between" style="font-size: 13px">');
+      h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px">Visits</div><strong style="font-family: var(--font-display); font-size: 20px; color: var(--primary-deep)">' + p.visits.toLocaleString() + '</strong></div>');
+      h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px">Conv.</div><strong style="font-family: var(--font-display); font-size: 20px; color: var(--primary-deep)">' + p.conversion + '</strong></div>');
+      h.push('</div>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+  }
+
+  if (tab === 'media') {
+    h.push('<div class="card mb-md" style="padding: 14px 18px">');
+    h.push('<div class="flex items-center gap-sm" style="flex-wrap: wrap">');
+    h.push('<div class="search-wrap" style="max-width: 320px"><span class="search-wrap-icon">' + I.search + '</span><input type="text" placeholder="Cari media..." /></div>');
+    h.push('<button class="chip active">Semua</button>');
+    h.push('<button class="chip">Hero Images</button>');
+    h.push('<button class="chip">Icons</button>');
+    h.push('<button class="chip">Blog Thumbs</button>');
+    h.push('<span class="muted" style="margin-left: auto; font-size: 13px">Storage used: <strong>2.8 GB</strong> / 10 GB</span>');
+    h.push('</div>');
+    h.push('</div>');
+
+    h.push('<div class="media-grid">');
+    const mediaFiles = [
+      { name: 'tokyo-hero.jpg', kind: 'hero', color: '#0A3D62' },
+      { name: 'sakura-banner.jpg', kind: 'hero', color: '#D67BA0' },
+      { name: 'osaka-castle.jpg', kind: 'hero', color: '#2D5F4E' },
+      { name: 'kyoto-zen.jpg', kind: 'hero', color: '#5D7BA0' },
+      { name: 'icon-eat.svg', kind: 'icon', color: 'transparent' },
+      { name: 'icon-temple.svg', kind: 'icon', color: 'transparent' },
+      { name: 'seoul-night.jpg', kind: 'hero', color: '#1A2D4E' },
+      { name: 'hokkaido-snow.jpg', kind: 'hero', color: '#A8DADC' },
+      { name: 'jr-pass-thumb.jpg', kind: 'blog', color: '#C77B2C' },
+      { name: 'onsen-thumb.jpg', kind: 'blog', color: '#7B4A2C' },
+      { name: 'logo-kurma.svg', kind: 'icon', color: 'transparent' },
+      { name: 'placeholder-trip.jpg', kind: 'blog', color: '#8A95A2' },
+    ];
+    for (let i = 0; i < mediaFiles.length; i++) {
+      const m = mediaFiles[i];
+      h.push('<div class="media-tile" style="background: ' + (m.color === 'transparent' ? 'var(--surface-mist)' : m.color) + '">');
+      if (m.kind === 'icon') h.push('<span class="media-tile-icon">' + I.image + '</span>');
+      h.push('<div class="media-tile-name">' + escapeHTML(m.name) + '</div>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: MARKETING TOOLS
+   ================================================================= */
+function renderMarketing() {
+  const tab = state.marketingTab;
+  const h = [];
+
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Growth · Pendorong Konversi</div>');
+  h.push('<h1 class="page-title">Marketing <em>Tools</em></h1>');
+  h.push('<p class="page-lead">Voucher, nudge otomatis, funnel analytics, dan smart segmentation. Alat buat dorong user Free ke Premium.</p>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="tabs">');
+  h.push('<button class="tab ' + (tab === 'vouchers' ? 'active' : '') + '" data-action="marketing-tab" data-tab="vouchers">Vouchers (' + MOCK.vouchers.length + ')</button>');
+  h.push('<button class="tab ' + (tab === 'notifications' ? 'active' : '') + '" data-action="marketing-tab" data-tab="notifications">Notifications</button>');
+  h.push('<button class="tab ' + (tab === 'funnel' ? 'active' : '') + '" data-action="marketing-tab" data-tab="funnel">Conversion Funnel</button>');
+  h.push('<button class="tab ' + (tab === 'segments' ? 'active' : '') + '" data-action="marketing-tab" data-tab="segments">User Segments</button>');
+  h.push('</div>');
+
+  if (tab === 'vouchers') {
+    h.push('<div class="flex justify-between items-center mb-md">');
+    h.push('<div class="search-wrap" style="max-width: 320px"><span class="search-wrap-icon">' + I.search + '</span><input type="text" placeholder="Cari voucher..." /></div>');
+    h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="voucher-create">' + I.plus + '<span>Voucher Baru</span></button>');
+    h.push('</div>');
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>Code</th><th>Discount</th><th>Used</th><th>Expiry</th><th>Status</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.vouchers.length; i++) {
+      const v = MOCK.vouchers[i];
+      h.push('<tr>');
+      h.push('<td><span class="kbd" style="font-size: 13px">' + v.code + '</span></td>');
+      h.push('<td><strong>' + v.discount + '</strong></td>');
+      h.push('<td><span style="font-size: 13px">' + v.usedBy + ' / ' + v.limit + '</span></td>');
+      h.push('<td><span class="muted" style="font-size: 13px">' + v.expiry + '</span></td>');
+      h.push('<td>' + (v.status === 'active' ? '<span class="badge success">Active</span>' : '<span class="badge neutral">Expired</span>') + '</td>');
+      h.push('<td class="col-actions"><button class="topbar-icon-btn" style="width: 32px; height: 32px">' + I.more + '</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  if (tab === 'notifications') {
+    h.push('<div class="card mb-md" style="background: var(--surface-mist); border-left: 4px solid var(--primary-bright); padding: 18px 24px">');
+    h.push('<div class="flex items-center gap-sm">');
+    h.push('<div style="color: var(--primary)">' + I.zap + '</div>');
+    h.push('<div><strong>Nudge Center</strong> · Pesan otomatis yang trigger berdasarkan event user. Bisa email, push, atau WA.</div>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('<div class="flex justify-between items-center mb-md">');
+    h.push('<div></div>');
+    h.push('<button class="btn btn-primary btn-sm">' + I.plus + '<span>Nudge Baru</span></button>');
+    h.push('</div>');
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>Nama</th><th>Trigger</th><th>Channel</th><th>Sent (30d)</th><th>Status</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.notifications.length; i++) {
+      const n = MOCK.notifications[i];
+      h.push('<tr>');
+      h.push('<td><strong>' + escapeHTML(n.name) + '</strong></td>');
+      h.push('<td><span style="font-size: 13px">' + escapeHTML(n.trigger) + '</span></td>');
+      h.push('<td><span class="badge neutral" style="text-transform: none; letter-spacing: 0">' + escapeHTML(n.channel) + '</span></td>');
+      h.push('<td><strong>' + n.sent + '</strong></td>');
+      h.push('<td>' + (n.status === 'active' ? '<span class="badge success">Active</span>' : '<span class="badge neutral">Paused</span>') + '</td>');
+      h.push('<td class="col-actions"><label class="toggle"><input type="checkbox" ' + (n.status === 'active' ? 'checked' : '') + '/><span class="toggle-slider"></span></label></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  if (tab === 'funnel') {
+    h.push('<div class="grid-2" style="grid-template-columns: 1.4fr 1fr">');
+    h.push('<div class="card-elevated">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary-deep); margin-bottom: 4px">Conversion Funnel — User Journey</h3>');
+    h.push('<p class="muted mb-lg" style="font-size: 13px">Last 30 days · Lihat di tahap mana user berhenti</p>');
+
+    const funnelStages = [
+      { label: 'Sign Up', count: 1247, drop: null, cls: 's1' },
+      { label: 'Buka Aplikasi (1st time)', count: 968, drop: '-22%', cls: 's2' },
+      { label: 'Bikin Day 1', count: 668, drop: '-31%', cls: 's3' },
+      { label: 'Lanjut ke Day 3', count: 401, drop: '-40%', cls: 's4' },
+      { label: 'Upgrade Premium', count: 178, drop: '-56%', cls: 's5' },
+    ];
+    for (let i = 0; i < funnelStages.length; i++) {
+      const s = funnelStages[i];
+      h.push('<div class="funnel-stage">');
+      h.push('<div class="funnel-meta"><strong>' + s.count.toLocaleString() + '</strong>' + escapeHTML(s.label) + '</div>');
+      h.push('<div class="funnel-bar ' + s.cls + '">' + ((s.count / 1247) * 100).toFixed(0) + '% retention</div>');
+      if (s.drop) h.push('<div class="funnel-drop">' + s.drop + '</div>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+
+    h.push('<div class="card-mist">');
+    h.push('<div class="eyebrow mb-md">Actionable Insight</div>');
+    h.push('<div style="font-family: var(--font-display); font-size: 21px; font-weight: 400; font-style: italic; color: var(--primary-deep); line-height: 1.4; margin-bottom: 16px">"Drop-off terbesar (40%) terjadi antara Day 1 dan Day 3."</div>');
+    h.push('<p style="font-size: 14px; color: var(--ink-72); margin-bottom: 20px">Pertimbangkan setup nudge otomatis: <em>"Butuh inspirasi buat hari ke-3 di Tokyo? Cek template ini!"</em></p>');
+    h.push('<button class="btn btn-primary btn-sm">' + I.plus + '<span>Setup Nudge "Day 3 Help"</span></button>');
+    h.push('</div>');
+    h.push('</div>');
+  }
+
+  if (tab === 'segments') {
+    h.push('<p class="muted mb-lg" style="font-size: 14px">Smart Segments mengelompokkan user otomatis berdasarkan perilaku. Klik untuk lihat user list & kirim notifikasi massal.</p>');
+    h.push('<div class="grid-2">');
+    for (let i = 0; i < MOCK.segments.length; i++) {
+      const s = MOCK.segments[i];
+      h.push('<div class="segment-card ' + s.cls + '" style="cursor: pointer" data-action="navigate" data-view="users">');
+      h.push('<div class="flex justify-between items-center mb-md">');
+      h.push('<div class="eyebrow">' + escapeHTML(s.name) + '</div>');
+      h.push('<span style="font-family: var(--font-display); font-size: 32px; font-weight: 600; color: var(--primary-deep); line-height: 1">' + s.count + '</span>');
+      h.push('</div>');
+      h.push('<p style="font-size: 14px; color: var(--ink-72); margin-bottom: 12px">' + escapeHTML(s.desc) + '</p>');
+      h.push('<div class="flex items-center gap-xs" style="font-size: 13px; color: var(--primary); font-weight: 600">' + I.zap + '<span>' + escapeHTML(s.cta) + '</span></div>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: AFFILIATE MANAGER
+   ================================================================= */
+function renderAffiliate() {
+  const tab = state.affiliateTab;
+  const h = [];
+
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Growth · Partnership</div>');
+  h.push('<h1 class="page-title">Affiliate <em>Manager</em></h1>');
+  h.push('<p class="page-lead">Sistem pencatat mitra/influencer yang bantuin jualan. Track click, konversi, dan komisi yang harus dicairkan.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  h.push('<button class="btn btn-ghost btn-sm">' + I.copy + '<span>Generate Link</span></button>');
+  h.push('<button class="btn btn-primary btn-sm">' + I.plus + '<span>Affiliate Baru</span></button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  // Top stats
+  h.push('<div class="stat-grid mb-lg" style="margin-bottom: 24px">');
+  h.push(statCard('Total Affiliate', '24', 'up', '+3 bulan ini', null, 'aff-total'));
+  h.push(statCard('Total Klik (30d)', '14,608', 'up', '+18% MoM', null, 'aff-clicks'));
+  h.push(statCard('Conversions (30d)', '442', 'up', '3.0% rate', null, 'aff-conv'));
+  h.push(statCard('Pending Payout', 'Rp 13.260.000', 'flat', '4 affiliates', null, 'aff-payout'));
+  h.push('</div>');
+
+  h.push('<div class="tabs">');
+  h.push('<button class="tab ' + (tab === 'list' ? 'active' : '') + '" data-action="affiliate-tab" data-tab="list">Affiliate List</button>');
+  h.push('<button class="tab ' + (tab === 'links' ? 'active' : '') + '" data-action="affiliate-tab" data-tab="links">Link & Code Generator</button>');
+  h.push('<button class="tab ' + (tab === 'payout' ? 'active' : '') + '" data-action="affiliate-tab" data-tab="payout">Commission & Payout</button>');
+  h.push('</div>');
+
+  if (tab === 'list') {
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>Affiliate</th><th>Clicks</th><th>Conversions</th><th>Rate</th><th>Balance</th><th>Status</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.affiliates.length; i++) {
+      const a = MOCK.affiliates[i];
+      h.push('<tr>');
+      h.push('<td><div class="user-cell"><div class="user-cell-avatar">' + getInitials(a.name) + '</div><div class="user-cell-info"><div class="user-cell-name">' + escapeHTML(a.name) + '</div><div class="user-cell-email">' + escapeHTML(a.email) + ' · ' + a.id + '</div></div></div></td>');
+      h.push('<td><strong>' + a.clicks.toLocaleString() + '</strong></td>');
+      h.push('<td><strong>' + a.conversions + '</strong></td>');
+      h.push('<td><span class="badge success">' + a.rate + '</span></td>');
+      h.push('<td><strong style="font-family: var(--font-display); font-size: 15px; color: var(--primary-deep)">' + a.balance + '</strong></td>');
+      h.push('<td>' + (a.status === 'active' ? '<span class="badge success">Active</span>' : '<span class="badge warning">Pending Payout</span>') + '</td>');
+      h.push('<td class="col-actions"><button class="topbar-icon-btn" style="width: 32px; height: 32px">' + I.more + '</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  if (tab === 'links') {
+    h.push('<div class="grid-2">');
+    h.push('<div class="card-elevated">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary-deep); margin-bottom: 16px">Generate Affiliate Link</h3>');
+    h.push('<div class="field"><label class="field-label">Pilih Affiliate</label><select class="select"><option>@travelbug.id</option><option>@japanhacks</option><option>Travel Vlogger Andra</option><option>@kyotostories</option></select></div>');
+    h.push('<div class="field"><label class="field-label">Landing URL</label><select class="select"><option>kurma.guide (homepage)</option><option>kurma.guide/promo-sakura</option><option>kurma.guide/founding-member</option></select></div>');
+    h.push('<div class="field"><label class="field-label">Commission Rate</label><input class="input" value="10%" /></div>');
+    h.push('<button class="btn btn-primary mt-md">Generate Link</button>');
+    h.push('</div>');
+
+    h.push('<div class="card">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary-deep); margin-bottom: 16px">Recent Generated Links</h3>');
+    h.push('<div class="flex-col gap-sm">');
+    const sampleLinks = [
+      { aff: '@travelbug.id', url: 'kurma.guide/?ref=travelbug', clicks: 4892 },
+      { aff: '@japanhacks', url: 'kurma.guide/?ref=jh', clicks: 2103 },
+      { aff: 'Travel Vlogger Andra', url: 'kurma.guide/?ref=andra', clicks: 6721 },
+    ];
+    for (let i = 0; i < sampleLinks.length; i++) {
+      const l = sampleLinks[i];
+      h.push('<div class="card-mist" style="padding: 14px 16px">');
+      h.push('<div class="flex justify-between items-center" style="margin-bottom: 4px"><strong>' + escapeHTML(l.aff) + '</strong><button class="btn btn-text btn-sm">' + I.copy + ' Copy</button></div>');
+      h.push('<div class="mono" style="font-size: 12px; color: var(--ink-72)">' + l.url + '</div>');
+      h.push('<div class="muted" style="font-size: 12px; margin-top: 6px">' + l.clicks.toLocaleString() + ' klik all-time</div>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+    h.push('</div>');
+    h.push('</div>');
+  }
+
+  if (tab === 'payout') {
+    h.push('<div class="card-mist mb-md" style="border-left: 4px solid var(--primary-bright); padding: 18px 24px">');
+    h.push('<div class="flex items-center gap-sm">');
+    h.push('<div style="color: var(--primary)">' + I.warning + '</div>');
+    h.push('<div><strong>4 affiliate</strong> sudah lewat threshold payout (Rp 500.000) dan menunggu transfer.</div>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>Affiliate</th><th>Saldo</th><th>Last Payout</th><th>Bank Account</th><th>Status</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    const payouts = [
+      { aff: 'Travel Vlogger Andra', balance: 'Rp 5.940.000', last: '15 Apr 2026', bank: 'BCA · 1234567890', status: 'pending' },
+      { aff: '@travelbug.id', balance: 'Rp 4.260.000', last: '20 Apr 2026', bank: 'Mandiri · 9876543210', status: 'pending' },
+      { aff: '@japanhacks', balance: 'Rp 2.340.000', last: '10 Apr 2026', bank: 'BNI · 5566778899', status: 'pending' },
+      { aff: '@kyotostories', balance: 'Rp 720.000', last: '—', bank: 'BCA · 2233445566', status: 'pending' },
+    ];
+    for (let i = 0; i < payouts.length; i++) {
+      const p = payouts[i];
+      h.push('<tr>');
+      h.push('<td><strong>' + escapeHTML(p.aff) + '</strong></td>');
+      h.push('<td><strong style="font-family: var(--font-display); font-size: 15px; color: var(--primary-deep)">' + p.balance + '</strong></td>');
+      h.push('<td><span class="muted" style="font-size: 13px">' + p.last + '</span></td>');
+      h.push('<td><span class="mono" style="font-size: 12px">' + p.bank + '</span></td>');
+      h.push('<td><span class="badge warning">Pending</span></td>');
+      h.push('<td class="col-actions"><button class="btn btn-primary btn-sm">Mark as Paid</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: TRANSACTION & FINANCE
+   ================================================================= */
+function renderFinance() {
+  const tab = state.financeTab;
+  const h = [];
+
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Finance · Akuntansi</div>');
+  h.push('<h1 class="page-title">Transaction & <em>Finance</em></h1>');
+  h.push('<p class="page-lead">Buku besar digital. Tempat tim Finance kerja: bukan cuma lihat data, tapi proses transaksi.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  if (tab === 'payments') h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="manual-tx">' + I.plus + '<span>Manual Transaction</span></button>');
+  h.push('<button class="btn btn-ghost btn-sm">' + I.download + '<span>Export Accounting</span></button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  // Top stats
+  h.push('<div class="stat-grid mb-lg">');
+  h.push(statCard('Gross Revenue (May)', 'Rp 156.4 Jt', 'up', '+12.4% MoM', null, 'gross'));
+  h.push(statCard('Payment Gateway Fee', 'Rp 4.2 Jt', 'flat', '2.7% of gross', null, 'fee'));
+  h.push(statCard('Net Revenue', 'Rp 152.2 Jt', 'up', '+12.6% MoM', null, 'net'));
+  h.push(statCard('Refund Rate', '0.8%', 'down', '-0.2pp vs bulan lalu', null, 'refund'));
+  h.push('</div>');
+
+  h.push('<div class="tabs">');
+  h.push('<button class="tab ' + (tab === 'payments' ? 'active' : '') + '" data-action="finance-tab" data-tab="payments">All Payments</button>');
+  h.push('<button class="tab ' + (tab === 'invoices' ? 'active' : '') + '" data-action="finance-tab" data-tab="invoices">Invoices</button>');
+  h.push('<button class="tab ' + (tab === 'refunds' ? 'active' : '') + '" data-action="finance-tab" data-tab="refunds">Refunds</button>');
+  h.push('<button class="tab ' + (tab === 'reconciliation' ? 'active' : '') + '" data-action="finance-tab" data-tab="reconciliation">Reconciliation</button>');
+  h.push('<button class="tab ' + (tab === 'webhooks' ? 'active' : '') + '" data-action="finance-tab" data-tab="webhooks">Webhook Logs</button>');
+  h.push('</div>');
+
+  if (tab === 'payments') {
+    h.push('<div class="card mb-md" style="padding: 14px 18px"><div class="flex items-center gap-sm" style="flex-wrap: wrap">');
+    h.push('<div class="search-wrap"><span class="search-wrap-icon">' + I.search + '</span><input type="text" placeholder="Cari TX ID, user, atau email..." /></div>');
+    h.push('<button class="chip active">Semua</button>');
+    h.push('<button class="chip">Success</button>');
+    h.push('<button class="chip">Pending</button>');
+    h.push('<button class="chip">Refunded</button>');
+    h.push('<select class="select" style="max-width: 180px; height: 38px; margin-left: auto"><option>Semua Gateway</option><option>Midtrans</option><option>Stripe</option><option>Xendit</option><option>Manual Transfer</option></select>');
+    h.push('</div></div>');
+
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>TX ID</th><th>User</th><th>Amount</th><th>Gateway</th><th>Fee</th><th>Net</th><th>Status</th><th>Date</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.payments.length; i++) {
+      const p = MOCK.payments[i];
+      h.push('<tr>');
+      h.push('<td><span class="kbd">' + p.id + '</span></td>');
+      h.push('<td><strong>' + escapeHTML(p.user) + '</strong></td>');
+      h.push('<td><strong>' + p.amount + '</strong></td>');
+      h.push('<td><span class="badge neutral" style="text-transform: none; letter-spacing: 0">' + escapeHTML(p.gateway) + '</span></td>');
+      h.push('<td><span class="muted">' + p.fee + '</span></td>');
+      h.push('<td><strong>' + p.net + '</strong></td>');
+      const sb = p.status === 'success' ? '<span class="badge success">Success</span>' : p.status === 'pending' ? '<span class="badge warning">Pending</span>' : '<span class="badge error">Refunded</span>';
+      h.push('<td>' + sb + '</td>');
+      h.push('<td><span class="muted mono" style="font-size: 12px">' + p.date + '</span></td>');
+      h.push('<td class="col-actions"><button class="topbar-icon-btn" style="width: 32px; height: 32px">' + I.more + '</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  if (tab === 'invoices') {
+    h.push('<div class="card-elevated">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary-deep); margin-bottom: 6px">Invoice Generator</h3>');
+    h.push('<p class="muted mb-lg">Otomatis generate invoice PDF/email untuk setiap transaksi sukses. Bisa juga generate manual untuk B2B.</p>');
+    h.push('<div class="grid-2">');
+    h.push('<div><strong style="display: block; margin-bottom: 8px">Auto-generate</strong><p class="muted" style="font-size: 13px; margin-bottom: 12px">Setiap success payment otomatis kirim invoice ke email user.</p><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span><span class="toggle-label">Aktif</span></label></div>');
+    h.push('<div><strong style="display: block; margin-bottom: 8px">Format invoice</strong><select class="select"><option>KurmaGo Standard (PDF + Email)</option><option>Custom Letterhead (PDF only)</option></select></div>');
+    h.push('</div>');
+    h.push('<div class="mt-lg" style="padding-top: 24px; border-top: 1px solid var(--hairline)">');
+    h.push('<strong style="display: block; margin-bottom: 12px">Invoice Manual (Korporat / VVIP)</strong>');
+    h.push('<button class="btn btn-primary btn-sm">' + I.plus + '<span>Buat Invoice Manual</span></button>');
+    h.push('</div>');
+    h.push('</div>');
+  }
+
+  if (tab === 'refunds') {
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>TX ID</th><th>User</th><th>Amount</th><th>Reason</th><th>Date</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    h.push('<tr><td><span class="kbd">TX-9244</span></td><td><strong>Dewi Lestari</strong></td><td>Rp 299.000</td><td>Pelanggan minta refund (kompromi)</td><td><span class="muted mono">2026-05-07 16:08</span></td><td class="col-actions"><button class="btn btn-text btn-sm">Detail</button></td></tr>');
+    h.push('<tr><td><span class="kbd">TX-9189</span></td><td><strong>Tono Suparto</strong></td><td>Rp 599.000</td><td>Double charge — gateway error</td><td><span class="muted mono">2026-05-04 11:23</span></td><td class="col-actions"><button class="btn btn-text btn-sm">Detail</button></td></tr>');
+    h.push('</tbody></table></div></div>');
+    h.push('<div class="muted mt-md" style="font-size: 13px">Total refund bulan ini: <strong>Rp 898.000</strong> dari 2 transaksi.</div>');
+  }
+
+  if (tab === 'reconciliation') {
+    h.push('<div class="card-elevated">');
+    h.push('<div class="flex justify-between items-center mb-lg">');
+    h.push('<div><h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary-deep)">Daily Reconciliation</h3><p class="muted">8 Mei 2026 · Rekapitulasi per gateway</p></div>');
+    h.push('<button class="btn btn-ghost btn-sm">' + I.download + '<span>Export ke Spreadsheet</span></button>');
+    h.push('</div>');
+    h.push('<div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>Gateway</th><th>Transaksi</th><th>Gross</th><th>Fee</th><th>Net (estimasi setor)</th></tr></thead>');
+    h.push('<tbody>');
+    const reconRows = [
+      { g: 'Midtrans', tx: 142, gross: 'Rp 84.640.000', fee: 'Rp 2.539.200', net: 'Rp 82.100.800' },
+      { g: 'Stripe', tx: 38, gross: 'Rp 47.620.000', fee: 'Rp 1.428.600', net: 'Rp 46.191.400' },
+      { g: 'Xendit', tx: 24, gross: 'Rp 14.376.000', fee: 'Rp 460.032', net: 'Rp 13.915.968' },
+      { g: 'Manual Transfer', tx: 6, gross: 'Rp 9.794.000', fee: 'Rp 0', net: 'Rp 9.794.000' },
+    ];
+    let totalGross = 0, totalNet = 0;
+    for (let i = 0; i < reconRows.length; i++) {
+      const r = reconRows[i];
+      h.push('<tr>');
+      h.push('<td><strong>' + r.g + '</strong></td>');
+      h.push('<td>' + r.tx + '</td>');
+      h.push('<td>' + r.gross + '</td>');
+      h.push('<td><span style="color: var(--coral)">' + r.fee + '</span></td>');
+      h.push('<td><strong>' + r.net + '</strong></td>');
+      h.push('</tr>');
+    }
+    h.push('<tr style="background: var(--surface-mist)"><td><strong>TOTAL</strong></td><td><strong>210</strong></td><td><strong>Rp 156.430.000</strong></td><td><strong>Rp 4.427.832</strong></td><td><strong style="color: var(--success)">Rp 152.002.168</strong></td></tr>');
+    h.push('</tbody></table></div>');
+    h.push('</div>');
+  }
+
+  if (tab === 'webhooks') {
+    h.push('<div class="card-mist mb-md" style="padding: 14px 18px">');
+    h.push('<div class="flex items-center gap-sm" style="font-size: 13px">');
+    h.push('<div style="color: var(--primary)">' + I.zap + '</div>');
+    h.push('<div>Webhook Logs untuk debugging integrasi JapanTrips, Midtrans, Stripe, dan Xendit. Click row untuk lihat full payload.</div>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>Time</th><th>Endpoint</th><th>Status</th><th>Latency</th><th>Payload Preview</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.webhooks.length; i++) {
+      const w = MOCK.webhooks[i];
+      h.push('<tr>');
+      h.push('<td><span class="mono" style="font-size: 12px">' + w.time + '</span></td>');
+      h.push('<td><span class="mono" style="font-size: 12px">' + w.endpoint + '</span></td>');
+      const statusBadge = w.status === 200 ? '<span class="badge success">200 OK</span>' : '<span class="badge error">' + w.status + ' Error</span>';
+      h.push('<td>' + statusBadge + '</td>');
+      h.push('<td><span class="mono" style="font-size: 12px; color: ' + (parseInt(w.latency) > 1000 ? 'var(--coral)' : 'var(--ink-72)') + '">' + w.latency + '</span></td>');
+      h.push('<td><span class="mono muted" style="font-size: 12px">' + escapeHTML(w.payload) + '</span></td>');
+      h.push('<td class="col-actions"><button class="btn btn-text btn-sm">Inspect</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+    h.push('<div class="muted mt-md" style="font-size: 13px">⚠ <strong>1 error</strong> hari ini di endpoint /webhook/japantrips/grant — perlu cek user U1041 manually.</div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: MODERATION
+   ================================================================= */
+function renderModeration() {
+  const h = [];
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">Safety · Trust & Compliance</div>');
+  h.push('<h1 class="page-title">Content <em>Moderation</em></h1>');
+  h.push('<p class="page-lead">Inbox laporan dari user. Tim CS screening sebelum diteruskan ke Andy untuk takedown.</p>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="card-mist mb-md" style="border-left: 4px solid var(--coral); padding: 18px 24px; background: var(--coral-soft)">');
+  h.push('<div class="flex items-center gap-sm">');
+  h.push('<div style="color: var(--coral)">' + I.warning + '</div>');
+  h.push('<div><strong>3 laporan baru</strong> menunggu review. Target SLA: respons dalam 24 jam.</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+  h.push('<thead><tr><th>Konten Dilaporkan</th><th>Dibagikan Oleh</th><th>Reporter</th><th>Alasan</th><th>Date</th><th class="col-actions" style="width: 200px"></th></tr></thead>');
+  h.push('<tbody>');
+  for (let i = 0; i < MOCK.reports.length; i++) {
+    const r = MOCK.reports[i];
+    h.push('<tr>');
+    h.push('<td><strong>' + escapeHTML(r.tripTitle) + '</strong><div class="muted" style="font-size: 12px; margin-top: 2px">Report ID: ' + r.id + '</div></td>');
+    h.push('<td>' + escapeHTML(r.sharedBy) + '</td>');
+    h.push('<td><span class="badge warning">' + escapeHTML(r.reportedBy) + '</span></td>');
+    h.push('<td>' + escapeHTML(r.reason) + '</td>');
+    h.push('<td><span class="muted mono" style="font-size: 12px">' + r.date + '</span></td>');
+    h.push('<td class="col-actions"><div class="flex gap-xs" style="justify-content: flex-end"><button class="btn btn-text btn-sm">Lihat</button><button class="btn btn-danger-ghost btn-sm">Takedown</button></div></td>');
+    h.push('</tr>');
+  }
+  h.push('</tbody></table></div></div>');
+
+  // Resolved section
+  h.push('<h3 class="mt-xl mb-md" style="font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--primary-deep)">Resolved (last 7 days)</h3>');
+  h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+  h.push('<thead><tr><th>Konten</th><th>Action</th><th>Resolved By</th><th>Date</th></tr></thead>');
+  h.push('<tbody>');
+  h.push('<tr><td><strong>Spam Bali Trip — Eko</strong></td><td><span class="badge error">Takedown</span></td><td>Andy Pradana</td><td><span class="muted">2026-05-04 14:30</span></td></tr>');
+  h.push('<tr><td><strong>Konten Beli/Jual — Yusuf</strong></td><td><span class="badge warning">Warning Sent</span></td><td>Jessi Lim</td><td><span class="muted">2026-05-03 09:15</span></td></tr>');
+  h.push('<tr><td><strong>Plagiarism Suspect — Ahmad</strong></td><td><span class="badge success">Cleared</span></td><td>Jessi Lim</td><td><span class="muted">2026-05-02 16:48</span></td></tr>');
+  h.push('</tbody></table></div></div>');
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: CORE CONFIG
+   ================================================================= */
+function renderConfig() {
+  const tab = state.configTab;
+  const h = [];
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">System · Production Switches</div>');
+  h.push('<h1 class="page-title">Core <em>Config</em></h1>');
+  h.push('<p class="page-lead">Pengaturan fundamental: tier subscription, integrasi API, maintenance mode, storage. Hati-hati — perubahan di sini langsung kena production.</p>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="tabs">');
+  h.push('<button class="tab ' + (tab === 'subscription' ? 'active' : '') + '" data-action="config-tab" data-tab="subscription">Subscription Tiers</button>');
+  h.push('<button class="tab ' + (tab === 'api' ? 'active' : '') + '" data-action="config-tab" data-tab="api">API & Integration Hub</button>');
+  h.push('<button class="tab ' + (tab === 'maintenance' ? 'active' : '') + '" data-action="config-tab" data-tab="maintenance">Maintenance Mode</button>');
+  h.push('<button class="tab ' + (tab === 'storage' ? 'active' : '') + '" data-action="config-tab" data-tab="storage">Storage Limits</button>');
+  h.push('</div>');
+
+  if (tab === 'subscription') {
+    h.push('<div class="grid-3">');
+    const tiers = [
+      { name: 'Free', price: 'Rp 0', features: ['Max 3 trip', 'AI generation: 0', 'Itinerary public read-only', 'eSIM tidak termasuk'], cls: 'tier-free' },
+      { name: 'Premium', price: 'Rp 299.000', sub: '/ year', features: ['Unlimited trips', 'AI generation unlimited', 'Re-optimize day plan', 'Discount eSIM 15%', 'Translate kamera offline'], cls: 'tier-premium', highlight: true },
+      { name: 'VIP / VVIP', price: 'Rp 1.299.000', sub: '/ year', features: ['Semua fitur Premium', 'Personal travel consultant', 'Internal templates VVIP', 'Priority support 24/7', 'eSIM premium gratis'], cls: 'tier-vip' },
+    ];
+    for (let i = 0; i < tiers.length; i++) {
+      const t = tiers[i];
+      h.push('<div class="card-elevated" style="' + (t.highlight ? 'border: 2px solid var(--primary)' : '') + '">');
+      h.push('<div class="flex justify-between items-center mb-md"><span class="badge ' + t.cls + '">' + t.name + '</span>' + (t.highlight ? '<span class="badge tier-vip" style="background: var(--primary); color: var(--primary-tint)">Most Popular</span>' : '') + '</div>');
+      h.push('<div style="font-family: var(--font-display); font-size: 32px; font-weight: 600; color: var(--primary-deep); line-height: 1; margin-bottom: 4px">' + t.price + '</div>');
+      if (t.sub) h.push('<div class="muted" style="font-size: 13px; margin-bottom: 16px">' + t.sub + '</div>');
+      h.push('<ul style="list-style: none; padding: 0; margin: 16px 0 20px; display: flex; flex-direction: column; gap: 8px">');
+      for (let j = 0; j < t.features.length; j++) {
+        h.push('<li style="font-size: 13px; color: var(--ink-72); display: flex; gap: 8px; align-items: flex-start"><span style="color: var(--primary); font-weight: 700">·</span><span>' + escapeHTML(t.features[j]) + '</span></li>');
+      }
+      h.push('</ul>');
+      h.push('<button class="btn btn-ghost btn-sm" style="width: 100%">' + I.edit + '<span>Edit Tier</span></button>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+  }
+
+  if (tab === 'api') {
+    h.push('<div class="card-mist mb-md" style="padding: 18px 24px; border-left: 4px solid var(--coral)">');
+    h.push('<div class="flex items-center gap-sm" style="font-size: 13px">');
+    h.push('<div style="color: var(--coral)">' + I.warning + '</div>');
+    h.push('<div><strong>Sensitive zone.</strong> Secret keys ditampilkan masked. Hanya Super Admin bisa edit.</div>');
+    h.push('</div>');
+    h.push('</div>');
+
+    h.push('<div class="grid-2">');
+    const apis = [
+      { name: 'Midtrans (Payment)', status: 'connected', key: 'sk_live_••••••••••••••a4f2', updated: '12 Apr 2026' },
+      { name: 'Stripe (Payment)', status: 'connected', key: 'sk_live_••••••••••••••9b3c', updated: '15 Mar 2026' },
+      { name: 'Xendit (Payment)', status: 'connected', key: 'xnd_••••••••••••••ed12', updated: '5 Apr 2026' },
+      { name: 'JapanTrips Webhook', status: 'connected', key: 'jt_secret_••••••••8a91', updated: '20 Mar 2026' },
+      { name: 'OpenWeather API', status: 'connected', key: 'ow_••••••••••••••3f44', updated: '1 May 2026' },
+      { name: 'Anthropic / Claude API', status: 'connected', key: 'sk-ant-••••••••••0d72', updated: '3 May 2026' },
+    ];
+    for (let i = 0; i < apis.length; i++) {
+      const a = apis[i];
+      h.push('<div class="card-accent">');
+      h.push('<div class="flex justify-between items-center mb-md"><strong style="font-family: var(--font-display); font-size: 16px; color: var(--primary-deep)">' + escapeHTML(a.name) + '</strong><span class="badge success">Connected</span></div>');
+      h.push('<div style="font-size: 12px; color: var(--ink-56); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 4px">Secret Key</div>');
+      h.push('<div class="mono" style="font-size: 13px; padding: 8px 12px; background: var(--canvas); border-radius: 6px; margin-bottom: 12px">' + a.key + '</div>');
+      h.push('<div class="flex justify-between items-center">');
+      h.push('<span class="muted" style="font-size: 12px">Updated: ' + a.updated + '</span>');
+      h.push('<button class="btn btn-text btn-sm">' + I.edit + '<span>Update</span></button>');
+      h.push('</div>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+  }
+
+  if (tab === 'maintenance') {
+    h.push('<div class="card-elevated" style="max-width: 700px">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--primary-deep); margin-bottom: 6px">Maintenance Mode</h3>');
+    h.push('<p class="muted mb-lg">Tombol darurat. Saat aktif, semua user akan diarahkan ke halaman maintenance, tapi admin tetap bisa akses.</p>');
+    h.push('<div class="flex items-center gap-sm" style="padding: 16px; background: ' + (state.maintenanceMode ? 'var(--coral-soft)' : 'var(--success-soft)') + '; border-radius: var(--r-md); margin-bottom: 24px">');
+    h.push('<div style="width: 12px; height: 12px; border-radius: 50%; background: ' + (state.maintenanceMode ? 'var(--coral)' : 'var(--success)') + '"></div>');
+    h.push('<div style="flex: 1"><strong>Status: ' + (state.maintenanceMode ? 'MAINTENANCE AKTIF' : 'Normal Operation') + '</strong><div class="muted" style="font-size: 13px">' + (state.maintenanceMode ? 'User saat ini melihat halaman maintenance' : 'Semua user bisa mengakses aplikasi normally') + '</div></div>');
+    h.push('<label class="toggle"><input type="checkbox" ' + (state.maintenanceMode ? 'checked' : '') + ' data-action="toggle-maintenance"/><span class="toggle-slider"></span></label>');
+    h.push('</div>');
+
+    h.push('<div class="field"><label class="field-label">Pesan Maintenance (ditampilkan ke user)</label>');
+    h.push('<textarea class="textarea" rows="3">Kami sedang melakukan upgrade sistem. Aplikasi akan kembali normal dalam 30 menit. Mohon kesabarannya 🙏</textarea>');
+    h.push('</div>');
+    h.push('<div class="field"><label class="field-label">Estimasi Selesai</label><input class="input" type="datetime-local" value="2026-05-09T03:00"/></div>');
+    h.push('<div class="field"><label class="field-label">Override (admin tetap akses)</label>');
+    h.push('<label class="flex items-center gap-xs" style="font-size: 13px"><input type="checkbox" class="checkbox" checked/> Admin role tetap bisa login & akses CMS</label>');
+    h.push('</div>');
+    h.push('</div>');
+  }
+
+  if (tab === 'storage') {
+    h.push('<div class="card-elevated">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary-deep); margin-bottom: 6px">Storage Limits per Tier</h3>');
+    h.push('<p class="muted mb-lg">Maksimum penyimpanan per user. Saat user melebihi limit, mereka diminta upgrade tier atau hapus konten lama.</p>');
+    h.push('<div class="grid-3">');
+    const sLimits = [
+      { tier: 'Free', limit: '500 MB', items: '50 foto / 10 trip', cls: 'tier-free' },
+      { tier: 'Premium', limit: '5 GB', items: 'Unlimited trip / 1000 foto', cls: 'tier-premium' },
+      { tier: 'VIP / VVIP', limit: '20 GB', items: 'Unlimited everything', cls: 'tier-vip' },
+    ];
+    for (let i = 0; i < sLimits.length; i++) {
+      const s = sLimits[i];
+      h.push('<div class="card">');
+      h.push('<span class="badge ' + s.cls + ' mb-md" style="display: inline-flex">' + s.tier + '</span>');
+      h.push('<div style="font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--primary-deep); margin: 8px 0 4px">' + s.limit + '</div>');
+      h.push('<div class="muted" style="font-size: 13px">' + escapeHTML(s.items) + '</div>');
+      h.push('<button class="btn btn-text btn-sm mt-md">' + I.edit + 'Edit</button>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+    h.push('</div>');
+
+    h.push('<div class="card-mist mt-lg" style="padding: 18px 24px">');
+    h.push('<strong>Capacity total saat ini:</strong> 47.2 GB / 100 GB allocated. <button class="inline-link">Upgrade infrastructure →</button>');
+    h.push('</div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   VIEW: SETTINGS & RBAC
+   ================================================================= */
+function renderSettings() {
+  const tab = state.settingsTab;
+  const h = [];
+
+  h.push('<div class="page-head">');
+  h.push('<div class="page-head-row">');
+  h.push('<div>');
+  h.push('<div class="page-eyebrow">System · Trust & Security</div>');
+  h.push('<h1 class="page-title">Settings & <em>RBAC</em></h1>');
+  h.push('<p class="page-lead">Akun admin, role permission matrix, audit logs setiap aksi, dan 2FA enforcement.</p>');
+  h.push('</div>');
+  h.push('<div class="page-head-actions">');
+  if (tab === 'admins') h.push('<button class="btn btn-primary btn-sm" data-action="open-modal" data-modal="admin-add">' + I.plus + '<span>Tambah Admin</span></button>');
+  h.push('</div>');
+  h.push('</div>');
+  h.push('</div>');
+
+  h.push('<div class="tabs">');
+  h.push('<button class="tab ' + (tab === 'admins' ? 'active' : '') + '" data-action="settings-tab" data-tab="admins">Admin Accounts (' + MOCK.admins.length + ')</button>');
+  h.push('<button class="tab ' + (tab === 'roles' ? 'active' : '') + '" data-action="settings-tab" data-tab="roles">Roles & Permissions</button>');
+  h.push('<button class="tab ' + (tab === 'audit' ? 'active' : '') + '" data-action="settings-tab" data-tab="audit">Audit Logs (' + MOCK.auditLogs.length + ')</button>');
+  h.push('<button class="tab ' + (tab === '2fa' ? 'active' : '') + '" data-action="settings-tab" data-tab="2fa">2FA & Security</button>');
+  h.push('</div>');
+
+  if (tab === 'admins') {
+    h.push('<div class="table-wrap"><div class="table-scroll"><table class="data-table">');
+    h.push('<thead><tr><th>Admin</th><th>Role</th><th>Status</th><th>Last Login</th><th>2FA</th><th class="col-actions"></th></tr></thead>');
+    h.push('<tbody>');
+    for (let i = 0; i < MOCK.admins.length; i++) {
+      const a = MOCK.admins[i];
+      const r = ROLES[a.role];
+      h.push('<tr>');
+      h.push('<td><div class="user-cell"><div class="user-cell-avatar" style="background: ' + r.color + '; color: var(--primary-tint)">' + getInitials(a.name) + '</div><div class="user-cell-info"><div class="user-cell-name">' + escapeHTML(a.name) + '</div><div class="user-cell-email">' + escapeHTML(a.email) + '</div></div></div></td>');
+      h.push('<td><span class="badge tier-vip" style="background: ' + r.color + '; color: var(--primary-tint)">' + r.name + '</span></td>');
+      h.push('<td>' + (a.status === 'active' ? '<span class="badge success">Active</span>' : '<span class="badge error">Suspended</span>') + '</td>');
+      h.push('<td><span class="muted" style="font-size: 13px">' + a.lastLogin + '</span></td>');
+      h.push('<td>' + (a.mfa ? '<span class="badge success">Enabled</span>' : '<span class="badge error">Disabled</span>') + '</td>');
+      h.push('<td class="col-actions"><button class="topbar-icon-btn" style="width: 32px; height: 32px">' + I.more + '</button></td>');
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div></div>');
+  }
+
+  if (tab === 'roles') {
+    h.push('<div class="card-elevated">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary-deep); margin-bottom: 6px">Permission Matrix</h3>');
+    h.push('<p class="muted mb-lg">Per modul × per role. ✓ Full access · ◐ View only · ✕ No access.</p>');
+    h.push('<div class="table-scroll"><table class="data-table perm-matrix">');
+    h.push('<thead><tr><th style="text-align: left">Modul</th>');
+    const roleOrder = ['super', 'cs', 'editor', 'marketing'];
+    for (let i = 0; i < roleOrder.length; i++) {
+      h.push('<th>' + ROLES[roleOrder[i]].name + '</th>');
+    }
+    h.push('</tr></thead>');
+    h.push('<tbody>');
+    const moduleLabels = [
+      { key: 'overview', label: 'Dashboard Overview' },
+      { key: 'users', label: 'User Management' },
+      { key: 'destinations', label: 'Destinations & Cities' },
+      { key: 'templates', label: 'Master Templates' },
+      { key: 'cms', label: 'CMS Manager (Blog/Pages/Media)' },
+      { key: 'marketing', label: 'Marketing Tools' },
+      { key: 'affiliate', label: 'Affiliate Manager' },
+      { key: 'finance', label: 'Finance & Billing' },
+      { key: 'moderation', label: 'Content Moderation' },
+      { key: 'config', label: 'Core Config' },
+      { key: 'settings', label: 'Settings & RBAC' },
+    ];
+    for (let i = 0; i < moduleLabels.length; i++) {
+      const m = moduleLabels[i];
+      h.push('<tr>');
+      h.push('<td><strong>' + escapeHTML(m.label) + '</strong></td>');
+      for (let j = 0; j < roleOrder.length; j++) {
+        h.push('<td>' + permIcon(PERMS[m.key][roleOrder[j]]) + '</td>');
+      }
+      h.push('</tr>');
+    }
+    h.push('</tbody></table></div>');
+    h.push('<div class="muted mt-md" style="font-size: 13px">Permission matrix locked untuk security. Hubungi Super Admin untuk perubahan.</div>');
+    h.push('</div>');
+  }
+
+  if (tab === 'audit') {
+    h.push('<div class="card mb-md" style="padding: 14px 18px"><div class="flex items-center gap-sm" style="flex-wrap: wrap">');
+    h.push('<div class="search-wrap"><span class="search-wrap-icon">' + I.search + '</span><input type="text" placeholder="Cari aksi atau actor..." /></div>');
+    h.push('<select class="select" style="max-width: 180px; height: 38px"><option>Semua Action</option><option>CREATE</option><option>UPDATE</option><option>DELETE</option><option>EXPORT</option></select>');
+    h.push('<select class="select" style="max-width: 180px; height: 38px"><option>Semua Modul</option><option>User Management</option><option>Marketing</option><option>Settings</option></select>');
+    h.push('<button class="btn btn-ghost btn-sm" style="margin-left: auto">' + I.download + '<span>Export Logs</span></button>');
+    h.push('</div></div>');
+
+    h.push('<div class="table-wrap">');
+    for (let i = 0; i < MOCK.auditLogs.length; i++) {
+      const l = MOCK.auditLogs[i];
+      h.push('<div class="audit-row">');
+      h.push('<div><div class="audit-time">' + l.time + '</div><span class="badge ' + (l.action === 'DELETE' ? 'error' : l.action === 'CREATE' ? 'success' : 'neutral') + '" style="margin-top: 6px; display: inline-flex">' + l.action + '</span></div>');
+      h.push('<div>');
+      h.push('<div class="audit-action">' + escapeHTML(l.module) + ' — ' + escapeHTML(l.target) + '</div>');
+      if (l.oldVal !== null) {
+        h.push('<div class="audit-payload">');
+        h.push('<span class="old">' + escapeHTML(l.oldVal) + '</span>');
+        h.push('<span class="arrow">→</span>');
+        h.push('<span class="new">' + escapeHTML(l.newVal) + '</span>');
+        h.push('</div>');
+      } else {
+        h.push('<div class="audit-payload"><span class="new">' + escapeHTML(l.newVal) + '</span></div>');
+      }
+      h.push('</div>');
+      h.push('<div class="audit-actor"><strong>' + escapeHTML(l.actor) + '</strong>' + escapeHTML(l.actorRole) + '<div class="mono" style="font-size: 11px; margin-top: 4px">' + escapeHTML(l.ip) + '</div></div>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+  }
+
+  if (tab === '2fa') {
+    h.push('<div class="card-elevated" style="max-width: 700px">');
+    h.push('<h3 style="font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--primary-deep); margin-bottom: 6px">Two-Factor Authentication</h3>');
+    h.push('<p class="muted mb-lg">2FA wajib untuk role Super Admin & Marketing (akses ke data sensitif). Untuk role lain, tetap rekomendasi.</p>');
+    h.push('<div class="flex-col gap-md">');
+    const policies = [
+      { role: 'Super Admin', mandatory: true },
+      { role: 'CS / Support', mandatory: false },
+      { role: 'Editor (Ops)', mandatory: false },
+      { role: 'Marketing', mandatory: true },
+    ];
+    for (let i = 0; i < policies.length; i++) {
+      const p = policies[i];
+      h.push('<div class="card-mist" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center">');
+      h.push('<div><strong>' + p.role + '</strong>' + (p.mandatory ? '<span class="badge error" style="margin-left: 8px">Mandatory</span>' : '<span class="badge neutral" style="margin-left: 8px">Recommended</span>') + '<div class="muted" style="font-size: 13px; margin-top: 4px">2FA via Authenticator App (Google Authenticator, Authy, 1Password)</div></div>');
+      h.push('<label class="toggle"><input type="checkbox" ' + (p.mandatory ? 'checked' : '') + '/><span class="toggle-slider"></span></label>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+    h.push('<div style="padding-top: 24px; margin-top: 24px; border-top: 1px solid var(--hairline)">');
+    h.push('<strong style="display: block; margin-bottom: 8px">Session Policy</strong>');
+    h.push('<div class="field"><label class="field-label">Session Timeout</label><select class="select"><option>1 jam (rekomendasi)</option><option>4 jam</option><option>8 jam</option><option>24 jam</option></select></div>');
+    h.push('<div class="field"><label class="field-label">IP Whitelist (opsional)</label><textarea class="textarea" rows="2" placeholder="103.47.xx.xx&#10;110.22.xx.xx"></textarea></div>');
+    h.push('</div>');
+    h.push('</div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   MODALS
+   ================================================================= */
+function renderModal() {
+  if (!state.modal) return '';
+  const h = [];
+
+  if (state.modal === 'role-switch') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Switch Role</div><div class="modal-sub">Demo RBAC: pilih role untuk lihat sidebar dan akses berubah</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body"><div class="flex-col gap-sm">');
+    const keys = ['super', 'cs', 'editor', 'marketing'];
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      const r = ROLES[k];
+      const isCurrent = state.role === k;
+      h.push('<button class="card" style="display: flex; align-items: center; gap: 16px; cursor: pointer; ' + (isCurrent ? 'border: 2px solid var(--primary); background: var(--surface-mist)' : '') + '" data-action="set-role" data-role="' + k + '">');
+      h.push('<div style="width: 44px; height: 44px; border-radius: 50%; background: ' + r.color + '; color: var(--primary-tint); display: grid; place-items: center; font-weight: 600; font-size: 14px; flex-shrink: 0">' + r.initials + '</div>');
+      h.push('<div style="flex: 1; text-align: left"><strong>' + r.name + '</strong><div class="muted" style="font-size: 13px">' + r.tier + '</div></div>');
+      if (isCurrent) h.push('<span class="badge success">Current</span>');
+      h.push('</button>');
+    }
+    h.push('</div></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'user-detail') {
+    const u = state.modalData || {};
+    h.push('<div class="modal lg">');
+    h.push('<div class="modal-head"><div><div class="modal-title">User Profile · ' + escapeHTML(u.name || '') + '</div><div class="modal-sub">' + escapeHTML(u.email || '') + ' · ' + escapeHTML(u.id || '') + '</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    // Tabs
+    h.push('<div class="tabs" style="margin-bottom: 20px">');
+    h.push('<button class="tab active">Profil</button>');
+    h.push('<button class="tab">Trip History (' + (u.trips || 0) + ')</button>');
+    h.push('<button class="tab">Subscription</button>');
+    h.push('<button class="tab">Internal Notes</button>');
+    h.push('</div>');
+
+    h.push('<div class="grid-2 mb-lg">');
+    h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px">Status</div><div style="margin-top: 6px">' + tierBadge(u.tier || 'free') + '</div></div>');
+    h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px">Origin</div><div style="margin-top: 6px; font-size: 14px">' + escapeHTML(u.origin || '—') + '</div></div>');
+    h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px">Last Active</div><div style="margin-top: 6px; font-size: 14px">' + escapeHTML(u.lastActive || '—') + ' lalu</div></div>');
+    h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px">Bergabung</div><div style="margin-top: 6px; font-size: 14px">' + escapeHTML(u.joined || '—') + '</div></div>');
+    h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px">Phone</div><div style="margin-top: 6px; font-size: 14px">' + (u.phone || '<span class="muted-lg">Tidak terdaftar</span>') + '</div></div>');
+    h.push('<div><div class="muted" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px">Sub Expiry</div><div style="margin-top: 6px; font-size: 14px">' + (u.expiry || '—') + '</div></div>');
+    h.push('</div>');
+
+    h.push('<div class="card-mist mb-lg" style="padding: 20px">');
+    h.push('<div class="eyebrow mb-md">Manual Premium Override (CS Use)</div>');
+    h.push('<p class="muted mb-md" style="font-size: 13px">Tools darurat untuk CS: kalau payment user bermasalah tapi udah bayar, override jadi Premium di sini. Wajib isi reason — auto-tercatat di Audit Log.</p>');
+    h.push('<div class="grid-2"><div class="field"><label class="field-label">Set Tier ke</label><select class="select"><option>— pilih —</option><option>Premium (1 tahun)</option><option>Premium (6 bulan)</option><option>VIP (1 tahun)</option></select></div><div class="field"><label class="field-label">Berlaku sampai</label><input class="input" type="date"/></div></div>');
+    h.push('<div class="field"><label class="field-label">Reason (mandatory)</label><textarea class="textarea" rows="2" placeholder="Contoh: Payment gateway error, user sudah konfirmasi transfer manual..."></textarea></div>');
+    h.push('<button class="btn btn-primary btn-sm">Apply Override</button>');
+    h.push('</div>');
+
+    h.push('<div class="card" style="padding: 20px">');
+    h.push('<div class="eyebrow mb-md">Internal Notes</div>');
+    h.push('<p class="muted mb-md" style="font-size: 13px">Catatan privat antar admin (tidak terlihat user).</p>');
+    h.push('<textarea class="textarea" rows="3" placeholder="VIP customer, prefer email reminder vs WA..."></textarea>');
+    h.push('<button class="btn btn-text btn-sm mt-md">Save Notes</button>');
+    h.push('</div>');
+
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Tutup</button><button class="btn btn-danger-ghost btn-sm">Suspend User</button><button class="btn btn-primary btn-sm">Save Changes</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'voucher-create') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Buat Voucher Baru</div><div class="modal-sub">Voucher otomatis terdaftar setelah disimpan</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="field"><label class="field-label">Voucher Code</label><input class="input" placeholder="JEPANGHEMAT" style="text-transform: uppercase"/></div>');
+    h.push('<div class="grid-2"><div class="field"><label class="field-label">Tipe Discount</label><select class="select"><option>Percentage (%)</option><option>Fixed Amount (Rp)</option></select></div><div class="field"><label class="field-label">Value</label><input class="input" placeholder="20"/></div></div>');
+    h.push('<div class="grid-2"><div class="field"><label class="field-label">Limit Penggunaan</label><input class="input" placeholder="500" type="number"/></div><div class="field"><label class="field-label">Expires</label><input class="input" type="date"/></div></div>');
+    h.push('<div class="field"><label class="field-label">Apply Ke</label><select class="select"><option>Semua user</option><option>Specific Segment...</option><option>New Users Only</option></select></div>');
+    h.push('<div class="field"><label class="flex items-center gap-xs" style="font-size: 13px"><input type="checkbox" class="checkbox" checked/> Track penggunaan di Marketing Analytics</label></div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm" data-action="save-voucher">Buat Voucher</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'blog-edit') {
+    h.push('<div class="modal xl">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Blog Editor</div><div class="modal-sub">Bikin atau edit artikel blog. Auto-save aktif.</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="grid-2" style="grid-template-columns: 2fr 1fr; gap: 24px">');
+    // Editor side
+    h.push('<div>');
+    h.push('<div class="field"><label class="field-label">Judul Artikel</label><input class="input" placeholder="7 Spot Sakura Tersembunyi di Tokyo" style="font-family: var(--font-display); font-size: 18px; font-weight: 600"/></div>');
+    h.push('<div class="field"><label class="field-label">Slug URL</label><input class="input mono" placeholder="7-spot-sakura-tokyo"/><div class="field-help">URL: kurma.guide/blog/<strong>7-spot-sakura-tokyo</strong></div></div>');
+    h.push('<div class="field"><label class="field-label">Konten</label>');
+    // Editor toolbar mock
+    h.push('<div style="display: flex; gap: 4px; padding: 8px; background: var(--canvas); border: 1px solid var(--hairline); border-radius: 8px 8px 0 0; border-bottom: none">');
+    h.push('<button class="btn-text btn btn-sm">B</button><button class="btn-text btn btn-sm">I</button><button class="btn-text btn btn-sm">H1</button><button class="btn-text btn btn-sm">H2</button><button class="btn-text btn btn-sm">Link</button><button class="btn-text btn btn-sm">' + I.image + '</button>');
+    h.push('</div>');
+    h.push('<textarea class="textarea" rows="10" style="border-radius: 0 0 8px 8px; min-height: 240px" placeholder="Tulis konten di sini... atau drag & drop file Markdown..."></textarea>');
+    h.push('</div>');
+    h.push('</div>');
+    // Sidebar settings
+    h.push('<div class="flex-col gap-md">');
+    h.push('<div class="card-mist" style="padding: 16px"><div class="eyebrow mb-md">Publishing</div>');
+    h.push('<div class="field" style="margin-bottom: 12px"><label class="field-label">Status</label><select class="select"><option>Draft</option><option>In Review</option><option>Published</option></select></div>');
+    h.push('<div class="field" style="margin-bottom: 12px"><label class="field-label">Category</label><select class="select"><option>Tokyo</option><option>Osaka</option><option>Kyoto</option><option>Tips</option><option>Budaya</option></select></div>');
+    h.push('<div class="field" style="margin-bottom: 0"><label class="field-label">Author</label><input class="input" value="Tania"/></div>');
+    h.push('</div>');
+    h.push('<div class="card-mist" style="padding: 16px"><div class="eyebrow mb-md">SEO Metadata</div>');
+    h.push('<div class="field" style="margin-bottom: 12px"><label class="field-label">Meta Title</label><input class="input" placeholder="Sakura Hidden Spots Tokyo 2026"/></div>');
+    h.push('<div class="field" style="margin-bottom: 12px"><label class="field-label">Meta Description</label><textarea class="textarea" rows="2" placeholder="Panduan lokasi sakura yang masih sepi turis..."></textarea></div>');
+    h.push('<div class="field" style="margin-bottom: 0"><label class="field-label">OG Image</label><div style="height: 80px; background: var(--surface-mist); border-radius: 6px; display: grid; place-items: center; cursor: pointer; color: var(--primary)">' + I.image + ' Click to upload</div></div>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-text btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-ghost btn-sm">Save as Draft</button><button class="btn btn-primary btn-sm">Publish</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'page-edit') {
+    h.push('<div class="modal lg">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Landing Page Builder</div><div class="modal-sub">Pilih layout, drag-drop blok konten</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="field"><label class="field-label">Page Title</label><input class="input" placeholder="Promo Sakura 2026"/></div>');
+    h.push('<div class="field"><label class="field-label">URL Slug</label><input class="input mono" placeholder="/promo-sakura"/></div>');
+    h.push('<div class="field"><label class="field-label">Pilih Layout</label>');
+    h.push('<div class="grid-3">');
+    h.push('<div class="card" style="cursor: pointer; text-align: center; padding: 16px; border: 2px solid var(--primary)"><div style="height: 80px; background: var(--surface-mist); border-radius: 4px; margin-bottom: 8px; padding: 8px"><div style="height: 12px; background: var(--primary-bright); border-radius: 2px; margin-bottom: 6px"></div><div style="height: 6px; background: var(--hairline-mist); border-radius: 2px; width: 70%; margin-bottom: 4px"></div><div style="height: 6px; background: var(--hairline-mist); border-radius: 2px; width: 50%"></div></div><strong style="font-size: 13px">Hero + CTA</strong></div>');
+    h.push('<div class="card" style="cursor: pointer; text-align: center; padding: 16px"><div style="height: 80px; background: var(--surface-mist); border-radius: 4px; margin-bottom: 8px"></div><strong style="font-size: 13px">Long-form</strong></div>');
+    h.push('<div class="card" style="cursor: pointer; text-align: center; padding: 16px"><div style="height: 80px; background: var(--surface-mist); border-radius: 4px; margin-bottom: 8px"></div><strong style="font-size: 13px">Pricing Table</strong></div>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('<div class="field"><label class="field-label">Blok Konten</label><div class="card-mist" style="padding: 16px">[Drag-drop builder mockup — dalam prototype akan jadi WYSIWYG editor mirip Webflow]</div></div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm">Save & Publish</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'template-builder') {
+    h.push('<div class="modal xl">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Itinerary Template Builder</div><div class="modal-sub">Bikin template per hari · stop · waktu kunjung. User bisa duplicate hasil ini.</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="grid-2 mb-lg" style="grid-template-columns: 1fr 1fr 1fr; gap: 16px">');
+    h.push('<div class="field" style="margin-bottom: 0"><label class="field-label">Nama Template</label><input class="input" placeholder="Tokyo Klasik 5 Hari" value="Tokyo Klasik 5 Hari"/></div>');
+    h.push('<div class="field" style="margin-bottom: 0"><label class="field-label">Destinasi</label><input class="input" placeholder="Tokyo" value="Tokyo"/></div>');
+    h.push('<div class="field" style="margin-bottom: 0"><label class="field-label">Visibility</label><select class="select"><option>Public (semua user)</option><option>Internal (VVIP only)</option></select></div>');
+    h.push('</div>');
+    // Day 1
+    h.push('<div class="itin-day">');
+    h.push('<div class="itin-day-head"><div class="itin-day-num">Day 1 — Tokyo Tiba</div><button class="btn btn-text btn-sm">' + I.plus + 'Tambah Stop</button></div>');
+    const day1Stops = [
+      { time: '14:00', name: 'Check-in Hotel Shinjuku', meta: 'APA Hotel · 30 menit' },
+      { time: '16:00', name: 'Jalan-jalan Shinjuku', meta: 'Free walk · 2 jam' },
+      { time: '19:00', name: 'Makan Malam Ichiran Ramen', meta: 'Restaurant · 1 jam · Must-Eat' },
+    ];
+    for (let i = 0; i < day1Stops.length; i++) {
+      const s = day1Stops[i];
+      h.push('<div class="itin-stop">');
+      h.push('<span class="itin-stop-handle">' + I.menu + '</span>');
+      h.push('<span class="itin-stop-time">' + s.time + '</span>');
+      h.push('<div style="flex: 1"><div class="itin-stop-name">' + escapeHTML(s.name) + '</div><div class="itin-stop-meta">' + escapeHTML(s.meta) + '</div></div>');
+      h.push('<button class="btn-text btn btn-sm">' + I.edit + '</button>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+    // Day 2
+    h.push('<div class="itin-day">');
+    h.push('<div class="itin-day-head"><div class="itin-day-num">Day 2 — Asakusa & Skytree</div><button class="btn btn-text btn-sm">' + I.plus + 'Tambah Stop</button></div>');
+    const day2Stops = [
+      { time: '09:00', name: 'Senso-ji Temple', meta: 'Temple · 1.5 jam' },
+      { time: '12:00', name: 'Lunch Tonkatsu', meta: 'Restaurant · 1 jam' },
+      { time: '14:00', name: 'Tokyo Skytree', meta: 'Observation deck · 2 jam' },
+    ];
+    for (let i = 0; i < day2Stops.length; i++) {
+      const s = day2Stops[i];
+      h.push('<div class="itin-stop">');
+      h.push('<span class="itin-stop-handle">' + I.menu + '</span>');
+      h.push('<span class="itin-stop-time">' + s.time + '</span>');
+      h.push('<div style="flex: 1"><div class="itin-stop-name">' + escapeHTML(s.name) + '</div><div class="itin-stop-meta">' + escapeHTML(s.meta) + '</div></div>');
+      h.push('<button class="btn-text btn btn-sm">' + I.edit + '</button>');
+      h.push('</div>');
+    }
+    h.push('</div>');
+
+    h.push('<button class="btn btn-ghost btn-sm">' + I.plus + 'Tambah Hari</button>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm">Save Template</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'city-edit') {
+    const cityName = state.modalData && state.modalData.city ? state.modalData.city : 'Tokyo';
+    h.push('<div class="modal lg">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Edit ' + escapeHTML(cityName) + '</div><div class="modal-sub">Konten ini muncul di Right Panel di aplikasi user</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="grid-2 mb-lg"><div class="field" style="margin-bottom: 0"><label class="field-label">Latitude</label><input class="input mono" value="35.6762"/></div><div class="field" style="margin-bottom: 0"><label class="field-label">Longitude</label><input class="input mono" value="139.6503"/></div></div>');
+    h.push('<div class="field"><label class="field-label">Cuaca API Source</label><select class="select"><option>OpenWeather (auto-fetch by lat/lng)</option><option>Manual override</option></select></div>');
+    h.push('<div class="card-mist mb-lg" style="padding: 16px"><div class="eyebrow mb-md">Must-Eat List · 8 entries</div>');
+    h.push('<div class="flex-col gap-xs">');
+    const mustEat = [
+      'Ichiran Ramen Shibuya · Ramen · ★ 4.5',
+      'Sushi Dai Tsukiji · Sushi · ★ 4.8',
+      'Tempura Tendon Tenya · Tendon · ★ 4.3',
+      'Gyoza no Ohsho · Gyoza · ★ 4.4',
+    ];
+    for (let i = 0; i < mustEat.length; i++) {
+      h.push('<div class="card" style="padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-size: 13px"><span style="flex: 1">' + escapeHTML(mustEat[i]) + '</span><button class="btn-text btn btn-sm">' + I.edit + '</button></div>');
+    }
+    h.push('</div>');
+    h.push('<button class="btn btn-text btn-sm mt-md">' + I.plus + 'Tambah Resto</button>');
+    h.push('</div>');
+    h.push('<div class="card-mist" style="padding: 16px"><div class="eyebrow mb-md">Local Tips · 12 tips</div>');
+    h.push('<textarea class="textarea" rows="4">Pakai IC Card (Suica/Pasmo) buat naik kereta — nggak perlu beli tiket per perjalanan. Bisa dibeli di mesin JR di stasiun bandara.</textarea>');
+    h.push('<button class="btn btn-text btn-sm mt-md">' + I.plus + 'Tambah Tip</button>');
+    h.push('</div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm">Save Changes</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'country-add') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Tambah Negara Baru</div><div class="modal-sub">Setelah create, lo bisa tambahin kotanya satu-satu</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="grid-2"><div class="field"><label class="field-label">Nama Negara</label><input class="input" placeholder="Vietnam"/></div><div class="field"><label class="field-label">Kode 2 Huruf</label><input class="input" placeholder="VN" maxlength="2" style="text-transform: uppercase"/></div></div>');
+    h.push('<div class="field"><label class="field-label">Status</label><select class="select"><option>Active</option><option>Beta (limited)</option><option>Coming Soon</option></select></div>');
+    h.push('<div class="field"><label class="field-label">Currency Default</label><input class="input" placeholder="VND"/></div>');
+    h.push('<div class="field"><label class="field-label">Timezone</label><input class="input" placeholder="UTC+7"/></div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm">Tambah Negara</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'city-add') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Tambah Kota Baru</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="field"><label class="field-label">Nama Kota</label><input class="input" placeholder="Hanoi"/></div>');
+    h.push('<div class="field"><label class="field-label">Negara</label><select class="select"><option>Vietnam</option><option>Jepang</option><option>Korea Selatan</option></select></div>');
+    h.push('<div class="grid-2"><div class="field"><label class="field-label">Latitude</label><input class="input mono" placeholder="21.0285"/></div><div class="field"><label class="field-label">Longitude</label><input class="input mono" placeholder="105.8542"/></div></div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm">Tambah Kota</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'user-export') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Export User Data</div><div class="modal-sub">' + filterUsers().length + ' user akan di-export sesuai filter aktif</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="field"><label class="field-label">Format</label><select class="select"><option>CSV</option><option>Excel (.xlsx)</option><option>JSON</option></select></div>');
+    h.push('<div class="field"><label class="field-label">Kolom yang di-include</label>');
+    const kolomList = ['Nama', 'Email', 'Phone', 'Tier', 'Origin', 'Total Trips', 'Last Active', 'Joined', 'Sub Expiry'];
+    h.push('<div class="flex-col gap-xs" style="background: var(--canvas); padding: 12px; border-radius: 6px">');
+    for (let i = 0; i < kolomList.length; i++) {
+      h.push('<label class="flex items-center gap-xs" style="font-size: 13px"><input type="checkbox" class="checkbox" ' + (i < 7 ? 'checked' : '') + '/>' + kolomList[i] + '</label>');
+    }
+    h.push('</div></div>');
+    h.push('<div class="card-mist" style="padding: 12px 16px; font-size: 13px"><strong>⚠ Auto-tercatat di Audit Log:</strong> Export aksi user data wajib teregistrasi untuk compliance.</div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm" data-action="do-export">' + I.download + '<span>Export Sekarang</span></button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'user-bulk') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Bulk Notify</div><div class="modal-sub">' + state.userSelection.size + ' user terpilih</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    if (state.userSelection.size === 0) {
+      h.push('<div class="empty"><div class="empty-icon">' + I.users + '</div>Pilih user dulu di tabel sebelum kirim notifikasi.</div>');
+    } else {
+      h.push('<div class="field"><label class="field-label">Channel</label><div class="flex gap-xs"><button class="chip active">Email</button><button class="chip">Push</button><button class="chip">WhatsApp</button></div></div>');
+      h.push('<div class="field"><label class="field-label">Template</label><select class="select"><option>Pilih template...</option><option>Promo Sakura 30%</option><option>Comeback Email</option><option>Custom (tulis sendiri)</option></select></div>');
+      h.push('<div class="field"><label class="field-label">Subject</label><input class="input" placeholder="🌸 Spesial buat lo: 30% off Premium minggu ini"/></div>');
+      h.push('<div class="field"><label class="field-label">Body</label><textarea class="textarea" rows="6" placeholder="Halo {{first_name}}, ..."></textarea></div>');
+      h.push('<div class="card-mist" style="padding: 12px 16px; font-size: 13px"><strong>Variable yang tersedia:</strong> {{first_name}}, {{tier}}, {{trips_count}}</div>');
+    }
+    h.push('</div>');
+    if (state.userSelection.size > 0) {
+      h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm" data-action="send-bulk">Kirim ke ' + state.userSelection.size + ' user</button></div>');
+    }
+    h.push('</div>');
+  }
+
+  if (state.modal === 'manual-tx') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Manual Transaction Entry</div><div class="modal-sub">Buat record pembayaran manual (transfer bank, cash, dsb)</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="field"><label class="field-label">User</label><input class="input" placeholder="Cari nama atau email user..."/></div>');
+    h.push('<div class="grid-2"><div class="field"><label class="field-label">Amount</label><input class="input" placeholder="299000" type="number"/></div><div class="field"><label class="field-label">Method</label><select class="select"><option>Transfer Bank</option><option>Cash</option><option>QRIS Manual</option></select></div></div>');
+    h.push('<div class="field"><label class="field-label">Tier yang di-grant</label><select class="select"><option>Premium 1 tahun</option><option>Premium 6 bulan</option><option>VIP 1 tahun</option></select></div>');
+    h.push('<div class="field"><label class="field-label">Catatan / Bukti Transfer</label><textarea class="textarea" rows="3" placeholder="No. ref: BCA-20260508-XYZ. Bukti screenshot dilampirkan via email."></textarea></div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm">Catat Transaksi</button></div>');
+    h.push('</div>');
+  }
+
+  if (state.modal === 'admin-add') {
+    h.push('<div class="modal">');
+    h.push('<div class="modal-head"><div><div class="modal-title">Undang Admin Baru</div><div class="modal-sub">User akan menerima email invitation untuk set password</div></div><button class="modal-close" data-action="close-modal">' + I.close + '</button></div>');
+    h.push('<div class="modal-body">');
+    h.push('<div class="grid-2"><div class="field"><label class="field-label">Nama</label><input class="input" placeholder="Adi Pratama"/></div><div class="field"><label class="field-label">Email</label><input class="input" type="email" placeholder="adi@kurma.guide"/></div></div>');
+    h.push('<div class="field"><label class="field-label">Role</label><select class="select"><option>Editor (Ops Konten)</option><option>CS / Support</option><option>Marketing</option><option>Super Admin</option></select></div>');
+    h.push('<div class="field"><label class="flex items-center gap-xs" style="font-size: 13px"><input type="checkbox" class="checkbox" checked/> Wajib enable 2FA pada login pertama</label></div>');
+    h.push('</div>');
+    h.push('<div class="modal-foot"><button class="btn btn-ghost btn-sm" data-action="close-modal">Cancel</button><button class="btn btn-primary btn-sm">Kirim Invitation</button></div>');
+    h.push('</div>');
+  }
+
+  return h.join('');
+}
+
+/* =================================================================
+   MAIN RENDER
+   ================================================================= */
+const VIEWS = {
+  overview: renderOverview,
+  users: renderUsers,
+  destinations: renderDestinations,
+  templates: renderTemplates,
+  cms: renderCMS,
+  marketing: renderMarketing,
+  affiliate: renderAffiliate,
+  finance: renderFinance,
+  moderation: renderModeration,
+  config: renderConfig,
+  settings: renderSettings,
+};
+
+function renderViewContent() {
+  const fn = VIEWS[state.view] || renderOverview;
+  const access = canAccess(state.view);
+  if (access === 'none') {
+    return '<div class="empty"><div class="empty-icon" style="background: var(--coral-soft); color: var(--coral)">' + I.shield + '</div><strong>Akses Ditolak</strong><p class="mt-xs">Role <strong>' + ROLES[state.role].name + '</strong> tidak punya akses ke modul ini.<br/><button class="inline-link mt-sm" data-action="open-role-switch">Switch role untuk demo</button></p></div>';
+  }
+  let viewHTML = fn();
+  if (access === 'view') {
+    viewHTML = '<div class="card-mist mb-md" style="padding: 12px 18px; border-left: 4px solid var(--warning); font-size: 13px"><strong>👁 View Only:</strong> Role lo bisa lihat data tapi tidak bisa edit. Tombol aksi akan disabled.</div>' + viewHTML;
+  }
+  return viewHTML;
+}
+
+function render() {
+  const app = el('app');
+  app.innerHTML = renderSidebar() + '<div class="main">' + renderTopbar() + '<div class="content">' + renderViewContent() + '</div></div>';
+
+  const modalRoot = el('modal-root');
+  if (state.modal) {
+    modalRoot.classList.add('open');
+    modalRoot.innerHTML = renderModal();
+  } else {
+    modalRoot.classList.remove('open');
+    modalRoot.innerHTML = '';
+  }
+
+  // Mobile hamburger visibility
+  const hamburger = el('hamburger-btn');
+  if (hamburger) {
+    if (window.innerWidth <= 768) hamburger.style.display = 'grid';
+  }
+}
+
+/* =================================================================
+   EVENT DELEGATION
+   ================================================================= */
+document.addEventListener('click', function(e) {
+  // Find nearest data-action
+  let target = e.target;
+  let action = null;
+  while (target && target !== document.body) {
+    if (target.dataset && target.dataset.action) { action = target.dataset.action; break; }
+    target = target.parentElement;
+  }
+  if (!action) {
+    // Click outside dropdowns - close them
+    document.querySelectorAll('.dropdown-menu.open').forEach(function(m) { m.classList.remove('open'); });
+    return;
+  }
+
+  const ds = target.dataset;
+
+  switch (action) {
+    case 'navigate':
+      if (canAccess(ds.view) === 'none') {
+        toast('Role ' + ROLES[state.role].name + ' tidak punya akses ke modul ini', 'error');
+        return;
+      }
+      state.view = ds.view;
+      state.userSelection.clear();
+      state.sidebarOpen = false;
+      render();
+      break;
+
+    case 'toggle-sidebar':
+      state.sidebarOpen = !state.sidebarOpen;
+      render();
+      break;
+
+    case 'open-role-switch':
+      state.modal = 'role-switch';
+      render();
+      break;
+
+    case 'set-role':
+      state.role = ds.role;
+      state.modal = null;
+      // If current view inaccessible, fall back to overview
+      if (canAccess(state.view) === 'none') state.view = 'overview';
+      toast('Role: ' + ROLES[state.role].name, 'success');
+      render();
+      break;
+
+    case 'close-modal':
+      state.modal = null;
+      state.modalData = null;
+      render();
+      break;
+
+    case 'open-modal':
+      state.modal = ds.modal;
+      state.modalData = { ...ds };
+      render();
+      break;
+
+    case 'open-user':
+      const userId = ds.userId;
+      const user = MOCK.users.find(function(u) { return u.id === userId; });
+      if (user) {
+        state.modal = 'user-detail';
+        state.modalData = user;
+        render();
+      }
+      break;
+
+    case 'select-user':
+      e.stopPropagation();
+      const uid = ds.userId;
+      if (state.userSelection.has(uid)) state.userSelection.delete(uid);
+      else state.userSelection.add(uid);
+      render();
+      break;
+
+    case 'select-all':
+      const filt = filterUsers();
+      if (state.userSelection.size === filt.length) state.userSelection.clear();
+      else { state.userSelection.clear(); filt.forEach(function(u) { state.userSelection.add(u.id); }); }
+      render();
+      break;
+
+    case 'user-filter':
+      const grp = ds.group;
+      const val = ds.value || null;
+      state.userFilters[grp] = (state.userFilters[grp] === val) ? null : val;
+      render();
+      break;
+
+    case 'clear-filters':
+      state.userFilters = { tier: null, activity: null, origin: null, engagement: null };
+      state.userSearch = '';
+      render();
+      break;
+
+    case 'toggle-col':
+      e.stopPropagation();
+      state.userColumns[ds.col] = !state.userColumns[ds.col];
+      render();
+      break;
+
+    case 'toggle-dropdown':
+      e.stopPropagation();
+      const ddId = 'dd-' + ds.dd;
+      const ddEl = el(ddId);
+      const wasOpen = ddEl && ddEl.classList.contains('open');
+      document.querySelectorAll('.dropdown-menu.open').forEach(function(m) { m.classList.remove('open'); });
+      if (ddEl && !wasOpen) ddEl.classList.add('open');
+      break;
+
+    case 'dest-tab':
+      state.destTab = ds.tab;
+      render();
+      break;
+
+    case 'cms-tab':
+      state.cmsTab = ds.tab;
+      render();
+      break;
+
+    case 'marketing-tab':
+      state.marketingTab = ds.tab;
+      render();
+      break;
+
+    case 'affiliate-tab':
+      state.affiliateTab = ds.tab;
+      render();
+      break;
+
+    case 'finance-tab':
+      state.financeTab = ds.tab;
+      render();
+      break;
+
+    case 'settings-tab':
+      state.settingsTab = ds.tab;
+      render();
+      break;
+
+    case 'config-tab':
+      state.configTab = ds.tab;
+      render();
+      break;
+
+    case 'toggle-maintenance':
+      state.maintenanceMode = !state.maintenanceMode;
+      toast(state.maintenanceMode ? '⚠ MAINTENANCE MODE AKTIF — User akan diarahkan ke halaman maintenance' : 'Maintenance mode dimatikan', state.maintenanceMode ? 'error' : 'success');
+      render();
+      break;
+
+    case 'do-export':
+      toast('Export ' + filterUsers().length + ' user ke CSV — file akan diunduh dalam beberapa detik', 'success');
+      state.modal = null;
+      render();
+      break;
+
+    case 'send-bulk':
+      toast('Notifikasi terkirim ke ' + state.userSelection.size + ' user', 'success');
+      state.modal = null;
+      state.userSelection.clear();
+      render();
+      break;
+
+    case 'save-voucher':
+      toast('Voucher baru berhasil dibuat', 'success');
+      state.modal = null;
+      render();
+      break;
+
+    case 'show-help':
+    case 'show-notifs':
+    case 'open-help':
+      toast('Coming soon dalam prototype final', 'default');
+      break;
+
+    case 'stat-menu':
+      toast('Klik untuk drill-down per metric — fitur penuh di build berikutnya', 'default');
+      break;
+
+    case 'toast-close':
+      const toastEl = target.closest('.toast');
+      if (toastEl) toastEl.remove();
+      break;
+
+    case 'noop':
+      break;
+
+    default:
+      break;
+  }
+});
+
+// Live search input handler
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.dataset && e.target.dataset.action === 'user-search-input') {
+    state.userSearch = e.target.value;
+    // Re-render only the table area, but full re-render is fine for prototype
+    const cursorPos = e.target.selectionStart;
+    render();
+    // Restore focus
+    const inp = el('user-search');
+    if (inp) {
+      inp.focus();
+      try { inp.setSelectionRange(cursorPos, cursorPos); } catch (err) {}
+    }
+  }
+});
+
+// Backdrop click closes modal
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'modal-root') {
+    state.modal = null;
+    state.modalData = null;
+    render();
+  }
+});
+
+// Resize
+window.addEventListener('resize', function() {
+  render();
+});
+
+// ESC closes modal
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && state.modal) {
+    state.modal = null;
+    state.modalData = null;
+    render();
+  }
+});
+
+/* =================================================================
+   INIT
+   ================================================================= */
+document.addEventListener('DOMContentLoaded', function() {
+  render();
+  // Welcome toast
+  setTimeout(function() {
+    toast('Welcome ke KurmaGo CMS prototype · Try switching role di top-right untuk lihat RBAC', 'default');
+  }, 500);
+});
+
+// Also run immediately if DOM already loaded
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(function() { render(); }, 0);
+}
+
+</script>
+</body>
+</html>
