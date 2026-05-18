@@ -180,7 +180,7 @@ export default function AdminTopbar({ onMobileMenuOpen }: AdminTopbarProps) {
                             background: '#f1f1f1',
                             border: '1px solid transparent',
                             borderRadius: 6,
-                            padding: '0 40px 0 32px',
+                            padding: '0 14px 0 32px',
                             fontSize: 13, color: '#1a1a1a',
                             cursor: 'pointer', outline: 'none',
                             transition: 'background .12s',
@@ -188,21 +188,6 @@ export default function AdminTopbar({ onMobileMenuOpen }: AdminTopbarProps) {
                         onMouseEnter={e => { e.currentTarget.style.background = '#e4e7eb'; }}
                         onMouseLeave={e => { e.currentTarget.style.background = '#f1f1f1'; }}
                     />
-                    {/* Cmd+K hint — desktop only */}
-                    <span className="hidden lg:flex" style={{
-                        position: 'absolute', right: 8, top: '50%',
-                        transform: 'translateY(-50%)',
-                        alignItems: 'center', gap: 2,
-                        fontSize: 10, color: '#8a8a8a',
-                        pointerEvents: 'none',
-                    }}>
-                        <kbd style={{
-                            background: '#ffffff', border: '1px solid #d2d5d8',
-                            borderRadius: 3, padding: '1px 4px',
-                            fontSize: 10, color: '#616161', lineHeight: 1.4,
-                            fontFamily: 'inherit',
-                        }}>⌘K</kbd>
-                    </span>
                 </div>
 
                 {/* Right actions */}

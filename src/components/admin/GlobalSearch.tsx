@@ -367,14 +367,25 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <kbd style={kbdStyle}>Enter</kbd> buka
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <kbd style={kbdStyle}>Esc</kbd> tutup
-          </span>
           {results.length > 0 && (
-            <span style={{ marginLeft: 'auto', fontWeight: 500 }}>
+            <span style={{ fontWeight: 500 }}>
               {results.length} hasil
             </span>
           )}
+          <button
+            onClick={onClose}
+            style={{
+              marginLeft: 'auto',
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '4px 10px', borderRadius: 6,
+              border: '1px solid #d2d5d8',
+              background: '#ffffff', cursor: 'pointer',
+              fontSize: 11, fontWeight: 500, color: '#616161',
+              fontFamily: 'inherit',
+            }}
+          >
+            <X size={11} /> Tutup
+          </button>
         </div>
       </div>
 
