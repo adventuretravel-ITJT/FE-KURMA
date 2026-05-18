@@ -23,7 +23,7 @@ export function Badge({ label, color, bg, status, config }: BadgeProps) {
 }
 
 export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  draft: { label: 'Draft', color: '#8A95A2', bg: 'rgba(138,149,162,.12)' },
-  active: { label: 'Active', color: '#1E6091', bg: 'rgba(30,96,145,.10)' },
-  completed: { label: 'Completed', color: '#2E8B57', bg: 'rgba(46,139,87,.10)' },
+  draft: { label: 'Draft', color: '#616161', bg: '#f4f6f8' },
+  active: { label: 'Active', color: '#008060', bg: '#e3f1df' },
+  completed: { label: 'Completed', color: '#0044a4', bg: '#ebf5ff' },
 };

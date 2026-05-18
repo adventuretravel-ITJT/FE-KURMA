@@ -32,11 +32,11 @@ function initials(name: string) {
 
 const ROLE_COLORS: Record<string, { bg: string; color: string }> = {
   superadmin: { bg: '#FDF2F8', color: '#9D174D' },
-  admin:      { bg: '#EFF6FF', color: '#1D4ED8' },
+  admin:      { bg: '#EFF6FF', color: '#0044a4' },
   cs:         { bg: '#FEF9C3', color: '#854D0E' },
   editor:     { bg: '#F0FDF4', color: '#166534' },
   marketing:  { bg: '#FFF7ED', color: '#C2410C' },
-  user:       { bg: '#F5F3EF', color: '#5C6B7A' },
+  user:       { bg: '#F5F3EF', color: '#616161' },
 };
 
 function roleStyle(slug: string | undefined) {
@@ -52,7 +52,7 @@ function SkeletonRows() {
         <tr key={i}>
           {[140, 200, 80, 70, 60, 90].map((w, j) => (
             <td key={j} style={{ padding: '14px' }}>
-              <div style={{ height: 13, borderRadius: 6, background: '#F0EBE1', width: w, animation: 'pulse-sk 1.4s ease infinite' }} />
+              <div style={{ height: 13, borderRadius: 6, background: '#e4e7eb', width: w, animation: 'pulse-sk 1.4s ease infinite' }} />
             </td>
           ))}
         </tr>
@@ -83,13 +83,13 @@ function Pagination({
 
   const btnBase: React.CSSProperties = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-    width: 32, height: 32, borderRadius: 8, border: '1px solid #E5DFD0',
-    fontSize: 13, cursor: 'pointer', background: '#fff', color: '#5C6B7A',
+    width: 32, height: 32, borderRadius: 8, border: '1px solid #e1e3e5',
+    fontSize: 13, cursor: 'pointer', background: '#fff', color: '#616161',
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderTop: '1px solid #E5DFD0' }}>
-      <span style={{ fontSize: 12, color: '#8A95A2' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderTop: '1px solid #e1e3e5' }}>
+      <span style={{ fontSize: 12, color: '#8a8a8a' }}>
         {(page - 1) * meta.per_page + 1}–{Math.min(page * meta.per_page, meta.total)} of {meta.total.toLocaleString()} users
       </span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -102,15 +102,15 @@ function Pagination({
         </button>
         {pages.map((p, i) =>
           p === '…' ? (
-            <span key={`e${i}`} style={{ width: 32, textAlign: 'center', fontSize: 13, color: '#8A95A2' }}>…</span>
+            <span key={`e${i}`} style={{ width: 32, textAlign: 'center', fontSize: 13, color: '#8a8a8a' }}>…</span>
           ) : (
             <button
               key={p}
               style={{
                 ...btnBase,
-                background: p === page ? '#1E6091' : '#fff',
-                color: p === page ? '#fff' : '#5C6B7A',
-                borderColor: p === page ? '#1E6091' : '#E5DFD0',
+                background: p === page ? '#2c6ecb' : '#fff',
+                color: p === page ? '#fff' : '#616161',
+                borderColor: p === page ? '#2c6ecb' : '#e1e3e5',
                 fontWeight: p === page ? 600 : 400,
               }}
               onClick={() => onPage(p as number)}
@@ -178,12 +178,12 @@ export default function UsersPage() {
   }
 
   const selectStyle: React.CSSProperties = {
-    padding: '8px 12px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13,
-    background: '#FAFAF8', color: '#0D1B2A', outline: 'none', cursor: 'pointer',
+    padding: '8px 12px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13,
+    background: '#f4f6f8', color: '#1a1a1a', outline: 'none', cursor: 'pointer',
   };
 
   const SortArrow = ({ key: k }: { key: string }) => (
-    <span style={{ fontSize: 10, color: sort === k ? '#1E6091' : '#C4BDB0', marginLeft: 4 }}>
+    <span style={{ fontSize: 10, color: sort === k ? '#2c6ecb' : '#d2d5d8', marginLeft: 4 }}>
       {sort === k ? (dir === 'asc' ? '↑' : '↓') : '↕'}
     </span>
   );
@@ -203,8 +203,8 @@ export default function UsersPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '8px 14px', borderRadius: 8,
-              border: '1px solid #E5DFD0', background: '#fff',
-              fontSize: 12, color: '#5C6B7A', cursor: 'pointer',
+              border: '1px solid #e1e3e5', background: '#fff',
+              fontSize: 12, color: '#616161', cursor: 'pointer',
             }}
           >
             <RefreshCw size={13} /> Refresh
@@ -215,7 +215,7 @@ export default function UsersPage() {
       {/* Summary cards */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         {[
-          { label: 'Total Users', value: meta.total, bg: '#EFF6FF', color: '#1D4ED8' },
+          { label: 'Total Users', value: meta.total, bg: '#EFF6FF', color: '#0044a4' },
           { label: 'Verified',    value: verifiedCount,   bg: '#ECFDF5', color: '#059669' },
           { label: 'Unverified',  value: unverifiedCount, bg: '#FFF5F5', color: '#DC2626' },
         ].map((s) => (
@@ -229,12 +229,12 @@ export default function UsersPage() {
       {/* Filters */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: 340 }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8A95A2' }} />
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8a8a8a' }} />
           <input
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Cari nama atau email…"
-            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13, background: '#FAFAF8', color: '#0D1B2A', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13, background: '#f4f6f8', color: '#1a1a1a', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
 
@@ -264,11 +264,11 @@ export default function UsersPage() {
       )}
 
       {/* Table */}
-      <div style={{ background: '#fff', border: '1px solid #E5DFD0', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ background: '#fff', border: '1px solid #e1e3e5', borderRadius: 12, overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
-              <tr style={{ background: '#F9F7F4' }}>
+              <tr style={{ background: '#f4f6f8' }}>
                 {[
                   { label: 'User', key: 'name' },
                   { label: 'Email', key: 'email' },
@@ -282,8 +282,8 @@ export default function UsersPage() {
                     onClick={() => k && handleSort(k)}
                     style={{
                       padding: '11px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600,
-                      color: '#8A95A2', textTransform: 'uppercase', letterSpacing: '.04em',
-                      borderBottom: '1px solid #E5DFD0', whiteSpace: 'nowrap',
+                      color: '#8a8a8a', textTransform: 'uppercase', letterSpacing: '.04em',
+                      borderBottom: '1px solid #e1e3e5', whiteSpace: 'nowrap',
                       cursor: k ? 'pointer' : 'default', userSelect: 'none',
                     }}
                   >
@@ -300,9 +300,9 @@ export default function UsersPage() {
               ) : !error && users.length === 0 ? (
                 <tr>
                   <td colSpan={6}>
-                    <div style={{ padding: '60px 20px', textAlign: 'center', color: '#8A95A2' }}>
+                    <div style={{ padding: '60px 20px', textAlign: 'center', color: '#8a8a8a' }}>
                       <Users size={36} style={{ margin: '0 auto 12px', opacity: .35 }} />
-                      <p style={{ fontSize: 14, fontWeight: 600, color: '#5C6B7A', marginBottom: 4 }}>Tidak ada user ditemukan</p>
+                      <p style={{ fontSize: 14, fontWeight: 600, color: '#616161', marginBottom: 4 }}>Tidak ada user ditemukan</p>
                       <p style={{ fontSize: 13 }}>Coba ubah filter atau kata kunci pencarian.</p>
                     </div>
                   </td>
@@ -313,9 +313,9 @@ export default function UsersPage() {
                   return (
                     <tr
                       key={u.id}
-                      style={{ borderBottom: i < users.length - 1 ? '1px solid #F0EBE1' : 'none', cursor: 'pointer' }}
+                      style={{ borderBottom: i < users.length - 1 ? '1px solid #ebebeb' : 'none', cursor: 'pointer' }}
                       onClick={() => router.push(`/admin/users/${u.id}`)}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = '#FAFAF8')}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = '#f4f6f8')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
                       {/* User */}
@@ -323,20 +323,20 @@ export default function UsersPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{
                             width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-                            background: 'rgba(30,96,145,.08)',
+                            background: '#ebf5ff',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 12, fontWeight: 700, color: '#1E6091',
+                            fontSize: 12, fontWeight: 700, color: '#2c6ecb',
                           }}>
                             {initials(u.name)}
                           </div>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: '#0D1B2A', whiteSpace: 'nowrap' }}>
+                          <span style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a', whiteSpace: 'nowrap' }}>
                             {u.name}
                           </span>
                         </div>
                       </td>
 
                       {/* Email */}
-                      <td style={{ padding: '12px 14px', color: '#5C6B7A', fontSize: 12.5 }}>{u.email}</td>
+                      <td style={{ padding: '12px 14px', color: '#616161', fontSize: 12.5 }}>{u.email}</td>
 
                       {/* Role */}
                       <td style={{ padding: '12px 14px' }}>
@@ -362,14 +362,14 @@ export default function UsersPage() {
                       </td>
 
                       {/* Trips count */}
-                      <td style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: u.trips_count > 0 ? '#1E6091' : '#C4BDB0' }}>
+                      <td style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: u.trips_count > 0 ? '#2c6ecb' : '#d2d5d8' }}>
                         {u.trips_count}
                       </td>
 
                       {/* Joined */}
                       <td style={{ padding: '12px 14px' }}>
-                        <p style={{ fontSize: 12, color: '#0D1B2A' }}>{fmtDate(u.created_at)}</p>
-                        <p style={{ fontSize: 11, color: '#8A95A2', marginTop: 1 }}>{ago(u.created_at)}</p>
+                        <p style={{ fontSize: 12, color: '#1a1a1a' }}>{fmtDate(u.created_at)}</p>
+                        <p style={{ fontSize: 11, color: '#8a8a8a', marginTop: 1 }}>{ago(u.created_at)}</p>
                       </td>
                     </tr>
                   );

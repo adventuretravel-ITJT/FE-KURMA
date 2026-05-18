@@ -46,7 +46,7 @@ function ago(iso: string) {
   return `${Math.floor(h / 24)}d ago`;
 }
 
-const TYPE_COLORS = ['#1E6091', '#2E86AB', '#A8DADC', '#5C6B7A', '#8A95A2'];
+const TYPE_COLORS = ['#2c6ecb', '#2E86AB', '#A8DADC', '#616161', '#8a8a8a'];
 const TYPE_LABEL: Record<string, string> = {
   solo: 'Solo', couple: 'Couple', family: 'Family', group: 'Group',
 };
@@ -60,14 +60,14 @@ function ChartTip({ active, payload, label }: {
   return (
     <div style={{
       background: '#fff',
-      border: '1px solid #E5DFD0',
+      border: '1px solid #e1e3e5',
       borderRadius: 8,
       padding: '6px 10px',
       fontSize: 12,
       boxShadow: '0 4px 12px rgba(13,27,42,.08)',
     }}>
-      <p style={{ color: '#5C6B7A', marginBottom: 2 }}>{label}</p>
-      <p style={{ fontWeight: 600, color: '#0D1B2A' }}>{payload[0].value}</p>
+      <p style={{ color: '#616161', marginBottom: 2 }}>{label}</p>
+      <p style={{ fontWeight: 600, color: '#1a1a1a' }}>{payload[0].value}</p>
     </div>
   );
 }
@@ -82,30 +82,30 @@ function LoadingSkeleton() {
         {/* header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ width: 120, height: 22, background: '#E5DFD0', borderRadius: 6 }} />
-            <div style={{ width: 200, height: 16, background: '#E5DFD0', borderRadius: 6 }} />
+            <div style={{ width: 120, height: 22, background: '#e4e7eb', borderRadius: 6 }} />
+            <div style={{ width: 200, height: 16, background: '#e4e7eb', borderRadius: 6 }} />
           </div>
-          <div style={{ width: 80, height: 32, background: '#E5DFD0', borderRadius: 8 }} />
+          <div style={{ width: 80, height: 32, background: '#e4e7eb', borderRadius: 8 }} />
         </div>
 
         {/* stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} style={{ height: 108, background: '#E5DFD0', borderRadius: 12 }} />
+            <div key={i} style={{ height: 108, background: '#e4e7eb', borderRadius: 12 }} />
           ))}
         </div>
 
         {/* charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div style={{ height: 280, background: '#E5DFD0', borderRadius: 12 }} />
-          <div style={{ height: 280, background: '#E5DFD0', borderRadius: 12 }} />
+          <div style={{ height: 280, background: '#e4e7eb', borderRadius: 12 }} />
+          <div style={{ height: 280, background: '#e4e7eb', borderRadius: 12 }} />
         </div>
-        <div style={{ height: 280, background: '#E5DFD0', borderRadius: 12 }} />
+        <div style={{ height: 280, background: '#e4e7eb', borderRadius: 12 }} />
 
         {/* recent */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div style={{ height: 360, background: '#E5DFD0', borderRadius: 12 }} />
-          <div style={{ height: 360, background: '#E5DFD0', borderRadius: 12 }} />
+          <div style={{ height: 360, background: '#e4e7eb', borderRadius: 12 }} />
+          <div style={{ height: 360, background: '#e4e7eb', borderRadius: 12 }} />
         </div>
 
       </div>
@@ -144,8 +144,8 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '7px 14px', borderRadius: 8,
-              border: '1px solid #E5DFD0', background: '#fff',
-              fontSize: 12, color: '#5C6B7A', cursor: 'pointer',
+              border: '1px solid #e1e3e5', background: '#fff',
+              fontSize: 12, color: '#616161', cursor: 'pointer',
             }}
           >
             <RefreshCw size={13} /> Refresh
@@ -155,7 +155,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
 
       {/* ── Stat cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={Users}     label="Total Users"    value={stats.users.total}    sub={`+${stats.users.new_this_month} this month`}                      color="#1E6091" />
+        <StatCard icon={Users}     label="Total Users"    value={stats.users.total}    sub={`+${stats.users.new_this_month} this month`}                      color="#2c6ecb" />
         <StatCard icon={UserCheck} label="Verified Users" value={stats.users.verified} sub={`${verifiedPct}% of total`}                                       color="#2E86AB" />
         <StatCard icon={MapPin}    label="Total Trips"    value={stats.trips.total}    sub={`+${stats.trips.new_this_month} this month`}                       color="#2E8B57" />
         <StatCard icon={Briefcase} label="Active Trips"   value={stats.trips.active}   sub={`${stats.trips.draft} draft · ${stats.trips.completed} done`}      color="#F4A261" />
@@ -172,20 +172,20 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
               <AreaChart data={signupData} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
                 <defs>
                   <linearGradient id="signupGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#1E6091" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#1E6091" stopOpacity={0}    />
+                    <stop offset="5%"  stopColor="#2c6ecb" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#2c6ecb" stopOpacity={0}    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5DFD0" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e1e3e5" vertical={false} />
                 <XAxis
                   dataKey="label"
-                  tick={{ fontSize: 10, fill: '#8A95A2' }}
+                  tick={{ fontSize: 10, fill: '#8a8a8a' }}
                   tickLine={false}
                   axisLine={false}
                   interval={6}
                 />
                 <YAxis
-                  tick={{ fontSize: 10, fill: '#8A95A2' }}
+                  tick={{ fontSize: 10, fill: '#8a8a8a' }}
                   tickLine={false}
                   axisLine={false}
                   allowDecimals={false}
@@ -195,11 +195,11 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
                 <Area
                   type="monotone"
                   dataKey="count"
-                  stroke="#1E6091"
+                  stroke="#2c6ecb"
                   strokeWidth={2}
                   fill="url(#signupGrad)"
                   dot={false}
-                  activeDot={{ r: 4, fill: '#1E6091' }}
+                  activeDot={{ r: 4, fill: '#2c6ecb' }}
                 />
               </AreaChart>
             </ResponsiveContainer>
@@ -232,7 +232,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
             </div>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
               {charts.trips_by_type.length === 0 && (
-                <p style={{ fontSize: 12, color: '#8A95A2' }}>No data yet</p>
+                <p style={{ fontSize: 12, color: '#8a8a8a' }}>No data yet</p>
               )}
               {charts.trips_by_type.map((item, i) => (
                 <div key={item.type} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
@@ -240,10 +240,10 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
                     width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
                     background: TYPE_COLORS[i % TYPE_COLORS.length],
                   }} />
-                  <span style={{ flex: 1, color: '#3A4A5C', textTransform: 'capitalize' }}>
+                  <span style={{ flex: 1, color: '#303030', textTransform: 'capitalize' }}>
                     {TYPE_LABEL[item.type] ?? item.type}
                   </span>
-                  <span style={{ fontWeight: 600, color: '#0D1B2A' }}>{item.count}</span>
+                  <span style={{ fontWeight: 600, color: '#1a1a1a' }}>{item.count}</span>
                 </div>
               ))}
             </div>
@@ -270,14 +270,14 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <Icon size={14} style={{ color: s.color }} />
-                      <span style={{ fontSize: 12, color: '#3A4A5C' }}>{label}</span>
+                      <span style={{ fontSize: 12, color: '#303030' }}>{label}</span>
                     </div>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#0D1B2A' }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#1a1a1a' }}>
                       {value.toLocaleString()}
-                      <span style={{ fontWeight: 400, color: '#8A95A2' }}> ({pct}%)</span>
+                      <span style={{ fontWeight: 400, color: '#8a8a8a' }}> ({pct}%)</span>
                     </span>
                   </div>
-                  <div style={{ height: 6, background: '#F5F1E8', borderRadius: 999, overflow: 'hidden' }}>
+                  <div style={{ height: 6, background: '#f4f6f8', borderRadius: 999, overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: `${pct}%`, background: s.color, borderRadius: 999, transition: 'width .5s ease' }} />
                   </div>
                 </div>
@@ -286,8 +286,8 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
           </div>
 
           {/* Sparkline */}
-          <div style={{ borderTop: '1px solid #E5DFD0', paddingTop: 16 }}>
-            <p style={{ fontSize: 11, color: '#8A95A2', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
+          <div style={{ borderTop: '1px solid #e1e3e5', paddingTop: 16 }}>
+            <p style={{ fontSize: 11, color: '#8a8a8a', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
               <TrendingUp size={12} /> New trips — last 30 days
             </p>
             <ResponsiveContainer width="100%" height={56}>
@@ -313,27 +313,27 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
         <Card>
           <CardHeader title="Recent Users" />
           {recent_users.length === 0 && (
-            <p style={{ padding: '16px 20px', fontSize: 13, color: '#8A95A2' }}>No users yet</p>
+            <p style={{ padding: '16px 20px', fontSize: 13, color: '#8a8a8a' }}>No users yet</p>
           )}
           {recent_users.map((u: RecentUser) => (
             <div key={u.id} style={{
               padding: '12px 20px',
               display: 'flex', alignItems: 'center', gap: 12,
-              borderTop: '1px solid #E5DFD0',
+              borderTop: '1px solid #e1e3e5',
             }}>
               <div style={{
                 width: 34, height: 34, borderRadius: '50%',
-                background: 'rgba(30,96,145,.08)',
+                background: '#f4f6f8',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 13, fontWeight: 700, color: '#1E6091', flexShrink: 0,
+                fontSize: 13, fontWeight: 700, color: '#2c6ecb', flexShrink: 0,
               }}>
                 {u.name.charAt(0).toUpperCase()}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 13, fontWeight: 500, color: '#0D1B2A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <p style={{ fontSize: 13, fontWeight: 500, color: '#1a1a1a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {u.name}
                 </p>
-                <p style={{ fontSize: 11, color: '#8A95A2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <p style={{ fontSize: 11, color: '#8a8a8a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {u.email}
                 </p>
               </div>
@@ -341,13 +341,13 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
                 {u.role && (
                   <span style={{
                     fontSize: 10, padding: '2px 8px', borderRadius: 999,
-                    background: 'rgba(30,96,145,.08)', color: '#1E6091', fontWeight: 500,
+                    background: '#f4f6f8', color: '#2c6ecb', fontWeight: 500,
                     textTransform: 'capitalize',
                   }}>
                     {u.role.slug}
                   </span>
                 )}
-                <span style={{ fontSize: 10, color: '#8A95A2' }}>{ago(u.created_at)}</span>
+                <span style={{ fontSize: 10, color: '#8a8a8a' }}>{ago(u.created_at)}</span>
               </div>
             </div>
           ))}
@@ -357,7 +357,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
         <Card>
           <CardHeader title="Recent Trips" />
           {recent_trips.length === 0 && (
-            <p style={{ padding: '16px 20px', fontSize: 13, color: '#8A95A2' }}>No trips yet</p>
+            <p style={{ padding: '16px 20px', fontSize: 13, color: '#8a8a8a' }}>No trips yet</p>
           )}
           {recent_trips.map((t: RecentTrip) => {
             const s = STATUS_CONFIG[t.status] ?? STATUS_CONFIG.draft;
@@ -365,16 +365,16 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
               <div key={t.id} style={{
                 padding: '12px 20px',
                 display: 'flex', alignItems: 'center', gap: 12,
-                borderTop: '1px solid #E5DFD0',
+                borderTop: '1px solid #e1e3e5',
               }}>
                 <div style={{ fontSize: 22, flexShrink: 0, width: 32, textAlign: 'center', lineHeight: 1 }}>
                   {t.destination_flag ?? '🗺️'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: '#0D1B2A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: '#1a1a1a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {t.name}
                   </p>
-                  <p style={{ fontSize: 11, color: '#8A95A2', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <p style={{ fontSize: 11, color: '#8a8a8a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {t.destination}
                     {t.start_date ? ` · ${fmtDate(t.start_date)}` : ''}
                     {t.user ? ` · ${t.user.name}` : ''}
@@ -382,7 +382,7 @@ function Dashboard({ data, onRefresh }: { data: OverviewData; onRefresh: () => v
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
                   <Badge label={s.label} color={s.color} bg={s.bg} />
-                  <span style={{ fontSize: 10, color: '#8A95A2' }}>{ago(t.created_at)}</span>
+                  <span style={{ fontSize: 10, color: '#8a8a8a' }}>{ago(t.created_at)}</span>
                 </div>
               </div>
             );
@@ -423,13 +423,13 @@ export default function OverviewPage() {
         alignItems: 'center', justifyContent: 'center', minHeight: 400, gap: 12,
       }}>
         <AlertCircle size={32} color="#FF6B6B" />
-        <p style={{ fontSize: 13, color: '#5C6B7A' }}>{error}</p>
+        <p style={{ fontSize: 13, color: '#616161' }}>{error}</p>
         <button
           onClick={load}
           style={{
             display: 'flex', alignItems: 'center', gap: 8,
             padding: '8px 18px', borderRadius: 8,
-            background: '#1E6091', color: '#fff',
+            background: '#2c6ecb', color: '#fff',
             fontSize: 13, fontWeight: 500, cursor: 'pointer', border: 'none',
           }}
         >

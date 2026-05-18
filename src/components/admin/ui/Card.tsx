@@ -15,8 +15,8 @@ export function Card({ children, className = '', padding = 'none' }: CardProps) 
   const p = padding === 'md' ? 'p-5' : padding === 'sm' ? 'p-4' : '';
   return (
     <div
-      className={`bg-[var(--kg-paper)] border border-[var(--kg-hairline)] rounded-xl overflow-hidden ${p} ${className}`}
-      style={{ boxShadow: 'var(--kg-shadow-soft-1)' }}
+      className={`bg-[var(--kg-paper)] rounded-[10px] overflow-hidden ${p} ${className}`}
+      style={{ boxShadow: 'inset 0 0 0 1px #e1e3e5, 0 1px 3px rgba(0,0,0,.06)' }}
     >
       {children}
     </div>

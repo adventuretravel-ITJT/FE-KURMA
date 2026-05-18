@@ -122,23 +122,29 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }, [router]);
 
   return (
-    <div className="bg-[var(--kg-canvas)] min-h-screen">
+    <div data-admin className="min-h-screen" style={{ background: '#f1f1f1' }}>
       {/* Mobile top bar — visible on < lg */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[var(--kg-paper)] border-b border-[var(--kg-hairline)] flex items-center px-4 gap-3 z-30">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-14 flex items-center px-4 gap-3 z-30"
+        style={{ background: '#ffffff', borderBottom: '1px solid #e1e3e5' }}>
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="p-2 rounded-lg text-[var(--kg-ink-56)] hover:bg-[var(--kg-canvas)] transition-colors"
+          className="p-2 rounded-lg transition-colors"
+          style={{ color: '#616161' }}
           aria-label="Buka menu"
         >
           <Menu className="w-5 h-5" />
         </button>
         <Link href="/admin/overview" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[var(--kg-primary)] to-[var(--kg-primary-bright)] flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+          <div
+            className="flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+            style={{ width: 26, height: 26, borderRadius: 6, background: 'linear-gradient(135deg, #2c6ecb, #1a4d8f)', fontSize: 13, fontWeight: 700 }}
+          >
             K
           </div>
-          <p className="font-serif text-[16px] font-medium text-[var(--kg-ink)] tracking-[-0.03em] leading-none">
-            Kurma<em className="font-light italic text-[var(--kg-primary)]">Go.</em>
-          </p>
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', letterSpacing: '-0.1px', lineHeight: 1.2 }}>KurmaGo</p>
+            <p style={{ fontSize: 10, color: '#8a8a8a', fontWeight: 500, letterSpacing: '0.3px', marginTop: 1 }}>Admin Panel</p>
+          </div>
         </Link>
       </header>
 
