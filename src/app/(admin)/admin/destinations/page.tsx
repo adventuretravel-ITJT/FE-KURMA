@@ -13,20 +13,33 @@ function authHeaders() {
   return { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
 }
 
+interface TipItem  { icon: string; title: string; note: string }
+interface EatItem  { name: string; price: string }
+
 interface CityGuide {
   id: number;
   name: string;
   country: string;
   country_code: string;
   flag_emoji: string | null;
+  lat: number | null;
+  lon: number | null;
+  kanji: string | null;
+  icon: string | null;
   description: string | null;
   image_url: string | null;
   climate: string | null;
+  season: string | null;
   best_time_to_visit: string | null;
+  best_months: number[] | null;
+  ok_months: number[] | null;
   currency: string | null;
   timezone: string | null;
   language: string | null;
   highlights: string[];
+  checklist: string[];
+  tips: TipItem[];
+  eats: EatItem[];
   is_active: boolean;
   updated_at: string;
 }
@@ -35,45 +48,96 @@ type CityForm = Omit<CityGuide, 'id' | 'updated_at'>;
 
 const EMPTY_FORM: CityForm = {
   name: '', country: '', country_code: '', flag_emoji: '',
-  description: '', image_url: '', climate: '', best_time_to_visit: '',
-  currency: '', timezone: '', language: '', highlights: [], is_active: true,
+  lat: null, lon: null, kanji: '', icon: '',
+  description: '', image_url: '', climate: '', season: '',
+  best_time_to_visit: '', best_months: [], ok_months: [],
+  currency: '', timezone: '', language: '',
+  highlights: [], checklist: [], tips: [], eats: [],
+  is_active: true,
 };
 
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
 // ── Modal ─────────────────────────────────────────────────────────────────────
+
+type TabKey = 'basic' | 'travel' | 'content';
 
 function CityModal({ city, onClose, onSaved }: { city: CityGuide | null; onClose: () => void; onSaved: () => void }) {
   const isEdit = !!city;
   const [form, setForm] = useState<CityForm>(
-    city ? { name: city.name, country: city.country, country_code: city.country_code, flag_emoji: city.flag_emoji ?? '', description: city.description ?? '', image_url: city.image_url ?? '', climate: city.climate ?? '', best_time_to_visit: city.best_time_to_visit ?? '', currency: city.currency ?? '', timezone: city.timezone ?? '', language: city.language ?? '', highlights: city.highlights ?? [], is_active: city.is_active } : { ...EMPTY_FORM }
+    city ? {
+      name: city.name, country: city.country, country_code: city.country_code,
+      flag_emoji: city.flag_emoji ?? '', lat: city.lat ?? null, lon: city.lon ?? null,
+      kanji: city.kanji ?? '', icon: city.icon ?? '',
+      description: city.description ?? '', image_url: city.image_url ?? '',
+      climate: city.climate ?? '', season: city.season ?? '',
+      best_time_to_visit: city.best_time_to_visit ?? '',
+      best_months: city.best_months ?? [], ok_months: city.ok_months ?? [],
+      currency: city.currency ?? '', timezone: city.timezone ?? '', language: city.language ?? '',
+      highlights: city.highlights ?? [], checklist: city.checklist ?? [],
+      tips: city.tips ?? [], eats: city.eats ?? [], is_active: city.is_active,
+    } : { ...EMPTY_FORM }
   );
+
+  const [tab, setTab]                       = useState<TabKey>('basic');
   const [highlightInput, setHighlightInput] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [error, setError]   = useState('');
+  const [checklistInput, setChecklistInput] = useState('');
+  const [tipForm, setTipForm]               = useState<TipItem>({ icon: '', title: '', note: '' });
+  const [eatForm, setEatForm]               = useState<EatItem>({ name: '', price: '' });
+  const [saving, setSaving]                 = useState(false);
+  const [error, setError]                   = useState('');
 
   function setField<K extends keyof CityForm>(k: K, v: CityForm[K]) {
     setForm(f => ({ ...f, [k]: v }));
   }
 
+  function toggleMonth(arr: number[], idx: number): number[] {
+    return arr.includes(idx) ? arr.filter(m => m !== idx) : [...arr, idx].sort((a, b) => a - b);
+  }
+
+  // Highlights
   function addHighlight() {
     const h = highlightInput.trim();
-    if (h && !form.highlights.includes(h)) {
-      setField('highlights', [...form.highlights, h]);
-    }
+    if (h && !form.highlights.includes(h)) setField('highlights', [...form.highlights, h]);
     setHighlightInput('');
   }
 
-  function removeHighlight(h: string) {
-    setField('highlights', form.highlights.filter(x => x !== h));
+  // Checklist
+  function addChecklist() {
+    const h = checklistInput.trim();
+    if (h && !form.checklist.includes(h)) setField('checklist', [...form.checklist, h]);
+    setChecklistInput('');
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.name.trim()) { setError('City name is required.'); return; }
-    if (!form.country.trim()) { setError('Country is required.'); return; }
-    if (!form.country_code.trim()) { setError('Country code is required.'); return; }
+  // Tips
+  function addTip() {
+    if (!tipForm.title.trim()) return;
+    setField('tips', [...form.tips, { ...tipForm }]);
+    setTipForm({ icon: '', title: '', note: '' });
+  }
+
+  // Eats
+  function addEat() {
+    if (!eatForm.name.trim()) return;
+    setField('eats', [...form.eats, { ...eatForm }]);
+    setEatForm({ name: '', price: '' });
+  }
+
+  async function handleSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (!form.name.trim()) { setError('City name is required.'); setTab('basic'); return; }
+    if (!form.country.trim()) { setError('Country is required.'); setTab('basic'); return; }
+    if (!form.country_code.trim()) { setError('Country code is required.'); setTab('basic'); return; }
     setSaving(true); setError('');
     try {
-      const payload = { ...form, flag_emoji: form.flag_emoji || null, description: form.description || null, image_url: form.image_url || null, climate: form.climate || null, best_time_to_visit: form.best_time_to_visit || null, currency: form.currency || null, timezone: form.timezone || null, language: form.language || null };
+      const payload = {
+        ...form,
+        flag_emoji: form.flag_emoji || null, kanji: form.kanji || null, icon: form.icon || null,
+        description: form.description || null, image_url: form.image_url || null,
+        climate: form.climate || null, season: form.season || null,
+        best_time_to_visit: form.best_time_to_visit || null,
+        currency: form.currency || null, timezone: form.timezone || null, language: form.language || null,
+      };
       const url = isEdit ? `${API}/api/admin/city-guides/${city!.id}` : `${API}/api/admin/city-guides`;
       const res = await fetch(url, { method: isEdit ? 'PUT' : 'POST', headers: authHeaders(), body: JSON.stringify(payload) });
       const data = await res.json();
@@ -91,115 +155,310 @@ function CityModal({ city, onClose, onSaved }: { city: CityGuide | null; onClose
     fontSize: 13, background: '#f4f6f8', color: '#1a1a1a', outline: 'none',
     fontFamily: 'var(--font-plus-jakarta-sans)',
   };
-  const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: '#616161', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.04em' };
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: 11, fontWeight: 600, color: '#616161',
+    marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.04em',
+  };
   const row2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 };
+
+  const TABS: { key: TabKey; label: string }[] = [
+    { key: 'basic', label: 'Basic Info' },
+    { key: 'travel', label: 'Travel Info' },
+    { key: 'content', label: 'Content' },
+  ];
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 680, maxHeight: '92vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(26,26,26,.18)' }} onClick={e => e.stopPropagation()}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #e4e7eb' }}>
+      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 720, maxHeight: '92vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(26,26,26,.18)' }} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px 0', flexShrink: 0 }}>
           <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a' }}>{isEdit ? 'Edit City Guide' : 'Add City Guide'}</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', padding: 4 }}><X size={18} /></button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 0, padding: '14px 24px 0', borderBottom: '1px solid #e4e7eb', flexShrink: 0 }}>
+          {TABS.map(t => (
+            <button key={t.key} onClick={() => setTab(t.key)} style={{
+              padding: '8px 16px', border: 'none', borderBottom: `2px solid ${tab === t.key ? '#2c6ecb' : 'transparent'}`,
+              background: 'none', fontSize: 13, fontWeight: 600,
+              color: tab === t.key ? '#2c6ecb' : '#8a8a8a', cursor: 'pointer',
+              fontFamily: 'inherit', marginBottom: -1,
+            }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Body */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
           {error && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: '#FFF5F5', border: '1px solid #FCA5A5', borderRadius: 8, fontSize: 12.5, color: '#DC2626' }}>
               <AlertCircle size={14} />{error}
             </div>
           )}
 
-          <div style={row2}>
-            <div>
-              <label style={labelStyle}>City Name *</label>
-              <input style={inputStyle} value={form.name} onChange={e => setField('name', e.target.value)} placeholder="e.g. Tokyo" required />
-            </div>
-            <div>
-              <label style={labelStyle}>Flag Emoji</label>
-              <input style={inputStyle} value={form.flag_emoji ?? ''} onChange={e => setField('flag_emoji', e.target.value)} placeholder="🇯🇵" maxLength={10} />
-            </div>
-          </div>
+          {/* ── TAB: BASIC ── */}
+          {tab === 'basic' && (
+            <>
+              <div style={row2}>
+                <div>
+                  <label style={labelStyle}>City Name *</label>
+                  <input style={inputStyle} value={form.name} onChange={e => setField('name', e.target.value)} placeholder="e.g. Tokyo" required />
+                </div>
+                <div>
+                  <label style={labelStyle}>Kanji / Local Script</label>
+                  <input style={inputStyle} value={form.kanji ?? ''} onChange={e => setField('kanji', e.target.value)} placeholder="e.g. 東京" />
+                </div>
+              </div>
 
-          <div style={row2}>
-            <div>
-              <label style={labelStyle}>Country *</label>
-              <input style={inputStyle} value={form.country} onChange={e => setField('country', e.target.value)} placeholder="e.g. Japan" required />
-            </div>
-            <div>
-              <label style={labelStyle}>Country Code *</label>
-              <input style={inputStyle} value={form.country_code} onChange={e => setField('country_code', e.target.value.toUpperCase())} placeholder="JP" maxLength={5} required />
-            </div>
-          </div>
+              <div style={row2}>
+                <div>
+                  <label style={labelStyle}>Country *</label>
+                  <input style={inputStyle} value={form.country} onChange={e => setField('country', e.target.value)} placeholder="e.g. Japan" required />
+                </div>
+                <div>
+                  <label style={labelStyle}>Country Code *</label>
+                  <input style={inputStyle} value={form.country_code} onChange={e => setField('country_code', e.target.value.toUpperCase())} placeholder="JP" maxLength={5} required />
+                </div>
+              </div>
 
-          <div>
-            <label style={labelStyle}>Description</label>
-            <textarea style={{ ...inputStyle, minHeight: 80, resize: 'vertical', lineHeight: 1.6 }}
-              value={form.description ?? ''} onChange={e => setField('description', e.target.value)}
-              placeholder="Brief description of the city…" />
-          </div>
+              <div style={row2}>
+                <div>
+                  <label style={labelStyle}>Flag Emoji</label>
+                  <input style={inputStyle} value={form.flag_emoji ?? ''} onChange={e => setField('flag_emoji', e.target.value)} placeholder="🇯🇵" maxLength={10} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Weather Icon Emoji</label>
+                  <input style={inputStyle} value={form.icon ?? ''} onChange={e => setField('icon', e.target.value)} placeholder="⛅" maxLength={10} />
+                </div>
+              </div>
 
-          <div>
-            <label style={labelStyle}>Image URL</label>
-            <input style={inputStyle} value={form.image_url ?? ''} onChange={e => setField('image_url', e.target.value)} placeholder="https://…" />
-          </div>
+              <div>
+                <label style={labelStyle}>Description</label>
+                <textarea style={{ ...inputStyle, minHeight: 80, resize: 'vertical', lineHeight: 1.6 }}
+                  value={form.description ?? ''} onChange={e => setField('description', e.target.value)}
+                  placeholder="Brief description of the city…" />
+              </div>
 
-          <div style={row2}>
-            <div>
-              <label style={labelStyle}>Climate</label>
-              <input style={inputStyle} value={form.climate ?? ''} onChange={e => setField('climate', e.target.value)} placeholder="e.g. Temperate" />
-            </div>
-            <div>
-              <label style={labelStyle}>Best Time to Visit</label>
-              <input style={inputStyle} value={form.best_time_to_visit ?? ''} onChange={e => setField('best_time_to_visit', e.target.value)} placeholder="e.g. March–May, Sep–Nov" />
-            </div>
-          </div>
+              <div>
+                <label style={labelStyle}>Image URL</label>
+                <input style={inputStyle} value={form.image_url ?? ''} onChange={e => setField('image_url', e.target.value)} placeholder="https://…" />
+              </div>
 
-          <div style={row2}>
-            <div>
-              <label style={labelStyle}>Currency</label>
-              <input style={inputStyle} value={form.currency ?? ''} onChange={e => setField('currency', e.target.value)} placeholder="e.g. JPY (¥)" />
-            </div>
-            <div>
-              <label style={labelStyle}>Timezone</label>
-              <input style={inputStyle} value={form.timezone ?? ''} onChange={e => setField('timezone', e.target.value)} placeholder="e.g. Asia/Tokyo (UTC+9)" />
-            </div>
-          </div>
+              <div style={row2}>
+                <div>
+                  <label style={labelStyle}>Latitude</label>
+                  <input style={inputStyle} type="number" step="0.0001" value={form.lat ?? ''} onChange={e => setField('lat', e.target.value ? parseFloat(e.target.value) : null)} placeholder="35.6762" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Longitude</label>
+                  <input style={inputStyle} type="number" step="0.0001" value={form.lon ?? ''} onChange={e => setField('lon', e.target.value ? parseFloat(e.target.value) : null)} placeholder="139.6503" />
+                </div>
+              </div>
 
-          <div>
-            <label style={labelStyle}>Language</label>
-            <input style={inputStyle} value={form.language ?? ''} onChange={e => setField('language', e.target.value)} placeholder="e.g. Japanese" />
-          </div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+                <input type="checkbox" checked={form.is_active} onChange={e => setField('is_active', e.target.checked)} style={{ width: 16, height: 16, accentColor: '#2c6ecb', cursor: 'pointer' }} />
+                <span style={{ fontSize: 13, color: '#1a1a1a', fontWeight: 500 }}>Active (visible to users)</span>
+              </label>
+            </>
+          )}
 
-          <div>
-            <label style={labelStyle}>Highlights</label>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-              <input style={{ ...inputStyle, flex: 1 }} value={highlightInput} onChange={e => setHighlightInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addHighlight(); } }}
-                placeholder="Add a highlight and press Enter or Add" />
-              <button type="button" onClick={addHighlight}
-                style={{ padding: '9px 14px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#2c6ecb', cursor: 'pointer', flexShrink: 0 }}>
-                Add
-              </button>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {form.highlights.map(h => (
-                <span key={h} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 20, fontSize: 12, color: '#2c6ecb' }}>
-                  {h}
-                  <button type="button" onClick={() => removeHighlight(h)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#93C5FD', padding: 0, display: 'flex' }}><X size={11} /></button>
-                </span>
-              ))}
-            </div>
-          </div>
+          {/* ── TAB: TRAVEL INFO ── */}
+          {tab === 'travel' && (
+            <>
+              <div style={row2}>
+                <div>
+                  <label style={labelStyle}>Climate</label>
+                  <input style={inputStyle} value={form.climate ?? ''} onChange={e => setField('climate', e.target.value)} placeholder="e.g. Temperate" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Season Label</label>
+                  <input style={inputStyle} value={form.season ?? ''} onChange={e => setField('season', e.target.value)} placeholder="e.g. Spring & Autumn" />
+                </div>
+              </div>
 
-          <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-            <input type="checkbox" checked={form.is_active} onChange={e => setField('is_active', e.target.checked)} style={{ width: 16, height: 16, accentColor: '#2c6ecb', cursor: 'pointer' }} />
-            <span style={{ fontSize: 13, color: '#1a1a1a', fontWeight: 500 }}>Active (visible to users)</span>
-          </label>
-        </form>
+              <div>
+                <label style={labelStyle}>Best Time to Visit</label>
+                <input style={inputStyle} value={form.best_time_to_visit ?? ''} onChange={e => setField('best_time_to_visit', e.target.value)} placeholder="e.g. March–May, Sep–Nov" />
+              </div>
 
-        <div style={{ padding: '16px 24px', borderTop: '1px solid #e4e7eb', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+              {/* Best Months */}
+              <div>
+                <label style={labelStyle}>Best Months</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {MONTHS.map((m, i) => {
+                    const on = (form.best_months ?? []).includes(i);
+                    return (
+                      <button key={i} type="button" onClick={() => setField('best_months', toggleMonth(form.best_months ?? [], i))}
+                        style={{ padding: '5px 10px', borderRadius: 20, border: `1px solid ${on ? '#008060' : '#e1e3e5'}`, background: on ? '#e3f1df' : '#f4f6f8', color: on ? '#008060' : '#8a8a8a', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        {m}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* OK Months */}
+              <div>
+                <label style={labelStyle}>OK Months</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {MONTHS.map((m, i) => {
+                    const on = (form.ok_months ?? []).includes(i);
+                    return (
+                      <button key={i} type="button" onClick={() => setField('ok_months', toggleMonth(form.ok_months ?? [], i))}
+                        style={{ padding: '5px 10px', borderRadius: 20, border: `1px solid ${on ? '#2c6ecb' : '#e1e3e5'}`, background: on ? '#ebf5ff' : '#f4f6f8', color: on ? '#2c6ecb' : '#8a8a8a', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        {m}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={row2}>
+                <div>
+                  <label style={labelStyle}>Currency</label>
+                  <input style={inputStyle} value={form.currency ?? ''} onChange={e => setField('currency', e.target.value)} placeholder="e.g. JPY (¥)" />
+                </div>
+                <div>
+                  <label style={labelStyle}>Timezone</label>
+                  <input style={inputStyle} value={form.timezone ?? ''} onChange={e => setField('timezone', e.target.value)} placeholder="e.g. Asia/Tokyo (UTC+9)" />
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Language</label>
+                <input style={inputStyle} value={form.language ?? ''} onChange={e => setField('language', e.target.value)} placeholder="e.g. Japanese" />
+              </div>
+
+              {/* Highlights */}
+              <div>
+                <label style={labelStyle}>Highlights</label>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <input style={{ ...inputStyle, flex: 1 }} value={highlightInput} onChange={e => setHighlightInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addHighlight(); } }}
+                    placeholder="e.g. Cherry Blossom — press Enter or Add" />
+                  <button type="button" onClick={addHighlight}
+                    style={{ padding: '9px 14px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#2c6ecb', cursor: 'pointer', flexShrink: 0 }}>
+                    Add
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {form.highlights.map((h, i) => (
+                    <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 20, fontSize: 12, color: '#2c6ecb' }}>
+                      {h}
+                      <button type="button" onClick={() => setField('highlights', form.highlights.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#93C5FD', padding: 0, display: 'flex' }}><X size={11} /></button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ── TAB: CONTENT ── */}
+          {tab === 'content' && (
+            <>
+              {/* Checklist */}
+              <div>
+                <label style={labelStyle}>Pack / Prep Checklist</label>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+                  <input style={{ ...inputStyle, flex: 1 }} value={checklistInput} onChange={e => setChecklistInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addChecklist(); } }}
+                    placeholder="e.g. Suica IC Card topped up" />
+                  <button type="button" onClick={addChecklist}
+                    style={{ padding: '9px 14px', background: '#f4f6f8', border: '1px solid #d2d5d8', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#616161', cursor: 'pointer', flexShrink: 0 }}>
+                    Add
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {form.checklist.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 10px', background: '#f4f6f8', borderRadius: 8 }}>
+                      <span style={{ fontSize: 13, flex: 1, color: '#1a1a1a' }}>{item}</span>
+                      <button type="button" onClick={() => setField('checklist', form.checklist.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', display: 'flex', padding: 0 }}><X size={12} /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ height: 1, background: '#e4e7eb' }} />
+
+              {/* Tips */}
+              <div>
+                <label style={labelStyle}>Local Tips</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr 2fr auto', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: '#8a8a8a', marginBottom: 4 }}>Icon</div>
+                    <input style={{ ...inputStyle, textAlign: 'center', fontSize: 16 }} value={tipForm.icon} onChange={e => setTipForm(f => ({ ...f, icon: e.target.value }))} placeholder="🚇" maxLength={5} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: '#8a8a8a', marginBottom: 4 }}>Title</div>
+                    <input style={inputStyle} value={tipForm.title} onChange={e => setTipForm(f => ({ ...f, title: e.target.value }))} placeholder="Get a Suica Card" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: '#8a8a8a', marginBottom: 4 }}>Note</div>
+                    <input style={inputStyle} value={tipForm.note} onChange={e => setTipForm(f => ({ ...f, note: e.target.value }))} placeholder="Works on metro, buses…" />
+                  </div>
+                  <div style={{ paddingTop: 20 }}>
+                    <button type="button" onClick={addTip}
+                      style={{ padding: '9px 12px', background: '#f4f6f8', border: '1px solid #d2d5d8', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#616161', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                      + Add
+                    </button>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {form.tips.map((tip, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', background: '#f4f6f8', borderRadius: 8 }}>
+                      <span style={{ fontSize: 16, flexShrink: 0 }}>{tip.icon}</span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#1a1a1a' }}>{tip.title}</div>
+                        <div style={{ fontSize: 11, color: '#616161' }}>{tip.note}</div>
+                      </div>
+                      <button type="button" onClick={() => setField('tips', form.tips.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', display: 'flex', padding: 0 }}><X size={12} /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ height: 1, background: '#e4e7eb' }} />
+
+              {/* Eats */}
+              <div>
+                <label style={labelStyle}>Must Eat</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr auto', gap: 8, marginBottom: 8, alignItems: 'flex-end' }}>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: '#8a8a8a', marginBottom: 4 }}>Dish / Restaurant</div>
+                    <input style={inputStyle} value={eatForm.name} onChange={e => setEatForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Ichiran Tonkotsu Ramen" />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: '#8a8a8a', marginBottom: 4 }}>Price</div>
+                    <input style={inputStyle} value={eatForm.price} onChange={e => setEatForm(f => ({ ...f, price: e.target.value }))} placeholder="¥980" />
+                  </div>
+                  <button type="button" onClick={addEat}
+                    style={{ padding: '9px 12px', background: '#f4f6f8', border: '1px solid #d2d5d8', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#616161', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                    + Add
+                  </button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {form.eats.map((eat, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 10px', background: '#f4f6f8', borderRadius: 8 }}>
+                      <div style={{ flex: 1 }}>
+                        <span style={{ fontSize: 12, fontWeight: 500, color: '#1a1a1a' }}>{eat.name}</span>
+                      </div>
+                      <span style={{ fontSize: 12, color: '#2c6ecb', fontWeight: 600, flexShrink: 0 }}>{eat.price}</span>
+                      <button type="button" onClick={() => setField('eats', form.eats.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', display: 'flex', padding: 0 }}><X size={12} /></button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ padding: '16px 24px', borderTop: '1px solid #e4e7eb', display: 'flex', justifyContent: 'flex-end', gap: 10, flexShrink: 0 }}>
           <button type="button" onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Cancel</button>
-          <button onClick={handleSubmit} disabled={saving}
+          <button onClick={() => handleSubmit()} disabled={saving}
             style={{ padding: '9px 20px', background: '#2c6ecb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? .7 : 1 }}>
             {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Add city'}
           </button>
@@ -374,7 +633,10 @@ export default function DestinationsPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ fontSize: 28, lineHeight: 1 }}>{city.flag_emoji || '🌍'}</div>
                   <div>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.2 }}>{city.name}</p>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.2 }}>
+                      {city.name}
+                      {city.kanji && <span style={{ fontSize: 11, color: '#8a8a8a', marginLeft: 5 }}>{city.kanji}</span>}
+                    </p>
                     <p style={{ fontSize: 12, color: '#8a8a8a' }}>{city.country} · {city.country_code}</p>
                   </div>
                 </div>
@@ -393,6 +655,13 @@ export default function DestinationsPage() {
                 {city.climate && <span style={{ fontSize: 11, padding: '3px 8px', background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 20, color: '#16A34A' }}>🌤 {city.climate}</span>}
                 {city.currency && <span style={{ fontSize: 11, padding: '3px 8px', background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 20, color: '#CA8A04' }}>💰 {city.currency}</span>}
                 {city.best_time_to_visit && <span style={{ fontSize: 11, padding: '3px 8px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 20, color: '#1D4ED8' }}>📅 {city.best_time_to_visit}</span>}
+              </div>
+
+              {/* Content summary */}
+              <div style={{ display: 'flex', gap: 8, fontSize: 11, color: '#8a8a8a' }}>
+                {city.checklist?.length > 0 && <span>✓ {city.checklist.length} checklist</span>}
+                {city.tips?.length > 0 && <span>💡 {city.tips.length} tips</span>}
+                {city.eats?.length > 0 && <span>🍜 {city.eats.length} eats</span>}
               </div>
 
               <div style={{ display: 'flex', gap: 7, marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #e4e7eb' }}>

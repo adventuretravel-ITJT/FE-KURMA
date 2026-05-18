@@ -5,9 +5,35 @@ import { WeatherData } from './types'
 import { CityInfo, CITY_DATA, getCityInfo } from './cityData'
 import BestTimeCalendar from './BestTimeCalendar'
 
+const API = process.env.NEXT_PUBLIC_API_URL
+
 interface Props {
   cities: string[]
   tripMonth?: number
+}
+
+// Map API response shape to CityInfo
+function apiToCityInfo(d: Record<string, unknown>): CityInfo {
+  return {
+    name: String(d.name ?? ''),
+    kanji: d.kanji ? String(d.kanji) : undefined,
+    country: String(d.country ?? ''),
+    flag: String(d.flag_emoji ?? '🌍'),
+    icon: String(d.icon ?? '⛅'),
+    lat: Number(d.lat ?? 0),
+    lon: Number(d.lon ?? 0),
+    bestMonths: Array.isArray(d.best_months) ? (d.best_months as number[]) : [],
+    okMonths: Array.isArray(d.ok_months) ? (d.ok_months as number[]) : [],
+    season: String(d.season ?? d.climate ?? ''),
+    desc: String(d.description ?? ''),
+    checklist: Array.isArray(d.checklist) ? (d.checklist as string[]) : [],
+    tips: Array.isArray(d.tips)
+      ? (d.tips as Array<{ icon?: string; title?: string; note?: string }>).map(t => ({ icon: String(t.icon ?? ''), title: String(t.title ?? ''), note: String(t.note ?? '') }))
+      : [],
+    eats: Array.isArray(d.eats)
+      ? (d.eats as Array<{ name?: string; price?: string }>).map(e => ({ name: String(e.name ?? ''), price: String(e.price ?? '') }))
+      : [],
+  }
 }
 
 function useWeather(cityName: string) {
@@ -47,7 +73,6 @@ function WeatherCard({ cityName, cityInfo }: { cityName: string; cityInfo: CityI
         </div>
       </div>
 
-      {/* Temps */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
         {loading ? (
           <div style={{ fontSize: 12, color: 'var(--ink-25)' }}>Loading weather…</div>
@@ -89,6 +114,31 @@ function Section({ label }: { label: string }) {
   )
 }
 
+function useCityInfo(citySlug: string): CityInfo | null {
+  const [info, setInfo] = useState<CityInfo | null>(() => getCityInfo(citySlug))
+
+  useEffect(() => {
+    const local = getCityInfo(citySlug)
+    if (local) { setInfo(local); return }
+
+    // Not in hardcoded data — try API by name match
+    const displayName = citySlug.replace(/_/g, ' ')
+    fetch(`${API}/api/city-guides?search=${encodeURIComponent(displayName)}&is_active=true`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.status === 'success' && d.data?.length > 0) {
+          const match = d.data.find((c: { name: string }) =>
+            c.name.toLowerCase() === displayName.toLowerCase()
+          ) ?? d.data[0]
+          setInfo(apiToCityInfo(match as Record<string, unknown>))
+        }
+      })
+      .catch(() => {})
+  }, [citySlug])
+
+  return info
+}
+
 export default function CityGuideSidebar({ cities, tripMonth }: Props) {
   const [activeCity, setActiveCity] = useState(cities[0] ?? '')
 
@@ -98,8 +148,8 @@ export default function CityGuideSidebar({ cities, tripMonth }: Props) {
 
   if (cities.length === 0) return null
 
-  const cityInfo = getCityInfo(activeCity)
-  const displayName = cityInfo?.name ?? activeCity
+  const cityInfo = useCityInfo(activeCity)
+  const displayName = cityInfo?.name ?? activeCity.replace(/_/g, ' ')
 
   return (
     <aside className="scrollbar-hide" style={{
@@ -117,8 +167,8 @@ export default function CityGuideSidebar({ cities, tripMonth }: Props) {
       {/* City tabs */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 14 }}>
         {cities.map((c) => {
-          const info = getCityInfo(c)
-          const name = info?.name ?? c
+          const info = CITY_DATA[c]
+          const name = info?.name ?? c.replace(/_/g, ' ')
           const on = c === activeCity
           return (
             <button
@@ -142,7 +192,7 @@ export default function CityGuideSidebar({ cities, tripMonth }: Props) {
       <WeatherCard cityName={displayName} cityInfo={cityInfo} />
 
       {/* Best time calendar */}
-      {cityInfo && (
+      {cityInfo && cityInfo.bestMonths.length > 0 && (
         <>
           <Section label="Best Time" />
           <BestTimeCalendar city={cityInfo} tripMonth={tripMonth} />
@@ -196,7 +246,7 @@ export default function CityGuideSidebar({ cities, tripMonth }: Props) {
 
       {!cityInfo && (
         <div style={{ fontSize: '11.5px', color: 'var(--ink-25)', lineHeight: 1.6, marginTop: 8 }}>
-          No city guide data yet for <strong>{activeCity}</strong>. Weather data is live.
+          No city guide data yet for <strong>{displayName}</strong>. Weather data is live.
         </div>
       )}
     </aside>

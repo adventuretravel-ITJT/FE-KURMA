@@ -1237,6 +1237,7 @@ export default function TripItineraryPage() {
         <CityPickerModal
           dayId={cityPickerState.dayId}
           currentCity={cityPickerState.currentCity}
+          country={trip?.destination}
           onSelect={handleCitySelect}
           onClose={() => setCityPickerState(null)}
         />
