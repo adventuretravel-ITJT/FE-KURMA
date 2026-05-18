@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
+
+const API = process.env.NEXT_PUBLIC_API_URL;
 import {
   LayoutDashboard,
   Users,
@@ -24,7 +26,6 @@ import {
   MonitorPlay,
   ChevronDown,
   LogOut,
-  HelpCircle,
   Briefcase,
   ShieldCheck,
   FileCheck,
@@ -53,6 +54,18 @@ interface NavGroup {
 interface AdminSidebarProps {
   mobileOpen: boolean;
   onMobileClose: () => void;
+}
+
+const ROLE_COLORS: Record<string, { bg: string; color: string; label: string }> = {
+  superadmin: { bg: '#F3E8FF', color: '#7C3AED', label: 'Super Admin' },
+  admin:      { bg: '#EBF5FF', color: '#1D4ED8', label: 'Admin' },
+  cs:         { bg: '#ECFDF5', color: '#059669', label: 'CS' },
+  editor:     { bg: '#FFF7ED', color: '#C2410C', label: 'Editor' },
+  marketing:  { bg: '#FDF2F8', color: '#9D174D', label: 'Marketing' },
+};
+
+function sidebarInitials(name: string) {
+  return name.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 
 const navGroups: NavGroup[] = [
@@ -133,6 +146,16 @@ export default function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebar
   const pathname = usePathname();
   const onCloseRef = useRef(onMobileClose);
   useEffect(() => { onCloseRef.current = onMobileClose; });
+
+  const [adminUser, setAdminUser] = useState<{ name: string; role?: { slug: string; name: string } } | null>(null);
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!token) return;
+    fetch(`${API}/api/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => setAdminUser({ name: d.name, role: d.role }))
+      .catch(() => {});
+  }, []);
 
   const defaultExpanded = navGroups
     .flatMap((g) => g.items)
@@ -302,15 +325,46 @@ export default function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebar
 
         {/* Footer */}
         <div
-          className="flex-shrink-0 p-2 space-y-px"
+          className="flex-shrink-0 p-2"
           style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
         >
-          <button
-            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors text-[#b5b5b5] hover:bg-[rgba(255,255,255,0.07)] hover:text-white"
-          >
-            <HelpCircle className="w-4 h-4 flex-shrink-0" />
-            Help & Docs
-          </button>
+          {/* User profile block */}
+          {adminUser && (() => {
+            const slug = adminUser.role?.slug ?? '';
+            const rc = ROLE_COLORS[slug] ?? { bg: '#EBF5FF', color: '#1D4ED8', label: adminUser.role?.name ?? '' };
+            const isProfileActive = pathname === '/admin/profile';
+            return (
+              <Link
+                href="/admin/profile"
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '8px 10px', borderRadius: 8, marginBottom: 4,
+                  background: isProfileActive ? 'rgba(255,255,255,0.12)' : 'transparent',
+                  textDecoration: 'none', transition: 'background .15s',
+                }}
+                onMouseEnter={e => { if (!isProfileActive) e.currentTarget.style.background = 'rgba(255,255,255,0.07)'; }}
+                onMouseLeave={e => { if (!isProfileActive) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <div style={{
+                  width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                  background: rc.bg, color: rc.color,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 700, letterSpacing: '-0.3px',
+                }}>
+                  {sidebarInitials(adminUser.name)}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 12.5, fontWeight: 600, color: '#fff', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {adminUser.name}
+                  </p>
+                  <p style={{ fontSize: 10.5, color: rc.color, fontWeight: 600, marginTop: 1, letterSpacing: '.02em' }}>
+                    {rc.label}
+                  </p>
+                </div>
+              </Link>
+            );
+          })()}
+
           <button
             onClick={() => {
               localStorage.removeItem('token');

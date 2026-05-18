@@ -2,10 +2,19 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Search, Bell, Check, CheckCheck, X, Menu } from 'lucide-react';
 import GlobalSearch from '@/components/admin/GlobalSearch';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
+
+const TOPBAR_ROLE_COLORS: Record<string, string> = {
+  superadmin: '#7C3AED', admin: '#1D4ED8', cs: '#059669',
+  editor: '#C2410C', marketing: '#9D174D',
+};
+function topbarInitials(name: string) {
+  return name.split(' ').filter(Boolean).map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
+}
 
 interface Notification {
     id: number;
@@ -44,12 +53,23 @@ interface AdminTopbarProps {
 }
 
 export default function AdminTopbar({ onMobileMenuOpen }: AdminTopbarProps) {
+    const pathname = usePathname();
     const [notifs, setNotifs] = useState<Notification[]>([]);
     const [unread, setUnread] = useState(0);
     const [notifsOpen, setNotifsOpen] = useState(false);
     const [loadingAll, setLoadingAll] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [topbarUser, setTopbarUser] = useState<{ name: string; role?: { slug: string } } | null>(null);
+
+    useEffect(() => {
+        const token = getToken();
+        if (!token) return;
+        fetch(`${API}/api/me`, { headers: { Authorization: `Bearer ${token}` } })
+            .then(r => r.json())
+            .then(d => setTopbarUser({ name: d.name, role: d.role }))
+            .catch(() => {});
+    }, []);
 
     async function fetchNotifs() {
         const token = getToken();
@@ -368,6 +388,25 @@ export default function AdminTopbar({ onMobileMenuOpen }: AdminTopbarProps) {
                             </div>
                         )}
                     </div>
+                    {/* User avatar → profile */}
+                    {topbarUser && (
+                        <Link
+                            href="/admin/profile"
+                            title={topbarUser.name}
+                            style={{
+                                width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                                background: TOPBAR_ROLE_COLORS[topbarUser.role?.slug ?? ''] + '18' || '#EBF5FF',
+                                border: `2px solid ${pathname === '/admin/profile' ? (TOPBAR_ROLE_COLORS[topbarUser.role?.slug ?? ''] || '#2c6ecb') : 'transparent'}`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: 11, fontWeight: 700, letterSpacing: '-0.3px',
+                                color: TOPBAR_ROLE_COLORS[topbarUser.role?.slug ?? ''] || '#2c6ecb',
+                                textDecoration: 'none', transition: 'border-color .15s',
+                                marginLeft: 4,
+                            }}
+                        >
+                            {topbarInitials(topbarUser.name)}
+                        </Link>
+                    )}
                 </div>
             </header>
 
