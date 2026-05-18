@@ -87,19 +87,19 @@ function CityModal({ city, onClose, onSaved }: { city: CityGuide | null; onClose
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '9px 12px', border: '1px solid #E5DFD0', borderRadius: 8,
-    fontSize: 13, background: '#FAFAF8', color: '#0D1B2A', outline: 'none',
+    width: '100%', padding: '9px 12px', border: '1px solid #e1e3e5', borderRadius: 8,
+    fontSize: 13, background: '#f4f6f8', color: '#1a1a1a', outline: 'none',
     fontFamily: 'var(--font-plus-jakarta-sans)',
   };
-  const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: '#5C6B7A', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.04em' };
+  const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: '#616161', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.04em' };
   const row2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,27,42,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 680, maxHeight: '92vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(13,27,42,.18)' }} onClick={e => e.stopPropagation()}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #F0EBE1' }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0D1B2A' }}>{isEdit ? 'Edit City Guide' : 'Add City Guide'}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8A95A2', padding: 4 }}><X size={18} /></button>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
+      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 680, maxHeight: '92vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(26,26,26,.18)' }} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #e4e7eb' }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a' }}>{isEdit ? 'Edit City Guide' : 'Add City Guide'}</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', padding: 4 }}><X size={18} /></button>
         </div>
 
         <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -177,13 +177,13 @@ function CityModal({ city, onClose, onSaved }: { city: CityGuide | null; onClose
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addHighlight(); } }}
                 placeholder="Add a highlight and press Enter or Add" />
               <button type="button" onClick={addHighlight}
-                style={{ padding: '9px 14px', background: '#F0F7FF', border: '1px solid #BFDBFE', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#1E6091', cursor: 'pointer', flexShrink: 0 }}>
+                style={{ padding: '9px 14px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#2c6ecb', cursor: 'pointer', flexShrink: 0 }}>
                 Add
               </button>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {form.highlights.map(h => (
-                <span key={h} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 20, fontSize: 12, color: '#1E6091' }}>
+                <span key={h} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 20, fontSize: 12, color: '#2c6ecb' }}>
                   {h}
                   <button type="button" onClick={() => removeHighlight(h)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#93C5FD', padding: 0, display: 'flex' }}><X size={11} /></button>
                 </span>
@@ -192,15 +192,15 @@ function CityModal({ city, onClose, onSaved }: { city: CityGuide | null; onClose
           </div>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-            <input type="checkbox" checked={form.is_active} onChange={e => setField('is_active', e.target.checked)} style={{ width: 16, height: 16, accentColor: '#1E6091', cursor: 'pointer' }} />
-            <span style={{ fontSize: 13, color: '#0D1B2A', fontWeight: 500 }}>Active (visible to users)</span>
+            <input type="checkbox" checked={form.is_active} onChange={e => setField('is_active', e.target.checked)} style={{ width: 16, height: 16, accentColor: '#2c6ecb', cursor: 'pointer' }} />
+            <span style={{ fontSize: 13, color: '#1a1a1a', fontWeight: 500 }}>Active (visible to users)</span>
           </label>
         </form>
 
-        <div style={{ padding: '16px 24px', borderTop: '1px solid #F0EBE1', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-          <button type="button" onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>Cancel</button>
+        <div style={{ padding: '16px 24px', borderTop: '1px solid #e4e7eb', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+          <button type="button" onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Cancel</button>
           <button onClick={handleSubmit} disabled={saving}
-            style={{ padding: '9px 20px', background: '#1E6091', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? .7 : 1 }}>
+            style={{ padding: '9px 20px', background: '#2c6ecb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? .7 : 1 }}>
             {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Add city'}
           </button>
         </div>
@@ -228,18 +228,18 @@ function DeleteConfirm({ city, onClose, onDeleted }: { city: CityGuide; onClose:
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,27,42,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 400, padding: 28, boxShadow: '0 24px 64px rgba(13,27,42,.18)' }} onClick={e => e.stopPropagation()}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
+      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 400, padding: 28, boxShadow: '0 24px 64px rgba(26,26,26,.18)' }} onClick={e => e.stopPropagation()}>
         <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#FFF5F5', border: '1px solid #FCA5A5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
           <Trash2 size={18} color="#DC2626" />
         </div>
-        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0D1B2A', marginBottom: 8 }}>Delete city guide?</h3>
-        <p style={{ fontSize: 13, color: '#5C6B7A', lineHeight: 1.6, marginBottom: 20 }}>
-          <strong style={{ color: '#0D1B2A' }}>{city.flag_emoji} {city.name}</strong> will be permanently deleted.
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', marginBottom: 8 }}>Delete city guide?</h3>
+        <p style={{ fontSize: 13, color: '#616161', lineHeight: 1.6, marginBottom: 20 }}>
+          <strong style={{ color: '#1a1a1a' }}>{city.flag_emoji} {city.name}</strong> will be permanently deleted.
         </p>
         {error && <p style={{ fontSize: 12, color: '#DC2626', marginBottom: 12 }}>{error}</p>}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Cancel</button>
           <button onClick={handleDelete} disabled={loading} style={{ padding: '9px 18px', background: '#DC2626', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: loading ? 'wait' : 'pointer', opacity: loading ? .7 : 1 }}>
             {loading ? 'Deleting…' : 'Delete'}
           </button>
@@ -298,9 +298,9 @@ export default function DestinationsPage() {
   function handleSaved() { closeModal(); load(); }
 
   const filterBtnStyle = (active: boolean): React.CSSProperties => ({
-    padding: '7px 14px', border: `1px solid ${active ? '#1E6091' : '#E5DFD0'}`,
+    padding: '7px 14px', border: `1px solid ${active ? '#2c6ecb' : '#e1e3e5'}`,
     borderRadius: 8, fontSize: 12.5, fontWeight: 600,
-    background: active ? '#EFF6FF' : '#fff', color: active ? '#1E6091' : '#5C6B7A', cursor: 'pointer',
+    background: active ? '#ebf5ff' : '#fff', color: active ? '#2c6ecb' : '#616161', cursor: 'pointer',
   });
 
   return (
@@ -311,7 +311,7 @@ export default function DestinationsPage() {
         description="Manage city guides, local tips, and travel information"
         action={
           <button onClick={() => setModal('create')}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px', background: '#1E6091', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px', background: '#2c6ecb', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
             <Plus size={15} /> Add City
           </button>
         }
@@ -320,9 +320,9 @@ export default function DestinationsPage() {
       {/* Filters */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: 340 }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8A95A2' }} />
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8a8a8a' }} />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search cities or countries…"
-            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13, background: '#FAFAF8', color: '#0D1B2A', outline: 'none' }} />
+            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13, background: '#f4f6f8', color: '#1a1a1a', outline: 'none' }} />
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
           {(['all', 'active', 'inactive'] as const).map(f => (
@@ -331,7 +331,7 @@ export default function DestinationsPage() {
             </button>
           ))}
         </div>
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13, background: '#fff', color: '#616161', cursor: 'pointer' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
@@ -339,9 +339,9 @@ export default function DestinationsPage() {
       {/* Summary */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
         {[
-          { label: 'Total', value: cities.length, color: '#1E6091', bg: '#EFF6FF' },
+          { label: 'Total', value: cities.length, color: '#2c6ecb', bg: '#ebf5ff' },
           { label: 'Active', value: cities.filter(c => c.is_active).length, color: '#059669', bg: '#ECFDF5' },
-          { label: 'Inactive', value: cities.filter(c => !c.is_active).length, color: '#8A95A2', bg: '#F5F3EF' },
+          { label: 'Inactive', value: cities.filter(c => !c.is_active).length, color: '#8a8a8a', bg: '#f4f6f8' },
         ].map(s => (
           <div key={s.label} style={{ padding: '10px 18px', background: s.bg, borderRadius: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 18, fontWeight: 700, color: s.color }}>{s.value}</span>
@@ -353,7 +353,7 @@ export default function DestinationsPage() {
       {/* Grid */}
       {loading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
-          {[1, 2, 3, 4, 5, 6].map(i => <div key={i} style={{ height: 120, background: '#F5F3EF', borderRadius: 12, animation: 'pulse 1.5s infinite' }} />)}
+          {[1, 2, 3, 4, 5, 6].map(i => <div key={i} style={{ height: 120, background: '#f4f6f8', borderRadius: 12, animation: 'pulse 1.5s infinite' }} />)}
         </div>
       ) : error ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', background: '#FFF5F5', border: '1px solid #FCA5A5', borderRadius: 12, color: '#DC2626', fontSize: 13 }}>
@@ -361,30 +361,30 @@ export default function DestinationsPage() {
           <button onClick={load} style={{ marginLeft: 'auto', fontSize: 12, color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Retry</button>
         </div>
       ) : cities.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8A95A2' }}>
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8a8a8a' }}>
           <Globe size={36} style={{ margin: '0 auto 12px', opacity: .4 }} />
-          <p style={{ fontSize: 14, fontWeight: 600, color: '#5C6B7A', marginBottom: 4 }}>No city guides yet</p>
+          <p style={{ fontSize: 14, fontWeight: 600, color: '#616161', marginBottom: 4 }}>No city guides yet</p>
           <p style={{ fontSize: 13 }}>Add your first city to get started.</p>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
           {cities.map(city => (
-            <div key={city.id} style={{ background: '#fff', border: '1px solid #E5DFD0', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 10, opacity: city.is_active ? 1 : .65 }}>
+            <div key={city.id} style={{ background: '#fff', border: '1px solid #e1e3e5', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 10, opacity: city.is_active ? 1 : .65 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ fontSize: 28, lineHeight: 1 }}>{city.flag_emoji || '🌍'}</div>
                   <div>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: '#0D1B2A', lineHeight: 1.2 }}>{city.name}</p>
-                    <p style={{ fontSize: 12, color: '#8A95A2' }}>{city.country} · {city.country_code}</p>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.2 }}>{city.name}</p>
+                    <p style={{ fontSize: 12, color: '#8a8a8a' }}>{city.country} · {city.country_code}</p>
                   </div>
                 </div>
-                <button onClick={() => toggleActive(city)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: city.is_active ? '#059669' : '#8A95A2', flexShrink: 0, display: 'flex', alignItems: 'center' }} title={city.is_active ? 'Deactivate' : 'Activate'}>
+                <button onClick={() => toggleActive(city)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: city.is_active ? '#059669' : '#8a8a8a', flexShrink: 0, display: 'flex', alignItems: 'center' }} title={city.is_active ? 'Deactivate' : 'Activate'}>
                   {city.is_active ? <ToggleRight size={22} /> : <ToggleLeft size={22} />}
                 </button>
               </div>
 
               {city.description && (
-                <p style={{ fontSize: 12, color: '#5C6B7A', lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as React.CSSProperties['WebkitBoxOrient'] }}>
+                <p style={{ fontSize: 12, color: '#616161', lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as React.CSSProperties['WebkitBoxOrient'] }}>
                   {city.description}
                 </p>
               )}
@@ -392,12 +392,12 @@ export default function DestinationsPage() {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                 {city.climate && <span style={{ fontSize: 11, padding: '3px 8px', background: '#F0FDF4', border: '1px solid #86EFAC', borderRadius: 20, color: '#16A34A' }}>🌤 {city.climate}</span>}
                 {city.currency && <span style={{ fontSize: 11, padding: '3px 8px', background: '#FEF9C3', border: '1px solid #FDE047', borderRadius: 20, color: '#CA8A04' }}>💰 {city.currency}</span>}
-                {city.best_time_to_visit && <span style={{ fontSize: 11, padding: '3px 8px', background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 20, color: '#1D4ED8' }}>📅 {city.best_time_to_visit}</span>}
+                {city.best_time_to_visit && <span style={{ fontSize: 11, padding: '3px 8px', background: '#ebf5ff', border: '1px solid #d2d5d8', borderRadius: 20, color: '#1D4ED8' }}>📅 {city.best_time_to_visit}</span>}
               </div>
 
-              <div style={{ display: 'flex', gap: 7, marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #F0EBE1' }}>
+              <div style={{ display: 'flex', gap: 7, marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #e4e7eb' }}>
                 <button onClick={() => openEdit(city)}
-                  style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '7px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#1E6091', background: '#fff', cursor: 'pointer' }}>
+                  style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '7px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#2c6ecb', background: '#fff', cursor: 'pointer' }}>
                   <Pencil size={12} /> Edit
                 </button>
                 <button onClick={() => openDelete(city)}

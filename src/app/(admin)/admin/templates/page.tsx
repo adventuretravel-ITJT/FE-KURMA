@@ -48,7 +48,7 @@ interface Meta {
 }
 
 const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  solo:   { bg: '#EFF6FF', color: '#1D4ED8' },
+  solo:   { bg: '#ebf5ff', color: '#1D4ED8' },
   couple: { bg: '#FDF2F8', color: '#9D174D' },
   family: { bg: '#FEF9C3', color: '#854D0E' },
   group:  { bg: '#F0FDF4', color: '#166534' },
@@ -78,23 +78,23 @@ function DeleteModal({ template, onClose, onDeleted }: {
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, background: 'rgba(13,27,42,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
       onClick={onClose}
     >
       <div
-        style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 400, padding: 28, boxShadow: '0 24px 64px rgba(13,27,42,.18)' }}
+        style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 400, padding: 28, boxShadow: '0 24px 64px rgba(26,26,26,.18)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#FFF5F5', border: '1px solid #FCA5A5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
           <Trash2 size={18} color="#DC2626" />
         </div>
-        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0D1B2A', marginBottom: 8 }}>Hapus template?</h3>
-        <p style={{ fontSize: 13, color: '#5C6B7A', lineHeight: 1.6, marginBottom: 20 }}>
-          <strong style={{ color: '#0D1B2A' }}>"{template.title}"</strong> akan dihapus permanen.
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', marginBottom: 8 }}>Hapus template?</h3>
+        <p style={{ fontSize: 13, color: '#616161', lineHeight: 1.6, marginBottom: 20 }}>
+          <strong style={{ color: '#1a1a1a' }}>"{template.title}"</strong> akan dihapus permanen.
         </p>
         {error && <p style={{ fontSize: 12, color: '#DC2626', marginBottom: 12 }}>{error}</p>}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>Batal</button>
+          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Batal</button>
           <button onClick={handleDelete} disabled={loading} style={{ padding: '9px 18px', background: '#DC2626', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: loading ? 'wait' : 'pointer', opacity: loading ? .7 : 1 }}>
             {loading ? 'Menghapus…' : 'Hapus'}
           </button>
@@ -118,11 +118,11 @@ function TemplateCard({
 
   return (
     <div style={{
-      background: '#fff', border: '1px solid #E5DFD0', borderRadius: 14,
+      background: '#fff', border: '1px solid #e1e3e5', borderRadius: 14,
       overflow: 'hidden', display: 'flex', flexDirection: 'column',
       transition: 'box-shadow .2s', cursor: 'pointer',
     }}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(13,27,42,.09)')}
+      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(26,26,26,.09)')}
       onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
       onClick={onEdit}
     >
@@ -130,7 +130,7 @@ function TemplateCard({
       <div style={{
         height: 140, background: template.cover_image
           ? `url(${template.cover_image}) center/cover`
-          : 'linear-gradient(135deg, #1E6091 0%, #2E86AB 100%)',
+          : 'linear-gradient(135deg, #2c6ecb, #1a4d8f)',
         position: 'relative', flexShrink: 0,
       }}>
         {/* Published badge */}
@@ -159,22 +159,22 @@ function TemplateCard({
           <span style={{ padding: '3px 8px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: tc.bg, color: tc.color, textTransform: 'capitalize' }}>
             <Users size={9} style={{ display: 'inline', marginRight: 3 }} />{template.travel_type}
           </span>
-          <span style={{ padding: '3px 8px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: '#F5F3EF', color: '#5C6B7A', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+          <span style={{ padding: '3px 8px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: '#f4f6f8', color: '#616161', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
             <Clock size={9} />{template.duration_days} hari
           </span>
         </div>
 
         <div>
-          <p style={{ fontSize: 14, fontWeight: 700, color: '#0D1B2A', lineHeight: 1.3, marginBottom: 2 }}>
+          <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a', lineHeight: 1.3, marginBottom: 2 }}>
             {template.title}
           </p>
-          <p style={{ fontSize: 12, color: '#8A95A2', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          <p style={{ fontSize: 12, color: '#8a8a8a', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
             <Globe size={10} />{template.destination}
           </p>
         </div>
 
         {template.description && (
-          <p style={{ fontSize: 12, color: '#5C6B7A', lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+          <p style={{ fontSize: 12, color: '#616161', lineHeight: 1.5, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
             {template.description}
           </p>
         )}
@@ -182,7 +182,7 @@ function TemplateCard({
         {template.tags && template.tags.length > 0 && (
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
             {template.tags.slice(0, 3).map((tag) => (
-              <span key={tag} style={{ padding: '2px 8px', borderRadius: 20, fontSize: 10.5, background: '#F5F3EF', color: '#8A95A2' }}>
+              <span key={tag} style={{ padding: '2px 8px', borderRadius: 20, fontSize: 10.5, background: '#f4f6f8', color: '#8a8a8a' }}>
                 {tag}
               </span>
             ))}
@@ -190,22 +190,22 @@ function TemplateCard({
         )}
 
         {/* Footer */}
-        <div style={{ marginTop: 'auto', paddingTop: 10, borderTop: '1px solid #F0EBE1', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#8A95A2' }}>
+        <div style={{ marginTop: 'auto', paddingTop: 10, borderTop: '1px solid #e4e7eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 11, color: '#8a8a8a' }}>
             {template.creator?.name ?? 'Admin'} · {ago(template.updated_at)}
           </span>
           <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.stopPropagation()}>
             <button
               title={template.is_published ? 'Unpublish' : 'Publish'}
               onClick={onTogglePublish}
-              style={{ width: 28, height: 28, border: '1px solid #E5DFD0', borderRadius: 7, background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: template.is_published ? '#059669' : '#8A95A2' }}
+              style={{ width: 28, height: 28, border: '1px solid #e1e3e5', borderRadius: 7, background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: template.is_published ? '#059669' : '#8a8a8a' }}
             >
               {template.is_published ? <Eye size={12} /> : <EyeOff size={12} />}
             </button>
             <button
               title="Edit"
               onClick={onEdit}
-              style={{ width: 28, height: 28, border: '1px solid #E5DFD0', borderRadius: 7, background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1E6091' }}
+              style={{ width: 28, height: 28, border: '1px solid #e1e3e5', borderRadius: 7, background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2c6ecb' }}
             >
               <Pencil size={12} />
             </button>
@@ -227,11 +227,11 @@ function TemplateCard({
 
 function SkeletonCard() {
   return (
-    <div style={{ background: '#fff', border: '1px solid #E5DFD0', borderRadius: 14, overflow: 'hidden' }}>
-      <div style={{ height: 140, background: '#F0EBE1', animation: 'psk 1.4s ease infinite' }} />
+    <div style={{ background: '#fff', border: '1px solid #e1e3e5', borderRadius: 14, overflow: 'hidden' }}>
+      <div style={{ height: 140, background: '#e4e7eb', animation: 'psk 1.4s ease infinite' }} />
       <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {[100, 160, 120].map((w, i) => (
-          <div key={i} style={{ height: 12, borderRadius: 6, background: '#F0EBE1', width: w, animation: 'psk 1.4s ease infinite' }} />
+          <div key={i} style={{ height: 12, borderRadius: 6, background: '#e4e7eb', width: w, animation: 'psk 1.4s ease infinite' }} />
         ))}
       </div>
     </div>
@@ -287,8 +287,8 @@ export default function TemplatesPage() {
   }
 
   const selectStyle: React.CSSProperties = {
-    padding: '8px 12px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13,
-    background: '#FAFAF8', color: '#0D1B2A', outline: 'none', cursor: 'pointer',
+    padding: '8px 12px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13,
+    background: '#f4f6f8', color: '#1a1a1a', outline: 'none', cursor: 'pointer',
   };
 
   const publishedCount = templates.filter((t) => t.is_published).length;
@@ -306,7 +306,7 @@ export default function TemplatesPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '9px 16px', borderRadius: 8,
-              background: '#1E6091', border: 'none',
+              background: '#2c6ecb', border: 'none',
               fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer',
             }}
           >
@@ -318,9 +318,9 @@ export default function TemplatesPage() {
       {/* Summary */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         {[
-          { label: 'Total',     value: meta.total,    bg: '#EFF6FF', color: '#1D4ED8' },
+          { label: 'Total',     value: meta.total,    bg: '#ebf5ff', color: '#1D4ED8' },
           { label: 'Published', value: publishedCount, bg: '#ECFDF5', color: '#059669' },
-          { label: 'Draft',     value: draftCount,    bg: '#F5F3EF', color: '#8A95A2' },
+          { label: 'Draft',     value: draftCount,    bg: '#f4f6f8', color: '#8a8a8a' },
         ].map((s) => (
           <div key={s.label} style={{ padding: '14px 20px', background: s.bg, borderRadius: 12, minWidth: 100 }}>
             <p style={{ fontSize: 22, fontWeight: 700, color: s.color, lineHeight: 1 }}>{s.value}</p>
@@ -332,12 +332,12 @@ export default function TemplatesPage() {
       {/* Filters */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: 320 }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8A95A2' }} />
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8a8a8a' }} />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari judul atau destinasi…"
-            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13, background: '#FAFAF8', color: '#0D1B2A', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13, background: '#f4f6f8', color: '#1a1a1a', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
 
@@ -355,7 +355,7 @@ export default function TemplatesPage() {
           <option value="0">Draft</option>
         </select>
 
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13, background: '#fff', color: '#616161', cursor: 'pointer' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
@@ -374,13 +374,13 @@ export default function TemplatesPage() {
           {[1, 2, 3, 4, 5, 6].map((i) => <SkeletonCard key={i} />)}
         </div>
       ) : templates.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '80px 20px', color: '#8A95A2' }}>
+        <div style={{ textAlign: 'center', padding: '80px 20px', color: '#8a8a8a' }}>
           <LayoutTemplate size={40} style={{ margin: '0 auto 14px', opacity: .35 }} />
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#5C6B7A', marginBottom: 6 }}>Belum ada template</p>
+          <p style={{ fontSize: 15, fontWeight: 600, color: '#616161', marginBottom: 6 }}>Belum ada template</p>
           <p style={{ fontSize: 13, marginBottom: 20 }}>Mulai buat template itinerary pertama.</p>
           <button
             onClick={() => router.push('/admin/templates/new')}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 20px', background: '#1E6091', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 20px', background: '#2c6ecb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer' }}
           >
             <Plus size={14} /> Buat Template
           </button>

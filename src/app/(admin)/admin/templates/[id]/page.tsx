@@ -99,23 +99,23 @@ function ActivityForm({
     onSave(form);
   }
 
-  const labelStyle: React.CSSProperties = { fontSize: 11.5, fontWeight: 600, color: '#5C6B7A', marginBottom: 5, display: 'block', letterSpacing: '.02em' };
-  const inputStyle: React.CSSProperties = { width: '100%', padding: '9px 12px', border: '1px solid #E5DFD0', borderRadius: 9, fontSize: 13, color: '#0D1B2A', outline: 'none', background: '#FAFAF8', boxSizing: 'border-box' };
+  const labelStyle: React.CSSProperties = { fontSize: 11.5, fontWeight: 600, color: '#616161', marginBottom: 5, display: 'block', letterSpacing: '.02em' };
+  const inputStyle: React.CSSProperties = { width: '100%', padding: '9px 12px', border: '1px solid #e1e3e5', borderRadius: 9, fontSize: 13, color: '#1a1a1a', outline: 'none', background: '#f4f6f8', boxSizing: 'border-box' };
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, background: 'rgba(13,27,42,.45)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
       onClick={onClose}
     >
       <div
-        style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 440, padding: 28, boxShadow: '0 24px 64px rgba(13,27,42,.18)' }}
+        style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 440, padding: 28, boxShadow: '0 24px 64px rgba(26,26,26,.18)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0D1B2A' }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a' }}>
             {initial ? 'Edit Aktivitas' : 'Tambah Aktivitas'}
           </h3>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8A95A2' }}><X size={16} /></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a' }}><X size={16} /></button>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -128,10 +128,10 @@ function ActivityForm({
                   key={t}
                   onClick={() => set('type', t)}
                   style={{
-                    flex: 1, padding: '8px 6px', border: `1.5px solid ${form.type === t ? '#1E6091' : '#E5DFD0'}`,
+                    flex: 1, padding: '8px 6px', border: `1.5px solid ${form.type === t ? '#2c6ecb' : '#e1e3e5'}`,
                     borderRadius: 9, fontSize: 12, fontWeight: 600,
-                    background: form.type === t ? '#F0F7FF' : '#fff',
-                    color: form.type === t ? '#1E6091' : '#5C6B7A',
+                    background: form.type === t ? '#ebf5ff' : '#fff',
+                    color: form.type === t ? '#2c6ecb' : '#616161',
                     cursor: 'pointer', textTransform: 'capitalize',
                   }}
                 >
@@ -209,13 +209,13 @@ function ActivityForm({
         </div>
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 20 }}>
-          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>
+          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>
             Batal
           </button>
           <button
             onClick={handleSave}
             disabled={!form.name.trim()}
-            style={{ padding: '9px 18px', background: '#1E6091', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: !form.name.trim() ? 'not-allowed' : 'pointer', opacity: !form.name.trim() ? .6 : 1 }}
+            style={{ padding: '9px 18px', background: '#2c6ecb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: !form.name.trim() ? 'not-allowed' : 'pointer', opacity: !form.name.trim() ? .6 : 1 }}
           >
             Simpan
           </button>
@@ -254,14 +254,14 @@ function DaySection({
   }
 
   return (
-    <div style={{ background: '#fff', border: '1px solid #E5DFD0', borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{ background: '#fff', border: '1px solid #e1e3e5', borderRadius: 12, overflow: 'hidden' }}>
       {/* Day header */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px',
         background: '#F9F7F4', cursor: 'pointer',
       }} onClick={() => setExpanded((p) => !p)}>
         <GripVertical size={14} color="#C4BDB0" style={{ flexShrink: 0 }} />
-        <div style={{ width: 28, height: 28, borderRadius: 8, background: '#1E6091', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ width: 28, height: 28, borderRadius: 8, background: '#2c6ecb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: '#fff' }}>{day.num}</span>
         </div>
 
@@ -273,12 +273,12 @@ function DaySection({
               onChange={(e) => setCityDraft(e.target.value)}
               onBlur={commitCity}
               onKeyDown={(e) => { if (e.key === 'Enter') commitCity(); if (e.key === 'Escape') setEditCity(false); }}
-              style={{ fontSize: 13, fontWeight: 600, color: '#0D1B2A', border: 'none', outline: 'none', background: 'transparent', width: '100%' }}
+              style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a', border: 'none', outline: 'none', background: 'transparent', width: '100%' }}
             />
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#0D1B2A' }}>{day.label}</span>
-              <span style={{ fontSize: 12, color: '#8A95A2', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a' }}>{day.label}</span>
+              <span style={{ fontSize: 12, color: '#8a8a8a', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                 <MapPin size={10} />
                 <span
                   style={{ cursor: 'text', textDecoration: 'underline dotted', textUnderlineOffset: 2 }}
@@ -291,7 +291,7 @@ function DaySection({
           )}
         </div>
 
-        <span style={{ fontSize: 11, color: '#8A95A2', flexShrink: 0 }}>{day.acts.length} aktivitas</span>
+        <span style={{ fontSize: 11, color: '#8a8a8a', flexShrink: 0 }}>{day.acts.length} aktivitas</span>
 
         {canDelete && (
           <button
@@ -303,14 +303,14 @@ function DaySection({
           </button>
         )}
 
-        {expanded ? <ChevronUp size={14} color="#8A95A2" /> : <ChevronDown size={14} color="#8A95A2" />}
+        {expanded ? <ChevronUp size={14} color="#8a8a8a" /> : <ChevronDown size={14} color="#8a8a8a" />}
       </div>
 
       {/* Activities */}
       {expanded && (
         <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
           {day.acts.length === 0 && (
-            <p style={{ fontSize: 12.5, color: '#8A95A2', textAlign: 'center', padding: '12px 0', fontStyle: 'italic' }}>
+            <p style={{ fontSize: 12.5, color: '#8a8a8a', textAlign: 'center', padding: '12px 0', fontStyle: 'italic' }}>
               Belum ada aktivitas — tambahkan di bawah
             </p>
           )}
@@ -323,17 +323,17 @@ function DaySection({
                 style={{
                   display: 'flex', alignItems: 'flex-start', gap: 10,
                   padding: '10px 12px', border: '1px solid #EEE8DF', borderRadius: 9,
-                  background: '#FAFAF8', transition: 'background .15s',
+                  background: '#f4f6f8', transition: 'background .15s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#F5F1E8')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = '#FAFAF8')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f1f1')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = '#f4f6f8')}
               >
                 <span style={{ fontSize: 16, flexShrink: 0, lineHeight: 1.3 }}>{TYPE_ICON[act.type]}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#0D1B2A' }}>{act.name}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a' }}>{act.name}</span>
                     {act.time && (
-                      <span style={{ fontSize: 11, color: '#8A95A2', display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                      <span style={{ fontSize: 11, color: '#8a8a8a', display: 'inline-flex', alignItems: 'center', gap: 2 }}>
                         <Clock size={9} />{act.time}
                       </span>
                     )}
@@ -343,17 +343,17 @@ function DaySection({
                       </span>
                     )}
                     {act.cost !== undefined && (
-                      <span style={{ fontSize: 11, color: act.cost === 0 ? '#059669' : '#5C6B7A' }}>
+                      <span style={{ fontSize: 11, color: act.cost === 0 ? '#059669' : '#616161' }}>
                         {act.cost === 0 ? 'Free' : `Rp ${act.cost.toLocaleString('id-ID')}`}
                       </span>
                     )}
                   </div>
-                  {act.note && <p style={{ fontSize: 11.5, color: '#8A95A2', marginTop: 3, lineHeight: 1.4 }}>{act.note}</p>}
+                  {act.note && <p style={{ fontSize: 11.5, color: '#8a8a8a', marginTop: 3, lineHeight: 1.4 }}>{act.note}</p>}
                 </div>
                 <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
                   <button
                     onClick={() => onEditActivity(act)}
-                    style={{ width: 26, height: 26, border: '1px solid #E5DFD0', borderRadius: 6, background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1E6091' }}
+                    style={{ width: 26, height: 26, border: '1px solid #e1e3e5', borderRadius: 6, background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2c6ecb' }}
                   >
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" style={{ width: 11, height: 11 }}>
                       <path d="M8.5 1.5l2 2L3 11H1V9L8.5 1.5z" />
@@ -375,11 +375,11 @@ function DaySection({
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               padding: '9px', border: '1.5px dashed #C4BDB0', borderRadius: 9,
-              background: 'transparent', fontSize: 12.5, fontWeight: 600, color: '#8A95A2',
+              background: 'transparent', fontSize: 12.5, fontWeight: 600, color: '#8a8a8a',
               cursor: 'pointer', transition: 'all .15s',
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#1E6091'; e.currentTarget.style.color = '#1E6091'; e.currentTarget.style.background = 'rgba(30,96,145,.04)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#C4BDB0'; e.currentTarget.style.color = '#8A95A2'; e.currentTarget.style.background = 'transparent'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#2c6ecb'; e.currentTarget.style.color = '#2c6ecb'; e.currentTarget.style.background = 'rgba(44,110,203,.04)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#C4BDB0'; e.currentTarget.style.color = '#8a8a8a'; e.currentTarget.style.background = 'transparent'; }}
           >
             <Plus size={13} /> Tambah Aktivitas
           </button>
@@ -585,46 +585,46 @@ export default function TemplateBuilderPage() {
   // ── Styles ────────────────────────────────────────────────────────────────
 
   const labelStyle: React.CSSProperties = {
-    fontSize: 11.5, fontWeight: 600, color: '#5C6B7A',
+    fontSize: 11.5, fontWeight: 600, color: '#616161',
     marginBottom: 5, display: 'block', letterSpacing: '.02em',
   };
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '9px 12px', border: '1px solid #E5DFD0',
-    borderRadius: 9, fontSize: 13, color: '#0D1B2A', outline: 'none',
-    background: '#FAFAF8', boxSizing: 'border-box', fontFamily: 'inherit',
+    width: '100%', padding: '9px 12px', border: '1px solid #e1e3e5',
+    borderRadius: 9, fontSize: 13, color: '#1a1a1a', outline: 'none',
+    background: '#f4f6f8', boxSizing: 'border-box', fontFamily: 'inherit',
   };
 
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
-        <div style={{ width: 32, height: 32, border: '3px solid #E5DFD0', borderTopColor: '#1E6091', borderRadius: '50%', animation: 'spin .8s linear infinite' }} />
+        <div style={{ width: 32, height: 32, border: '3px solid #e1e3e5', borderTopColor: '#2c6ecb', borderRadius: '50%', animation: 'spin .8s linear infinite' }} />
         <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F5F1E8', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: '#f1f1f1', display: 'flex', flexDirection: 'column' }}>
 
       {/* Top bar */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: '#fff', borderBottom: '1px solid #E5DFD0',
+        background: '#fff', borderBottom: '1px solid #e1e3e5',
         display: 'flex', alignItems: 'center', gap: 12, padding: '12px 24px',
       }}>
         <button
           onClick={() => router.push('/admin/templates')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 13, color: '#5C6B7A', background: '#fff', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, color: '#616161', background: '#fff', cursor: 'pointer' }}
         >
           <ArrowLeft size={14} /> Kembali
         </button>
 
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 15, fontWeight: 700, color: '#0D1B2A', lineHeight: 1 }}>
+          <p style={{ fontSize: 15, fontWeight: 700, color: '#1a1a1a', lineHeight: 1 }}>
             {isNew ? 'Template Baru' : meta.title || 'Edit Template'}
           </p>
           {!isNew && (
-            <p style={{ fontSize: 11, color: '#8A95A2', marginTop: 2 }}>
+            <p style={{ fontSize: 11, color: '#8a8a8a', marginTop: 2 }}>
               {meta.destination_flag} {meta.destination} · {meta.duration_days} hari
             </p>
           )}
@@ -659,7 +659,7 @@ export default function TemplateBuilderPage() {
           disabled={saving}
           style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px',
-            background: '#1E6091', border: 'none', borderRadius: 8,
+            background: '#2c6ecb', border: 'none', borderRadius: 8,
             fontSize: 13, fontWeight: 600, color: '#fff',
             cursor: saving ? 'wait' : 'pointer', opacity: saving ? .7 : 1,
           }}
@@ -674,11 +674,11 @@ export default function TemplateBuilderPage() {
         {/* ── Left: Meta panel ── */}
         <div style={{
           width: 320, flexShrink: 0, background: '#fff',
-          borderRight: '1px solid #E5DFD0', overflowY: 'auto',
+          borderRight: '1px solid #e1e3e5', overflowY: 'auto',
           padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 18,
         }}>
           <div>
-            <p style={{ fontSize: 12, fontWeight: 700, color: '#0D1B2A', letterSpacing: '.05em', textTransform: 'uppercase', marginBottom: 14 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', letterSpacing: '.05em', textTransform: 'uppercase', marginBottom: 14 }}>
               Info Template
             </p>
 
@@ -761,7 +761,7 @@ export default function TemplateBuilderPage() {
                   style={inputStyle}
                 />
                 {meta.cover_image && (
-                  <div style={{ marginTop: 8, height: 80, borderRadius: 8, overflow: 'hidden', border: '1px solid #E5DFD0' }}>
+                  <div style={{ marginTop: 8, height: 80, borderRadius: 8, overflow: 'hidden', border: '1px solid #e1e3e5' }}>
                     <img src={meta.cover_image} alt="cover" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 )}
@@ -781,12 +781,12 @@ export default function TemplateBuilderPage() {
 
           {/* Publish status indicator */}
           {!isNew && (
-            <div style={{ padding: '12px 14px', borderRadius: 10, background: published ? '#F0FDF4' : '#F5F3EF', border: `1px solid ${published ? '#86EFAC' : '#E5DFD0'}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: published ? '#059669' : '#8A95A2' }}>
+            <div style={{ padding: '12px 14px', borderRadius: 10, background: published ? '#F0FDF4' : '#f4f6f8', border: `1px solid ${published ? '#86EFAC' : '#e1e3e5'}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: published ? '#059669' : '#8a8a8a' }}>
                 {published ? <Eye size={12} /> : <EyeOff size={12} />}
                 {published ? 'Template sudah dipublish' : 'Template masih draft'}
               </div>
-              <p style={{ fontSize: 11, color: '#8A95A2', marginTop: 4, lineHeight: 1.4 }}>
+              <p style={{ fontSize: 11, color: '#8a8a8a', marginTop: 4, lineHeight: 1.4 }}>
                 {published ? 'User bisa melihat dan menggunakan template ini.' : 'Hanya admin yang dapat melihat template ini.'}
               </p>
             </div>
@@ -797,8 +797,8 @@ export default function TemplateBuilderPage() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
             <div>
-              <p style={{ fontSize: 14, fontWeight: 700, color: '#0D1B2A' }}>Itinerary Builder</p>
-              <p style={{ fontSize: 12, color: '#8A95A2', marginTop: 2 }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: '#1a1a1a' }}>Itinerary Builder</p>
+              <p style={{ fontSize: 12, color: '#8a8a8a', marginTop: 2 }}>
                 {itinerary.days.length} hari · {itinerary.days.reduce((s, d) => s + d.acts.length, 0)} aktivitas total
               </p>
             </div>
@@ -806,8 +806,8 @@ export default function TemplateBuilderPage() {
               onClick={addDay}
               style={{
                 display: 'flex', alignItems: 'center', gap: 5,
-                padding: '8px 14px', border: '1px solid #E5DFD0', borderRadius: 9,
-                fontSize: 13, fontWeight: 600, color: '#1E6091', background: '#EFF6FF', cursor: 'pointer',
+                padding: '8px 14px', border: '1px solid #e1e3e5', borderRadius: 9,
+                fontSize: 13, fontWeight: 600, color: '#2c6ecb', background: '#ebf5ff', cursor: 'pointer',
               }}
             >
               <Plus size={13} /> Tambah Hari
@@ -815,8 +815,8 @@ export default function TemplateBuilderPage() {
           </div>
 
           {itinerary.days.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8A95A2', border: '2px dashed #E5DFD0', borderRadius: 12 }}>
-              <p style={{ fontSize: 14, fontWeight: 600, color: '#5C6B7A', marginBottom: 8 }}>Belum ada hari</p>
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8a8a8a', border: '2px dashed #e1e3e5', borderRadius: 12 }}>
+              <p style={{ fontSize: 14, fontWeight: 600, color: '#616161', marginBottom: 8 }}>Belum ada hari</p>
               <p style={{ fontSize: 13 }}>Tambah hari untuk mulai membangun itinerary.</p>
             </div>
           ) : (
@@ -840,11 +840,11 @@ export default function TemplateBuilderPage() {
               style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                 padding: '12px', border: '2px dashed #C4BDB0', borderRadius: 12,
-                background: 'transparent', fontSize: 13, fontWeight: 600, color: '#8A95A2',
+                background: 'transparent', fontSize: 13, fontWeight: 600, color: '#8a8a8a',
                 cursor: 'pointer', transition: 'all .15s',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#1E6091'; e.currentTarget.style.color = '#1E6091'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#C4BDB0'; e.currentTarget.style.color = '#8A95A2'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#2c6ecb'; e.currentTarget.style.color = '#2c6ecb'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#C4BDB0'; e.currentTarget.style.color = '#8a8a8a'; }}
             >
               <Plus size={14} /> Tambah Hari
             </button>

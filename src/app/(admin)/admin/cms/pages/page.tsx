@@ -82,19 +82,19 @@ function PageModal({
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '9px 12px', border: '1px solid #E5DFD0', borderRadius: 8,
-    fontSize: 13, background: '#FAFAF8', color: '#0D1B2A', outline: 'none',
+    width: '100%', padding: '9px 12px', border: '1px solid #e1e3e5', borderRadius: 8,
+    fontSize: 13, background: '#f4f6f8', color: '#1a1a1a', outline: 'none',
     fontFamily: 'var(--font-plus-jakarta-sans)',
   };
-  const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: '#5C6B7A', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.04em' };
+  const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: '#616161', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.04em' };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,27,42,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 640, maxHeight: '90vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(13,27,42,.18)' }} onClick={e => e.stopPropagation()}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
+      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 640, maxHeight: '90vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(26,26,26,.18)' }} onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #F0EBE1' }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0D1B2A' }}>{isEdit ? 'Edit Page' : 'New Legal Page'}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8A95A2', padding: 4 }}><X size={18} /></button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #e4e7eb' }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a' }}>{isEdit ? 'Edit Page' : 'New Legal Page'}</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', padding: 4 }}><X size={18} /></button>
         </div>
 
         <form onSubmit={handleSubmit} style={{ flex: 1, overflowY: 'auto', padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -112,11 +112,11 @@ function PageModal({
           <div>
             <label style={{ ...labelStyle, display: 'flex', justifyContent: 'space-between' }}>
               <span>Slug</span>
-              <button type="button" onClick={() => setSlugManual(v => !v)} style={{ fontSize: 10, fontWeight: 500, color: '#1E6091', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
+              <button type="button" onClick={() => setSlugManual(v => !v)} style={{ fontSize: 10, fontWeight: 500, color: '#2c6ecb', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'none', letterSpacing: 0 }}>
                 {slugManual ? 'Auto-generate' : 'Edit manually'}
               </button>
             </label>
-            <input style={{ ...inputStyle, background: slugManual ? '#FAFAF8' : '#F5F3EF', color: slugManual ? '#0D1B2A' : '#8A95A2' }}
+            <input style={{ ...inputStyle, background: slugManual ? '#f4f6f8' : '#f4f6f8', color: slugManual ? '#1a1a1a' : '#8a8a8a' }}
               value={form.slug} onChange={e => { setSlugManual(true); setField('slug', slugify(e.target.value)); }}
               readOnly={!slugManual} placeholder="auto-generated-from-title" />
           </div>
@@ -134,20 +134,20 @@ function PageModal({
           <div>
             <label style={labelStyle}>Meta Description</label>
             <input style={inputStyle} value={form.meta_description ?? ''} onChange={e => setField('meta_description', e.target.value)} placeholder="Short description for SEO (max 500 chars)" maxLength={500} />
-            <p style={{ fontSize: 10.5, color: '#8A95A2', marginTop: 3 }}>{(form.meta_description ?? '').length}/500</p>
+            <p style={{ fontSize: 10.5, color: '#8a8a8a', marginTop: 3 }}>{(form.meta_description ?? '').length}/500</p>
           </div>
 
           <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
             <input type="checkbox" checked={form.is_published} onChange={e => setField('is_published', e.target.checked)}
-              style={{ width: 16, height: 16, accentColor: '#1E6091', cursor: 'pointer' }} />
-            <span style={{ fontSize: 13, color: '#0D1B2A', fontWeight: 500 }}>Publish immediately</span>
+              style={{ width: 16, height: 16, accentColor: '#2c6ecb', cursor: 'pointer' }} />
+            <span style={{ fontSize: 13, color: '#1a1a1a', fontWeight: 500 }}>Publish immediately</span>
           </label>
         </form>
 
-        <div style={{ padding: '16px 24px', borderTop: '1px solid #F0EBE1', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-          <button type="button" onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>Cancel</button>
+        <div style={{ padding: '16px 24px', borderTop: '1px solid #e4e7eb', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+          <button type="button" onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Cancel</button>
           <button type="submit" form="legal-form" disabled={saving} onClick={handleSubmit}
-            style={{ padding: '9px 20px', background: '#1E6091', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? .7 : 1 }}>
+            style={{ padding: '9px 20px', background: '#2c6ecb', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: saving ? 'wait' : 'pointer', opacity: saving ? .7 : 1 }}>
             {saving ? 'Saving…' : isEdit ? 'Save changes' : 'Create page'}
           </button>
         </div>
@@ -175,18 +175,18 @@ function DeleteConfirm({ page, onClose, onDeleted }: { page: LegalPage; onClose:
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,27,42,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 400, padding: 28, boxShadow: '0 24px 64px rgba(13,27,42,.18)' }} onClick={e => e.stopPropagation()}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(26,26,26,.45)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }} onClick={onClose}>
+      <div style={{ background: '#fff', borderRadius: 16, width: '100%', maxWidth: 400, padding: 28, boxShadow: '0 24px 64px rgba(26,26,26,.18)' }} onClick={e => e.stopPropagation()}>
         <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#FFF5F5', border: '1px solid #FCA5A5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
           <Trash2 size={18} color="#DC2626" />
         </div>
-        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0D1B2A', marginBottom: 8 }}>Delete page?</h3>
-        <p style={{ fontSize: 13, color: '#5C6B7A', lineHeight: 1.6, marginBottom: 20 }}>
-          <strong style={{ color: '#0D1B2A' }}>{page.title}</strong> will be permanently deleted. This action cannot be undone.
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', marginBottom: 8 }}>Delete page?</h3>
+        <p style={{ fontSize: 13, color: '#616161', lineHeight: 1.6, marginBottom: 20 }}>
+          <strong style={{ color: '#1a1a1a' }}>{page.title}</strong> will be permanently deleted. This action cannot be undone.
         </p>
         {error && <p style={{ fontSize: 12, color: '#DC2626', marginBottom: 12 }}>{error}</p>}
         <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #E5DFD0', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onClose} style={{ padding: '9px 18px', border: '1px solid #e1e3e5', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#fff', color: '#616161', cursor: 'pointer' }}>Cancel</button>
           <button onClick={handleDelete} disabled={loading} style={{ padding: '9px 18px', background: '#DC2626', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#fff', cursor: loading ? 'wait' : 'pointer', opacity: loading ? .7 : 1 }}>
             {loading ? 'Deleting…' : 'Delete'}
           </button>
@@ -241,14 +241,14 @@ export default function LegalPagesPage() {
         description="Manage privacy policy, terms of service, and other legal documents"
         action={
           <button onClick={() => setModal('create')}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px', background: '#1E6091', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px', background: '#2c6ecb', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer' }}>
             <Plus size={15} /> New Page
           </button>
         }
       />
 
       {/* Slug guide */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 20, padding: '12px 16px', background: '#EEF4FA', borderRadius: 10, border: '1px solid #C3D9ED', fontSize: 12.5, color: '#1E6091' }}>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20, padding: '12px 16px', background: '#EEF4FA', borderRadius: 10, border: '1px solid #C3D9ED', fontSize: 12.5, color: '#2c6ecb' }}>
         <span style={{ fontWeight: 600, flexShrink: 0 }}>💡 Slug penting:</span>
         <span>Halaman <strong>Privacy Policy</strong> harus pakai slug <code style={{ background: '#fff', padding: '1px 6px', borderRadius: 4 }}>privacy-policy</code> · Halaman <strong>Terms of Service</strong> harus pakai slug <code style={{ background: '#fff', padding: '1px 6px', borderRadius: 4 }}>terms-of-service</code> agar tampil otomatis di halaman publik.</span>
       </div>
@@ -256,11 +256,11 @@ export default function LegalPagesPage() {
       {/* Filters */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
         <div style={{ position: 'relative', flex: 1, maxWidth: 340 }}>
-          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8A95A2' }} />
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#8a8a8a' }} />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search pages…"
-            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13, background: '#FAFAF8', color: '#0D1B2A', outline: 'none' }} />
+            style={{ width: '100%', padding: '9px 12px 9px 36px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13, background: '#f4f6f8', color: '#1a1a1a', outline: 'none' }} />
         </div>
-        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', border: '1px solid #E5DFD0', borderRadius: 10, fontSize: 13, background: '#fff', color: '#5C6B7A', cursor: 'pointer' }}>
+        <button onClick={load} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 14px', border: '1px solid #e1e3e5', borderRadius: 10, fontSize: 13, background: '#fff', color: '#616161', cursor: 'pointer' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
@@ -268,7 +268,7 @@ export default function LegalPagesPage() {
       {/* Table */}
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {[1, 2, 3].map(i => <div key={i} style={{ height: 52, background: '#F5F3EF', borderRadius: 10, animation: 'pulse 1.5s infinite' }} />)}
+          {[1, 2, 3].map(i => <div key={i} style={{ height: 52, background: '#f4f6f8', borderRadius: 10, animation: 'pulse 1.5s infinite' }} />)}
         </div>
       ) : error ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '16px 20px', background: '#FFF5F5', border: '1px solid #FCA5A5', borderRadius: 12, color: '#DC2626', fontSize: 13 }}>
@@ -276,43 +276,43 @@ export default function LegalPagesPage() {
           <button onClick={load} style={{ marginLeft: 'auto', fontSize: 12, color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Retry</button>
         </div>
       ) : filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8A95A2' }}>
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8a8a8a' }}>
           <FileStack size={36} style={{ margin: '0 auto 12px', opacity: .4 }} />
-          <p style={{ fontSize: 14, fontWeight: 600, color: '#5C6B7A', marginBottom: 4 }}>No pages yet</p>
+          <p style={{ fontSize: 14, fontWeight: 600, color: '#616161', marginBottom: 4 }}>No pages yet</p>
           <p style={{ fontSize: 13 }}>Create your first legal page to get started.</p>
         </div>
       ) : (
-        <div style={{ background: '#fff', border: '1px solid #E5DFD0', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ background: '#fff', border: '1px solid #e1e3e5', borderRadius: 12, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: '#F9F7F4' }}>
                 {['Title', 'Slug', 'Status', 'Last Updated', 'Actions'].map(h => (
-                  <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#8A95A2', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid #E5DFD0' }}>{h}</th>
+                  <th key={h} style={{ padding: '11px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#8a8a8a', textTransform: 'uppercase', letterSpacing: '.04em', borderBottom: '1px solid #e1e3e5' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map((p, i) => (
-                <tr key={p.id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid #F0EBE1' : 'none' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#FAFAF8')}
+                <tr key={p.id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid #e4e7eb' : 'none' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#f4f6f8')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                   <td style={{ padding: '13px 16px' }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#0D1B2A' }}>{p.title}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a' }}>{p.title}</span>
                   </td>
                   <td style={{ padding: '13px 16px' }}>
-                    <code style={{ fontSize: 11.5, color: '#5C6B7A', background: '#F5F3EF', padding: '3px 7px', borderRadius: 5 }}>{p.slug}</code>
+                    <code style={{ fontSize: 11.5, color: '#616161', background: '#f4f6f8', padding: '3px 7px', borderRadius: 5 }}>{p.slug}</code>
                   </td>
                   <td style={{ padding: '13px 16px' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, fontSize: 11.5, fontWeight: 600, background: p.is_published ? '#ECFDF5' : '#F5F3EF', color: p.is_published ? '#059669' : '#8A95A2' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 20, fontSize: 11.5, fontWeight: 600, background: p.is_published ? '#ECFDF5' : '#f4f6f8', color: p.is_published ? '#059669' : '#8a8a8a' }}>
                       {p.is_published ? <Eye size={11} /> : <EyeOff size={11} />}
                       {p.is_published ? 'Published' : 'Draft'}
                     </span>
                   </td>
-                  <td style={{ padding: '13px 16px', fontSize: 12.5, color: '#8A95A2' }}>{fmtDate(p.updated_at)}</td>
+                  <td style={{ padding: '13px 16px', fontSize: 12.5, color: '#8a8a8a' }}>{fmtDate(p.updated_at)}</td>
                   <td style={{ padding: '13px 16px' }}>
                     <div style={{ display: 'flex', gap: 6 }}>
                       <button onClick={() => openEdit(p)}
-                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 10px', border: '1px solid #E5DFD0', borderRadius: 7, fontSize: 12, fontWeight: 600, color: '#1E6091', background: '#fff', cursor: 'pointer' }}>
+                        style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 10px', border: '1px solid #e1e3e5', borderRadius: 7, fontSize: 12, fontWeight: 600, color: '#2c6ecb', background: '#fff', cursor: 'pointer' }}>
                         <Pencil size={12} /> Edit
                       </button>
                       <button onClick={() => openDelete(p)}

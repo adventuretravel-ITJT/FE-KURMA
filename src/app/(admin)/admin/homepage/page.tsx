@@ -156,7 +156,7 @@ function TextField({ label, value, onChange, placeholder }: {
 }) {
   return (
     <div style={{ marginBottom: 16 }}>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#5C6B7A', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#616161', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
         {label}
       </label>
       <input
@@ -165,8 +165,8 @@ function TextField({ label, value, onChange, placeholder }: {
         placeholder={placeholder}
         style={{
           width: '100%', padding: '9px 12px', borderRadius: 8,
-          border: '1px solid #E5DFD0', fontSize: 13, color: '#0D1B2A',
-          background: '#FAFAF7', outline: 'none', boxSizing: 'border-box',
+          border: '1px solid #e1e3e5', fontSize: 13, color: '#1a1a1a',
+          background: '#f4f6f8', outline: 'none', boxSizing: 'border-box',
         }}
       />
     </div>
@@ -178,7 +178,7 @@ function TextareaField({ label, value, onChange, rows = 3 }: {
 }) {
   return (
     <div style={{ marginBottom: 16 }}>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#5C6B7A', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#616161', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
         {label}
       </label>
       <textarea
@@ -187,8 +187,8 @@ function TextareaField({ label, value, onChange, rows = 3 }: {
         rows={rows}
         style={{
           width: '100%', padding: '9px 12px', borderRadius: 8,
-          border: '1px solid #E5DFD0', fontSize: 13, color: '#0D1B2A',
-          background: '#FAFAF7', outline: 'none', resize: 'vertical', boxSizing: 'border-box',
+          border: '1px solid #e1e3e5', fontSize: 13, color: '#1a1a1a',
+          background: '#f4f6f8', outline: 'none', resize: 'vertical', boxSizing: 'border-box',
           fontFamily: 'inherit',
         }}
       />
@@ -209,10 +209,10 @@ function JsonField({ label, value, onChange, placeholder }: {
   return (
     <div style={{ marginBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-        <label style={{ fontSize: 12, fontWeight: 600, color: '#5C6B7A', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-          {label} <span style={{ color: '#8A95A2', textTransform: 'none', fontWeight: 400 }}>(JSON)</span>
+        <label style={{ fontSize: 12, fontWeight: 600, color: '#616161', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+          {label} <span style={{ color: '#8a8a8a', textTransform: 'none', fontWeight: 400 }}>(JSON)</span>
         </label>
-        {error && <span style={{ fontSize: 11, color: '#FF6B6B' }}>{error}</span>}
+        {error && <span style={{ fontSize: 11, color: '#d72c0d' }}>{error}</span>}
       </div>
       <textarea
         value={value}
@@ -222,8 +222,8 @@ function JsonField({ label, value, onChange, placeholder }: {
         spellCheck={false}
         style={{
           width: '100%', padding: '9px 12px', borderRadius: 8,
-          border: `1px solid ${error ? '#FF6B6B' : '#E5DFD0'}`, fontSize: 12, color: '#0D1B2A',
-          background: '#F5F1E8', outline: 'none', resize: 'vertical', boxSizing: 'border-box',
+          border: `1px solid ${error ? '#d72c0d' : '#e1e3e5'}`, fontSize: 12, color: '#1a1a1a',
+          background: '#f1f1f1', outline: 'none', resize: 'vertical', boxSizing: 'border-box',
           fontFamily: 'monospace',
         }}
       />
@@ -253,7 +253,7 @@ function ImageField({ label, value, onChange, sectionId }: {
 
   return (
     <div style={{ marginBottom: 16 }}>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#5C6B7A', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#616161', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
         {label}
       </label>
 
@@ -264,8 +264,8 @@ function ImageField({ label, value, onChange, sectionId }: {
         placeholder="URL gambar atau upload di bawah"
         style={{
           width: '100%', padding: '9px 12px', borderRadius: 8,
-          border: '1px solid #E5DFD0', fontSize: 13, color: '#0D1B2A',
-          background: '#FAFAF7', outline: 'none', boxSizing: 'border-box',
+          border: '1px solid #e1e3e5', fontSize: 13, color: '#1a1a1a',
+          background: '#f4f6f8', outline: 'none', boxSizing: 'border-box',
         }}
       />
 
@@ -276,7 +276,7 @@ function ImageField({ label, value, onChange, sectionId }: {
           <img
             src={value.startsWith('/storage') ? `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'}${value}` : value}
             alt="preview"
-            style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid #E5DFD0', flexShrink: 0 }}
+            style={{ width: 120, height: 80, objectFit: 'cover', borderRadius: 8, border: '1px solid #e1e3e5', flexShrink: 0 }}
           />
         )}
         <div>
@@ -287,14 +287,14 @@ function ImageField({ label, value, onChange, sectionId }: {
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '7px 14px', borderRadius: 8,
-              border: '1px solid #E5DFD0', background: '#fff',
-              fontSize: 12, color: '#5C6B7A', cursor: 'pointer',
+              border: '1px solid #e1e3e5', background: '#fff',
+              fontSize: 12, color: '#616161', cursor: 'pointer',
             }}
           >
             <Upload size={13} />{uploading ? 'Uploading…' : 'Upload Gambar'}
           </button>
-          {uploadError && <p style={{ fontSize: 11, color: '#FF6B6B', marginTop: 4 }}>{uploadError}</p>}
-          <p style={{ fontSize: 11, color: '#8A95A2', marginTop: 4 }}>Max 5 MB · JPEG, PNG, WebP</p>
+          {uploadError && <p style={{ fontSize: 11, color: '#d72c0d', marginTop: 4 }}>{uploadError}</p>}
+          <p style={{ fontSize: 11, color: '#8a8a8a', marginTop: 4 }}>Max 5 MB · JPEG, PNG, WebP</p>
         </div>
       </div>
 
@@ -321,10 +321,10 @@ function SectionEditor({ section, values, onChange, onSave, saving, saved }: {
 }) {
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid #E5DFD0' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid #e1e3e5' }}>
         <div>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0D1B2A' }}>Section: {section.label}</h2>
-          <p style={{ fontSize: 12, color: '#8A95A2', marginTop: 2 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a' }}>Section: {section.label}</h2>
+          <p style={{ fontSize: 12, color: '#8a8a8a', marginTop: 2 }}>
             Edit konten section <strong>{section.id}</strong> — perubahan langsung tampil di homepage setelah disimpan.
           </p>
         </div>
@@ -334,7 +334,7 @@ function SectionEditor({ section, values, onChange, onSave, saving, saved }: {
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '9px 18px', borderRadius: 8,
-            background: saving ? '#8A95A2' : '#1E6091', color: '#fff',
+            background: saving ? '#8a8a8a' : '#2c6ecb', color: '#fff',
             fontSize: 13, fontWeight: 500, cursor: saving ? 'not-allowed' : 'pointer', border: 'none',
           }}
         >
@@ -486,8 +486,8 @@ export default function HomepagePage() {
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '7px 14px', borderRadius: 8,
-              border: '1px solid #E5DFD0', background: '#fff',
-              fontSize: 12, color: '#5C6B7A', cursor: 'pointer',
+              border: '1px solid #e1e3e5', background: '#fff',
+              fontSize: 12, color: '#616161', cursor: 'pointer',
             }}
           >
             <RefreshCw size={13} /> Refresh
@@ -497,7 +497,7 @@ export default function HomepagePage() {
 
       {error && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderRadius: 10, background: '#FFF5F5', border: '1px solid #FFCCCC' }}>
-          <AlertCircle size={16} color="#FF6B6B" />
+          <AlertCircle size={16} color="#d72c0d" />
           <span style={{ fontSize: 13, color: '#CC0000' }}>{error}</span>
         </div>
       )}
@@ -508,7 +508,7 @@ export default function HomepagePage() {
         <div style={{ width: 200, flexShrink: 0 }}>
           <Card>
             <div style={{ padding: '12px 8px' }}>
-              <p style={{ fontSize: 11, fontWeight: 600, color: '#8A95A2', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0 8px', marginBottom: 8 }}>
+              <p style={{ fontSize: 11, fontWeight: 600, color: '#8a8a8a', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '0 8px', marginBottom: 8 }}>
                 Sections
               </p>
               {SECTIONS.map((s) => (
@@ -521,7 +521,7 @@ export default function HomepagePage() {
                     padding: '8px 12px', borderRadius: 8, border: 'none',
                     fontSize: 13, cursor: 'pointer',
                     background: activeSection === s.id ? '#EEF4FA' : 'transparent',
-                    color: activeSection === s.id ? '#1E6091' : '#5C6B7A',
+                    color: activeSection === s.id ? '#2c6ecb' : '#616161',
                     fontWeight: activeSection === s.id ? 600 : 400,
                   }}
                 >
@@ -537,7 +537,7 @@ export default function HomepagePage() {
         <div style={{ flex: 1, minWidth: 0 }}>
           <Card>
             {loading ? (
-              <div style={{ padding: 40, textAlign: 'center', color: '#8A95A2', fontSize: 13 }}>
+              <div style={{ padding: 40, textAlign: 'center', color: '#8a8a8a', fontSize: 13 }}>
                 Memuat konten…
               </div>
             ) : (
