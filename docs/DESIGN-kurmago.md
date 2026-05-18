@@ -394,6 +394,105 @@ components:
     textColor: "{colors.primary-deep}"
     rounded: "{rounded.full}"
     size: 36px
+
+admin:
+  description: >
+    The admin panel uses a completely separate neutral palette scoped via [data-admin].
+    It is Polaris-inspired (Shopify-style) — neutral greys, no warm sand, no serif fonts.
+    The homepage warm-sand tokens must never appear inside admin components.
+  colors:
+    canvas:         "#f1f1f1"
+    paper:          "#ffffff"
+    surface-mist:   "#f4f6f8"
+    surface-mist-2: "#e4e7eb"
+    ink:            "#1a1a1a"
+    ink-72:         "#303030"
+    ink-56:         "#616161"
+    ink-40:         "#8a8a8a"
+    hairline:       "#e1e3e5"
+    hairline-mist:  "#d2d5d8"
+    primary:        "#2c6ecb"
+    primary-deep:   "#1a4d8f"
+    coral:          "#d72c0d"
+    coral-soft:     "#fef2ee"
+    sidebar-bg:     "#1a1a1a"
+    sidebar-active: "rgba(255,255,255,0.12)"
+    sidebar-hover:  "rgba(255,255,255,0.07)"
+    sidebar-text:   "#ebebeb"
+    sidebar-muted:  "#b5b5b5"
+    sidebar-label:  "#8a8a8a"
+    badge-draft-color: "#616161"
+    badge-draft-bg:    "#f4f6f8"
+    badge-active-color: "#008060"
+    badge-active-bg:    "#e3f1df"
+    badge-completed-color: "#0044a4"
+    badge-completed-bg:    "#ebf5ff"
+    trend-positive-color: "#008060"
+    trend-positive-bg:    "#e3f1df"
+    trend-negative-color: "#d72c0d"
+    trend-negative-bg:    "#fef2ee"
+  shadows:
+    card: "inset 0 0 0 1px #e1e3e5, 0 1px 3px rgba(0,0,0,.06)"
+    dropdown: "0 8px 32px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06)"
+    search-modal: "0 16px 48px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.08)"
+  components:
+    sidebar:
+      backgroundColor: "#1a1a1a"
+      width: 220px
+      borderRight: "1px solid rgba(255,255,255,0.08)"
+    sidebar-nav-link:
+      textColor: "#ebebeb"
+      fontSize: 13px
+      fontWeight: 500
+      padding: "7px 10px"
+      rounded: 6px
+    sidebar-nav-link-active:
+      backgroundColor: "rgba(255,255,255,0.12)"
+      textColor: "#ffffff"
+    sidebar-nav-link-hover:
+      backgroundColor: "rgba(255,255,255,0.07)"
+      textColor: "#ffffff"
+    sidebar-section-label:
+      textColor: "#8a8a8a"
+      fontSize: 10px
+      fontWeight: 600
+      letterSpacing: 0.4px
+      textTransform: uppercase
+    topbar:
+      backgroundColor: "#ffffff"
+      height: 52px
+      borderBottom: "1px solid #e1e3e5"
+      position: sticky
+      zIndex: 50
+    topbar-search:
+      backgroundColor: "#f1f1f1"
+      height: 32px
+      rounded: 6px
+      fontSize: 13px
+      maxWidth: 420px
+    card:
+      backgroundColor: "#ffffff"
+      rounded: 10px
+      shadow: "inset 0 0 0 1px #e1e3e5, 0 1px 3px rgba(0,0,0,.06)"
+    stat-card:
+      layout: "label / value / sub — no icon box"
+      labelColor: "#8a8a8a"
+      labelSize: 11px
+      valueColor: "#1a1a1a"
+      valueSize: 24px
+      subColor: "#616161"
+      subSize: 12px
+    badge:
+      fontSize: 10px
+      fontWeight: 600
+      padding: "2px 8px"
+      rounded: 9999px
+    page-header:
+      titleColor: "#1a1a1a"
+      titleSize: 20px
+      titleWeight: 700
+      subtitleColor: "#8a8a8a"
+      subtitleSize: 14px
 ---
 
 # KurmaGo Design System
@@ -741,6 +840,143 @@ The structural breakpoints that matter for IT: 1200px (full itinerary 3-column a
 8. When in doubt about emphasis: lift the card with `{shadows.ring-hairline}` first; only escalate to `{shadows.soft-1}` or `{shadows.soft-2}` if the lift isn't reading.
 9. Wave Bright is for editorial accents and Pro upsells. Ocean Blue is for actions. Don't blur the two.
 10. Italic Fraunces is precious. Used too often, it stops feeling editorial and starts feeling decorative. Audit every italic usage — if it's not a brand quote, tagline, or vision moment, it shouldn't be italic.
+
+---
+
+## Admin Panel Design System
+
+The admin panel (`/admin/*`) is a **completely separate design surface** from the homepage. It uses a neutral Polaris-inspired palette — no warm sand, no Fraunces serif, no ocean metaphors. The two palettes are kept isolated via the `[data-admin]` CSS attribute on the layout root; the homepage tokens in `:root` are never overridden globally.
+
+### Why Separate
+
+The homepage is an editorial, brand-forward experience. The admin panel is a dense data tool — users spend hours inside it, managing content, users, and transactions. An editorial warm-sand palette would feel slow and precious in a data-dense context. The neutral palette (closer to Shopify Polaris or Linear) reduces cognitive load and keeps attention on the data.
+
+### Token Scope
+
+All admin overrides live in `globals.css` under the `[data-admin]` selector and map to the same `--kg-*` token names so admin components consume tokens normally — but they resolve to the neutral values, not the warm-sand homepage values.
+
+| Token | Admin Value | Homepage Value |
+|---|---|---|
+| `--kg-canvas` | `#f1f1f1` | `#F5F1E8` (Warm Sand) |
+| `--kg-paper` | `#ffffff` | `#FFFFFF` |
+| `--kg-surface-mist` | `#f4f6f8` | `#E8F4F8` (Sea Mist) |
+| `--kg-ink` | `#1a1a1a` | `#0D1B2A` (Deep Ink) |
+| `--kg-primary` | `#2c6ecb` | `#1E6091` (Ocean Blue) |
+| `--kg-hairline` | `#e1e3e5` | `#E5DFD0` |
+| `--kg-coral` | `#d72c0d` | `#FF6B6B` |
+
+### Layout
+
+```
+<div data-admin>                              bg: #f1f1f1
+  <AdminSidebar />                           fixed 220px, bg: #1a1a1a
+  <div class="lg:ml-[220px] flex flex-col">
+    <AdminTopbar />                          sticky 52px, bg: #ffffff
+    <main class="flex-1">
+      {page content}
+    </main>
+  </div>
+</div>
+```
+
+On mobile: sidebar slides in as a drawer from the left (`position: fixed`, translates off-screen). The topbar always renders and shows a hamburger button + KurmaGo "K" mark logo. On desktop the sidebar is always visible.
+
+### Sidebar (`AdminSidebar.tsx`)
+
+- **Background**: `#1a1a1a` — raw hex, not a token (sidebar lives outside the `[data-admin]` scroll context)
+- **Width**: `220px` via `var(--sidebar)`
+- **Section labels**: 10px, 600 weight, `#8a8a8a`, uppercase, 0.4px letter-spacing
+- **Nav link at rest**: `color: #ebebeb`, 13px / 500
+- **Active link**: `bg: rgba(255,255,255,0.12)`, `color: #ffffff`
+- **Hover**: `bg: rgba(255,255,255,0.07)`, `color: #ffffff`
+- **Sub-menu** (expanded children): indented with `border-left: 1px solid rgba(255,255,255,0.12)`
+- **Logo mark**: 26×26px rounded `6px`, gradient `linear-gradient(135deg, #2c6ecb, #1a4d8f)`, letter "K" placeholder (replace with SVG when brand asset is ready)
+- **Footer**: Help & Docs + Logout; logout hover tints red `rgba(255,107,107,0.12)` / `#ff8a8a`
+- **Mobile backdrop**: `rgba(0,0,0,0.5)`, `z-index: 40`; sidebar at `z-index: 50`
+
+### Topbar (`AdminTopbar.tsx`)
+
+- **Height**: 52px · `position: sticky; top: 0; z-index: 50`
+- **Background**: `#ffffff` · `border-bottom: 1px solid #e1e3e5`
+- **Search input**: `readOnly`, clicking opens `GlobalSearch` modal. Background `#f1f1f1`, hover `#e4e7eb`, `border-radius: 6px`, height 32px. Leading search icon `#8a8a8a`.
+- **Notification bell**: icon button `32×32px`, dropdown opens `position: absolute; top: calc(100% + 8px); right: 0`. Unread dot `#d72c0d` with `border: 2px solid #ffffff`. Polls `/api/admin/notifications` every 15 s.
+- **Mobile additions** (`lg:hidden`): hamburger button + KurmaGo logo mark before search input
+
+### Global Search (`GlobalSearch.tsx`)
+
+- **Trigger**: click search input or `Ctrl+K` / `⌘K`
+- **Modal**: `position: fixed; top: 10vh; left: 50%; transform: translateX(-50%)`, `max-width: 580px`
+- **Backdrop**: `rgba(26,26,26,0.5)`, `backdrop-filter: blur(2px)`, `z-index: 1000`; panel at `z-index: 1001`
+- **Input row**: search icon + text input + X close button (top-right of modal). Esc key also closes.
+- **Filter tabs**: Semua / Users / Trips / Destinasi / Halaman — chip style; active = `bg: #1a1a1a, color: #fff`; inactive = `bg: #fff, border: #e1e3e5`
+- **Result types**: `user` (blue `#ebf5ff`), `trip` (green `#e3f1df`), `guide` / destination (amber `#fff5e1`), `page` / legal (purple `#f3f0ff`)
+- **Keyboard**: `↑↓` navigate · `Enter` open · `Esc` close
+- **Recent searches**: stored in `localStorage` key `admin_search_recent`
+- **Footer**: `↑↓` and `Enter` hints + result count. No separate close button in footer.
+
+### Typography in Admin
+
+The admin panel uses **Plus Jakarta Sans exclusively**. Fraunces (serif) is not used anywhere in admin UI. This is intentional — the serif voice belongs to the editorial homepage experience.
+
+| Role | Size | Weight | Color |
+|---|---|---|---|
+| Page title | 20px | 700 | `#1a1a1a` |
+| Section label | 11px / UPPER | 600 | `#8a8a8a` |
+| Table header | 11px | 600 | `#8a8a8a` |
+| Body / cell | 13–14px | 400–500 | `#1a1a1a` |
+| Caption / sub | 11–12px | 400 | `#616161` |
+| Muted / placeholder | 11–13px | 400–500 | `#8a8a8a` |
+| Nav link | 13px | 500 | `#ebebeb` |
+| Badge | 10px | 600 | varies by status |
+
+### Admin Components
+
+**`Card`**
+- `border-radius: 10px`, no separate border prop
+- Shadow: `inset 0 0 0 1px #e1e3e5, 0 1px 3px rgba(0,0,0,.06)` (ring shadow replaces border)
+- Padding variants: `none` | `sm` (p-4) | `md` (p-5)
+- `CardHeader` sub-component: `px-5 py-3.5`, `border-bottom: 1px solid #e1e3e5`
+
+**`StatCard`**
+- Layout: `label` (top) → `value` (large, middle) → `sub` (bottom). **No icon box.**
+- Label: 11px / 600 / uppercase / `#8a8a8a`
+- Value: 24px / 700 / `#1a1a1a`, tabular nums
+- Sub: 12px / `#616161`
+- Trend badge: positive `color: #008060, bg: #e3f1df` · negative `color: #d72c0d, bg: #fef2ee`
+
+**`Badge`** — Status pill component
+
+| Status | Color | Background |
+|---|---|---|
+| `draft` | `#616161` | `#f4f6f8` |
+| `active` | `#008060` | `#e3f1df` |
+| `completed` | `#0044a4` | `#ebf5ff` |
+
+Custom badges accept explicit `color` + `bg` props.
+
+**`PageHeader`**
+- Title: `#1a1a1a`, 20px / 700
+- Subtitle: `#8a8a8a`, 14px
+- Optional icon (rendered at `#8a8a8a`) and action slot (right-aligned)
+
+### Admin Do's and Don'ts
+
+**Do**
+- Keep `[data-admin]` on the root layout div so all `var(--kg-*)` tokens resolve to neutral values automatically
+- Use `#f1f1f1` as page background, `#ffffff` for cards and topbar
+- Use only Plus Jakarta Sans — no Fraunces anywhere in admin
+- Use the Card shadow (`inset 0 0 0 1px #e1e3e5`) not a border + shadow combo
+- Keep StatCard as label/value/sub only — no icon box
+- Use `position: absolute` for the notification dropdown (anchored to topbar), not `position: fixed`
+
+**Don't**
+- Don't use warm-sand tokens (`#F5F1E8`, `#E5DFD0`, `#0D1B2A`, `#1E6091`) inside admin components
+- Don't use Fraunces or `.font-serif` in any admin component
+- Don't set `position: fixed` on the notification dropdown — it should anchor relative to the bell button
+- Don't put the notification bell or global search trigger inside the sidebar — both belong in the topbar
+- Don't use the homepage `.hp-*` CSS classes inside admin pages
+
+---
 
 ## Known Gaps
 
