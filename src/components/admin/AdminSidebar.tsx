@@ -6,7 +6,6 @@ import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard,
   Users,
-  Settings2,
   Globe,
   LayoutTemplate,
   FileText,
@@ -60,7 +59,6 @@ const navGroups: NavGroup[] = [
       { label: 'Overview', href: '/admin/overview', icon: LayoutDashboard },
       { label: 'User Management', href: '/admin/users', icon: Users },
       { label: 'Trip Manager', href: '/admin/trips', icon: Briefcase },
-      { label: 'Product Config', href: '/admin/product', icon: Settings2 },
     ],
   },
   {
