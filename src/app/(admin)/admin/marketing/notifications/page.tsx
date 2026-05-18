@@ -394,7 +394,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div>
+    <div className="p-4 lg:p-8">
       <PageHeader
         icon={<Bell size={20} />}
         title="Notification Blast"
