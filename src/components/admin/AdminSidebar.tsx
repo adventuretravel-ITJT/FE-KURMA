@@ -31,8 +31,6 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-import NotificationBell from '@/components/admin/NotificationBell';
-import GlobalSearch from '@/components/admin/GlobalSearch';
 
 interface NavChild {
   label: string;
@@ -142,7 +140,6 @@ export default function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebar
     .map((item) => item.label);
 
   const [expanded, setExpanded] = useState<string[]>(defaultExpanded);
-  const [searchOpen, setSearchOpen] = useState(false);
 
   // Close mobile sidebar on navigation
   const prevPathname = useRef(pathname);
@@ -152,18 +149,6 @@ export default function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebar
       onCloseRef.current();
     }
   }, [pathname]);
-
-  // Cmd+K / Ctrl+K global shortcut
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        setSearchOpen(true);
-      }
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
 
   const toggle = (label: string) => {
     setExpanded((prev) =>
@@ -320,13 +305,6 @@ export default function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebar
           className="flex-shrink-0 p-2 space-y-px"
           style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
         >
-          <div className="px-2.5 py-2 flex items-center gap-2.5">
-            <NotificationBell />
-            <span className="text-[13px] font-medium" style={{ color: '#ebebeb' }}>Notifikasi</span>
-          </div>
-
-          <div className="mx-1" style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
-
           <button
             className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-colors text-[#b5b5b5] hover:bg-[rgba(255,255,255,0.07)] hover:text-white"
           >
@@ -346,7 +324,6 @@ export default function AdminSidebar({ mobileOpen, onMobileClose }: AdminSidebar
           </button>
         </div>
 
-        <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
       </aside>
     </>
   );
