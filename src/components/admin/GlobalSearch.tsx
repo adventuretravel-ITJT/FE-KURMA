@@ -38,10 +38,10 @@ interface SearchResult {
 }
 
 const TYPE_CONFIG: Record<ResultType, { label: string; icon: React.ReactNode; color: string; bg: string }> = {
-  user:  { label: 'User',        icon: <Users size={13} />,    color: '#1D4ED8', bg: '#EFF6FF' },
-  trip:  { label: 'Trip',        icon: <Briefcase size={13} />, color: '#166534', bg: '#F0FDF4' },
-  guide: { label: 'Destinasi',   icon: <Globe size={13} />,    color: '#92400E', bg: '#FFFBEB' },
-  page:  { label: 'Legal Page',  icon: <FileText size={13} />, color: '#6B21A8', bg: '#F5F3FF' },
+  user:  { label: 'User',       icon: <Users size={13} />,     color: '#0044a4', bg: '#ebf5ff' },
+  trip:  { label: 'Trip',       icon: <Briefcase size={13} />, color: '#006b4f', bg: '#e3f1df' },
+  guide: { label: 'Destinasi',  icon: <Globe size={13} />,     color: '#8c6700', bg: '#fff5e1' },
+  page:  { label: 'Legal Page', icon: <FileText size={13} />,  color: '#6b21a8', bg: '#f3f0ff' },
 };
 
 const FILTER_TABS: { key: string; label: string }[] = [
@@ -59,7 +59,7 @@ function highlight(text: string, query: string) {
   return (
     <>
       {text.slice(0, idx)}
-      <mark style={{ background: '#FEF9C3', color: 'inherit', borderRadius: 2, padding: 0 }}>
+      <mark style={{ background: '#fef9c3', color: 'inherit', borderRadius: 2, padding: 0 }}>
         {text.slice(idx, idx + query.length)}
       </mark>
       {text.slice(idx + query.length)}
@@ -75,18 +75,17 @@ interface GlobalSearchProps {
 }
 
 export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
-  const router = useRouter();
-  const inputRef    = useRef<HTMLInputElement>(null);
-  const listRef     = useRef<HTMLDivElement>(null);
+  const router   = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef  = useRef<HTMLDivElement>(null);
 
-  const [query, setQuery]       = useState('');
+  const [query, setQuery]         = useState('');
   const [activeTab, setActiveTab] = useState('all');
-  const [results, setResults]   = useState<SearchResult[]>([]);
-  const [loading, setLoading]   = useState(false);
-  const [recent, setRecent]     = useState<string[]>([]);
+  const [results, setResults]     = useState<SearchResult[]>([]);
+  const [loading, setLoading]     = useState(false);
+  const [recent, setRecent]       = useState<string[]>([]);
   const [activeIdx, setActiveIdx] = useState(-1);
 
-  // Reset on open
   useEffect(() => {
     if (open) {
       setQuery('');
@@ -98,7 +97,6 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
     }
   }, [open]);
 
-  // Debounced search
   const doSearch = useCallback(async (q: string, tab: string) => {
     if (q.trim().length < 2) { setResults([]); return; }
     setLoading(true);
@@ -119,34 +117,22 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
     return () => clearTimeout(t);
   }, [query, activeTab, doSearch]);
 
-  // Keyboard nav
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') { onClose(); return; }
-
       const items = results.length > 0 ? results : [];
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setActiveIdx(i => Math.min(i + 1, items.length - 1));
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setActiveIdx(i => Math.max(i - 1, -1));
-      }
-      if (e.key === 'Enter' && activeIdx >= 0 && items[activeIdx]) {
-        navigate(items[activeIdx]);
-      }
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIdx(i => Math.min(i + 1, items.length - 1)); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); setActiveIdx(i => Math.max(i - 1, -1)); }
+      if (e.key === 'Enter' && activeIdx >= 0 && items[activeIdx]) navigate(items[activeIdx]);
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open, results, activeIdx]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Scroll active item into view
   useEffect(() => {
     if (activeIdx < 0 || !listRef.current) return;
-    const el = listRef.current.querySelector(`[data-idx="${activeIdx}"]`);
-    el?.scrollIntoView({ block: 'nearest' });
+    listRef.current.querySelector(`[data-idx="${activeIdx}"]`)?.scrollIntoView({ block: 'nearest' });
   }, [activeIdx]);
 
   function navigate(result: SearchResult) {
@@ -190,38 +176,41 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
         onClick={onClose}
         style={{
           position: 'fixed', inset: 0,
-          background: 'rgba(13,27,42,.5)',
+          background: 'rgba(26,26,26,0.5)',
           backdropFilter: 'blur(2px)',
-          zIndex: 200,
+          zIndex: 1000,
         }}
       />
 
       {/* Panel */}
       <div style={{
         position: 'fixed',
-        top: '12vh',
+        top: '10vh',
         left: '50%',
         transform: 'translateX(-50%)',
-        width: '100%',
-        maxWidth: 600,
-        zIndex: 201,
-        borderRadius: 16,
-        background: 'var(--kg-paper)',
-        border: '1px solid var(--kg-hairline)',
-        boxShadow: '0 24px 64px rgba(13,27,42,.2)',
+        width: 'calc(100% - 32px)',
+        maxWidth: 580,
+        zIndex: 1001,
+        borderRadius: 10,
+        background: '#ffffff',
+        border: '1px solid #e1e3e5',
+        boxShadow: '0 16px 48px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.08)',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        maxHeight: '72vh',
+        maxHeight: '74vh',
       }}>
 
         {/* Search input row */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
-          padding: '14px 16px',
-          borderBottom: '1px solid var(--kg-hairline)',
+          padding: '12px 14px',
+          borderBottom: '1px solid #e1e3e5',
         }}>
-          <Search size={18} style={{ color: loading ? 'var(--kg-primary)' : 'var(--kg-ink-40)', flexShrink: 0 }} />
+          <Search
+            size={16}
+            style={{ color: loading ? '#2c6ecb' : '#8a8a8a', flexShrink: 0, transition: 'color .15s' }}
+          />
           <input
             ref={inputRef}
             value={query}
@@ -229,31 +218,29 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
             placeholder="Cari user, trip, destinasi, halaman..."
             style={{
               flex: 1, border: 'none', outline: 'none',
-              fontSize: 15, background: 'transparent',
-              color: 'var(--kg-ink)', fontFamily: 'inherit',
+              fontSize: 14, background: 'transparent',
+              color: '#1a1a1a', fontFamily: 'inherit',
             }}
           />
           {query && (
-            <button onClick={() => { setQuery(''); setResults([]); inputRef.current?.focus(); }}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--kg-ink-40)', padding: 2, display: 'flex' }}>
-              <X size={15} />
+            <button
+              onClick={() => { setQuery(''); setResults([]); inputRef.current?.focus(); }}
+              style={{
+                background: '#f4f6f8', border: 'none', cursor: 'pointer',
+                color: '#616161', padding: 4, display: 'flex', borderRadius: 4,
+              }}
+            >
+              <X size={13} />
             </button>
           )}
-          <kbd style={{
-            padding: '3px 6px', borderRadius: 5,
-            border: '1px solid var(--kg-hairline)',
-            background: 'var(--kg-canvas)',
-            fontSize: 11, color: 'var(--kg-ink-40)', fontFamily: 'inherit',
-          }}>
-            Esc
-          </kbd>
+          <kbd style={kbdStyle}>Esc</kbd>
         </div>
 
-        {/* Filter tabs */}
+        {/* Filter tabs — chip style */}
         <div style={{
-          display: 'flex', gap: 4, padding: '8px 14px',
-          borderBottom: '1px solid var(--kg-hairline)',
-          overflowX: 'auto',
+          display: 'flex', gap: 4, padding: '8px 12px',
+          borderBottom: '1px solid #e1e3e5',
+          overflowX: 'auto', scrollbarWidth: 'none',
         }}>
           {FILTER_TABS.map(tab => {
             const count = tab.key === 'all'
@@ -266,21 +253,21 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
                 onClick={() => { setActiveTab(tab.key); setActiveIdx(-1); }}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 5,
-                  padding: '5px 11px', borderRadius: 100, whiteSpace: 'nowrap',
-                  border: `1px solid ${isActive ? 'var(--kg-primary)' : 'var(--kg-hairline)'}`,
-                  background: isActive ? 'var(--kg-primary)' : 'transparent',
-                  color: isActive ? '#fff' : 'var(--kg-ink-56)',
-                  cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                  padding: '4px 10px', borderRadius: 6, whiteSpace: 'nowrap',
+                  border: `1px solid ${isActive ? '#1a1a1a' : '#e1e3e5'}`,
+                  background: isActive ? '#1a1a1a' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#616161',
+                  cursor: 'pointer', fontSize: 12, fontWeight: 500,
                   fontFamily: 'inherit', transition: 'all .12s',
                 }}
               >
                 {tab.label}
                 {query.length >= 2 && count > 0 && (
                   <span style={{
-                    fontSize: 10, fontWeight: 700,
-                    background: isActive ? 'rgba(255,255,255,.3)' : 'var(--kg-surface-mist)',
-                    color: isActive ? '#fff' : 'var(--kg-ink-40)',
-                    padding: '1px 5px', borderRadius: 100,
+                    fontSize: 10, fontWeight: 600,
+                    background: isActive ? 'rgba(255,255,255,0.2)' : '#f4f6f8',
+                    color: isActive ? '#fff' : '#616161',
+                    padding: '0 4px', borderRadius: 4, lineHeight: '16px',
                   }}>
                     {count}
                   </span>
@@ -293,20 +280,22 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
         {/* Body */}
         <div ref={listRef} style={{ overflowY: 'auto', flex: 1 }}>
 
-          {/* Empty state — no query yet */}
+          {/* Empty state — no query */}
           {query.length < 2 && (
             <div style={{ padding: '6px 0' }}>
               {recent.length > 0 ? (
                 <>
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '8px 16px 4px',
+                    padding: '8px 14px 4px',
                   }}>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--kg-ink-40)', textTransform: 'uppercase', letterSpacing: '.5px' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: '#8a8a8a', textTransform: 'uppercase', letterSpacing: '.5px' }}>
                       Pencarian Terakhir
                     </span>
-                    <button onClick={() => { clearRecent(); setRecent([]); }}
-                      style={{ fontSize: 11, color: 'var(--kg-ink-40)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
+                    <button
+                      onClick={() => { clearRecent(); setRecent([]); }}
+                      style={{ fontSize: 11, color: '#8a8a8a', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
+                    >
                       Hapus semua
                     </button>
                   </div>
@@ -314,15 +303,15 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
                     <div
                       key={r}
                       onClick={() => pickRecent(r)}
-                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 16px', cursor: 'pointer' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'var(--kg-surface-mist)'; }}
+                      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 14px', cursor: 'pointer' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = '#f4f6f8'; }}
                       onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'none'; }}
                     >
-                      <Clock size={14} style={{ color: 'var(--kg-ink-40)', flexShrink: 0 }} />
-                      <span style={{ flex: 1, fontSize: 13, color: 'var(--kg-ink)' }}>{r}</span>
+                      <Clock size={13} style={{ color: '#8a8a8a', flexShrink: 0 }} />
+                      <span style={{ flex: 1, fontSize: 13, color: '#303030' }}>{r}</span>
                       <button
                         onClick={e => handleRemoveRecent(e, r)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--kg-ink-40)', padding: 2, display: 'flex', alignItems: 'center' }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8a8a8a', padding: 2, display: 'flex', alignItems: 'center' }}
                       >
                         <X size={11} />
                       </button>
@@ -330,35 +319,33 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
                   ))}
                 </>
               ) : (
-                <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--kg-ink-40)', fontSize: 13 }}>
-                  <Hash size={24} style={{ margin: '0 auto 10px', opacity: .3, display: 'block' }} />
+                <div style={{ padding: '32px 16px', textAlign: 'center', color: '#8a8a8a', fontSize: 13 }}>
+                  <Hash size={22} style={{ margin: '0 auto 10px', opacity: .3, display: 'block' }} />
                   Ketik minimal 2 karakter untuk mulai mencari
                 </div>
               )}
             </div>
           )}
 
-          {/* Loading */}
+          {/* Loading skeleton */}
           {loading && query.length >= 2 && (
-            <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--kg-ink-40)', fontSize: 13 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 400, margin: '0 auto' }}>
-                {[1, 2, 3].map(i => (
-                  <div key={i} style={{ height: 48, borderRadius: 8, background: 'var(--kg-surface-mist)', animation: 'pulse 1.4s ease-in-out infinite' }} />
-                ))}
-              </div>
+            <div style={{ padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {[1, 2, 3].map(i => (
+                <div key={i} style={{ height: 46, borderRadius: 6, background: '#f4f6f8', animation: 'gs-pulse 1.4s ease-in-out infinite' }} />
+              ))}
             </div>
           )}
 
           {/* Empty results */}
           {isEmpty && (
-            <div style={{ padding: '40px 16px', textAlign: 'center', color: 'var(--kg-ink-40)', fontSize: 13 }}>
-              <Search size={28} style={{ margin: '0 auto 10px', opacity: .25, display: 'block' }} />
-              <p style={{ fontWeight: 600, color: 'var(--kg-ink-56)' }}>Tidak ada hasil untuk &ldquo;{query}&rdquo;</p>
+            <div style={{ padding: '36px 16px', textAlign: 'center', color: '#8a8a8a', fontSize: 13 }}>
+              <Search size={26} style={{ margin: '0 auto 10px', opacity: .25, display: 'block' }} />
+              <p style={{ fontWeight: 600, color: '#616161' }}>Tidak ada hasil untuk &ldquo;{query}&rdquo;</p>
               <p style={{ marginTop: 4, fontSize: 12 }}>Coba kata kunci lain atau ganti filter</p>
             </div>
           )}
 
-          {/* Results — grouped by type when activeTab === 'all' */}
+          {/* Results */}
           {!loading && displayResults.length > 0 && (
             activeTab === 'all'
               ? renderGrouped(results, query, activeIdx, navigate)
@@ -368,10 +355,11 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
 
         {/* Footer */}
         <div style={{
-          padding: '8px 16px',
-          borderTop: '1px solid var(--kg-hairline)',
-          display: 'flex', alignItems: 'center', gap: 16,
-          fontSize: 11, color: 'var(--kg-ink-40)',
+          padding: '7px 14px',
+          borderTop: '1px solid #e1e3e5',
+          display: 'flex', alignItems: 'center', gap: 14,
+          fontSize: 11, color: '#8a8a8a',
+          background: '#f4f6f8',
         }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <kbd style={kbdStyle}>↑↓</kbd> navigasi
@@ -383,14 +371,16 @@ export default function GlobalSearch({ open, onClose }: GlobalSearchProps) {
             <kbd style={kbdStyle}>Esc</kbd> tutup
           </span>
           {results.length > 0 && (
-            <span style={{ marginLeft: 'auto' }}>
-              {results.length} hasil ditemukan
+            <span style={{ marginLeft: 'auto', fontWeight: 500 }}>
+              {results.length} hasil
             </span>
           )}
         </div>
       </div>
 
-      <style>{`@keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }`}</style>
+      <style>{`
+        @keyframes gs-pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+      `}</style>
     </>
   );
 }
@@ -404,24 +394,37 @@ function renderGrouped(
   onNavigate: (r: SearchResult) => void,
 ) {
   const groups: Record<string, SearchResult[]> = {};
-  results.forEach((r, i) => {
+  results.forEach(r => {
     if (!groups[r.type]) groups[r.type] = [];
-    groups[r.type].push({ ...r, _idx: i } as SearchResult & { _idx: number });
+    groups[r.type].push(r);
   });
 
   return (
-    <div style={{ padding: '6px 0' }}>
+    <div style={{ padding: '4px 0' }}>
       {Object.entries(groups).map(([type, items]) => {
         const cfg = TYPE_CONFIG[type as ResultType];
         return (
           <div key={type}>
-            <div style={{ padding: '8px 16px 4px', fontSize: 10, fontWeight: 700, color: 'var(--kg-ink-40)', textTransform: 'uppercase', letterSpacing: '.5px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{
+              padding: '8px 14px 3px',
+              fontSize: 10, fontWeight: 600, color: '#8a8a8a',
+              textTransform: 'uppercase', letterSpacing: '.5px',
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
               <span style={{ color: cfg.color }}>{cfg.icon}</span>
               {cfg.label}
             </div>
             {items.map(item => {
               const globalIdx = results.indexOf(item);
-              return <ResultRow key={item.id + type} result={item} query={query} isActive={activeIdx === globalIdx} idx={globalIdx} onNavigate={onNavigate} />;
+              return (
+                <ResultRow
+                  key={item.id + type}
+                  result={item} query={query}
+                  isActive={activeIdx === globalIdx}
+                  idx={globalIdx}
+                  onNavigate={onNavigate}
+                />
+              );
             })}
           </div>
         );
@@ -437,9 +440,15 @@ function renderFlat(
   onNavigate: (r: SearchResult) => void,
 ) {
   return (
-    <div style={{ padding: '6px 0' }}>
+    <div style={{ padding: '4px 0' }}>
       {results.map((r, i) => (
-        <ResultRow key={r.id + r.type} result={r} query={query} isActive={activeIdx === i} idx={i} onNavigate={onNavigate} />
+        <ResultRow
+          key={r.id + r.type}
+          result={r} query={query}
+          isActive={activeIdx === i}
+          idx={i}
+          onNavigate={onNavigate}
+        />
       ))}
     </div>
   );
@@ -458,17 +467,17 @@ function ResultRow({ result, query, isActive, idx, onNavigate }: {
       data-idx={idx}
       onClick={() => onNavigate(result)}
       style={{
-        display: 'flex', alignItems: 'center', gap: 12,
-        padding: '9px 16px',
-        background: isActive ? 'var(--kg-surface-mist)' : 'transparent',
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '8px 14px',
+        background: isActive ? '#f4f6f8' : 'transparent',
         cursor: 'pointer', transition: 'background .1s',
       }}
-      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'var(--kg-surface-mist)'; }}
+      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = '#f4f6f8'; }}
       onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
     >
       {/* Type icon badge */}
       <div style={{
-        width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+        width: 30, height: 30, borderRadius: 6, flexShrink: 0,
         background: cfg.bg, color: cfg.color,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
@@ -477,11 +486,11 @@ function ResultRow({ result, query, isActive, idx, onNavigate }: {
 
       {/* Text */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--kg-ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#1a1a1a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {highlight(result.title, query)}
         </div>
         {result.subtitle && (
-          <div style={{ fontSize: 11.5, color: 'var(--kg-ink-40)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
+          <div style={{ fontSize: 11.5, color: '#8a8a8a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: 1 }}>
             {highlight(result.subtitle, query)}
           </div>
         )}
@@ -490,22 +499,22 @@ function ResultRow({ result, query, isActive, idx, onNavigate }: {
       {/* Meta badge */}
       {result.meta && (
         <span style={{
-          padding: '2px 7px', borderRadius: 100,
+          padding: '2px 6px', borderRadius: 4,
           background: cfg.bg, color: cfg.color,
-          fontSize: 10, fontWeight: 700, flexShrink: 0,
+          fontSize: 10, fontWeight: 600, flexShrink: 0,
         }}>
           {result.meta}
         </span>
       )}
 
-      <ArrowRight size={13} style={{ color: 'var(--kg-ink-40)', flexShrink: 0 }} />
+      <ArrowRight size={12} style={{ color: '#8a8a8a', flexShrink: 0 }} />
     </div>
   );
 }
 
 const kbdStyle: React.CSSProperties = {
   padding: '2px 5px', borderRadius: 4,
-  border: '1px solid var(--kg-hairline)',
-  background: 'var(--kg-canvas)',
-  fontFamily: 'inherit', fontSize: 10,
+  border: '1px solid #d2d5d8',
+  background: '#ffffff',
+  fontFamily: 'inherit', fontSize: 10, color: '#616161',
 };

@@ -103,76 +103,77 @@ export default function NotificationBell() {
 
     return (
         <div ref={dropdownRef} style={{ position: 'relative' }}>
-            {/* Bell Button */}
+            {/* Bell Button — styled for dark sidebar */}
             <button
                 onClick={() => setOpen(prev => !prev)}
                 style={{
                     position: 'relative',
-                    width: 38, height: 38,
-                    borderRadius: 10,
-                    border: '1px solid var(--kg-hairline)',
-                    background: open ? 'var(--kg-surface-mist)' : 'var(--kg-paper)',
+                    width: 28, height: 28,
+                    borderRadius: 6,
+                    border: 'none',
+                    background: open ? 'rgba(255,255,255,0.10)' : 'transparent',
                     cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'var(--kg-ink-56)',
-                    transition: 'all .18s',
+                    color: open ? '#ffffff' : '#b5b5b5',
+                    transition: 'background .15s, color .15s',
+                    flexShrink: 0,
                 }}
                 onMouseEnter={e => {
-                    e.currentTarget.style.background = 'var(--kg-surface-mist)';
-                    e.currentTarget.style.color = 'var(--kg-primary)';
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
+                    e.currentTarget.style.color = '#ffffff';
                 }}
                 onMouseLeave={e => {
-                    if (!open) {
-                        e.currentTarget.style.background = 'var(--kg-paper)';
-                        e.currentTarget.style.color = 'var(--kg-ink-56)';
-                    }
+                    e.currentTarget.style.background = open ? 'rgba(255,255,255,0.10)' : 'transparent';
+                    e.currentTarget.style.color = open ? '#ffffff' : '#b5b5b5';
                 }}
             >
-                <Bell size={17} />
+                <Bell size={16} />
                 {unread > 0 && (
                     <span style={{
-                        position: 'absolute', top: 6, right: 6,
-                        width: 8, height: 8, borderRadius: '50%',
-                        background: '#FF6B6B',
-                        border: '2px solid var(--kg-paper)',
+                        position: 'absolute', top: 4, right: 4,
+                        width: 7, height: 7, borderRadius: '50%',
+                        background: '#ff6b6b',
+                        border: '2px solid #1a1a1a',
                     }} />
                 )}
             </button>
 
-            {/* Dropdown */}
+            {/* Dropdown — tetap light/white sebagai floating panel */}
             {open && (
                 <div style={{
-                    position: 'absolute', bottom: 'calc(100% + 8px)', left: 0,
-                    width: 340, maxHeight: 440,
-                    background: 'var(--kg-paper)',
-                    border: '1px solid var(--kg-hairline)',
-                    borderRadius: 14,
-                    boxShadow: '0 8px 32px rgba(13,27,42,.12)',
-                    zIndex: 999,
+                    position: 'fixed',
+                    bottom: 60, left: 12,
+                    width: 340, maxHeight: 460,
+                    background: '#ffffff',
+                    border: '1px solid #e1e3e5',
+                    borderRadius: 12,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08)',
+                    zIndex: 9999,
                     display: 'flex', flexDirection: 'column',
                     overflow: 'hidden',
                 }}>
                     {/* Header */}
                     <div style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '14px 16px 12px',
-                        borderBottom: '1px solid var(--kg-hairline)',
+                        padding: '12px 14px 10px',
+                        borderBottom: '1px solid #e1e3e5',
+                        flexShrink: 0,
                     }}>
-                        <div>
-                            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--kg-ink)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a' }}>
                                 Notifikasi
                             </span>
                             {unread > 0 && (
                                 <span style={{
-                                    marginLeft: 8, fontSize: 11, fontWeight: 600,
-                                    background: 'var(--kg-primary)', color: '#fff',
-                                    padding: '2px 7px', borderRadius: 100,
+                                    fontSize: 11, fontWeight: 600,
+                                    background: '#d72c0d', color: '#fff',
+                                    padding: '1px 6px', borderRadius: 999,
                                 }}>
-                                    {unread} baru
+                                    {unread}
                                 </span>
                             )}
                         </div>
-                        <div style={{ display: 'flex', gap: 6 }}>
+                        <div style={{ display: 'flex', gap: 4 }}>
                             {unread > 0 && (
                                 <button
                                     onClick={markAllRead}
@@ -180,24 +181,24 @@ export default function NotificationBell() {
                                     title="Tandai semua dibaca"
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: 4,
-                                        padding: '4px 10px', borderRadius: 8,
-                                        border: '1px solid var(--kg-hairline)',
+                                        padding: '4px 8px', borderRadius: 6,
+                                        border: '1px solid #e1e3e5',
                                         background: 'transparent', cursor: 'pointer',
-                                        fontSize: 11, fontWeight: 600, color: 'var(--kg-primary)',
+                                        fontSize: 11, fontWeight: 500, color: '#005bd3',
                                         fontFamily: 'inherit',
                                     }}
                                 >
-                                    <CheckCheck size={12} /> Baca semua
+                                    <CheckCheck size={11} /> Baca semua
                                 </button>
                             )}
                             <button
                                 onClick={() => setOpen(false)}
                                 style={{
                                     width: 26, height: 26, borderRadius: 6,
-                                    border: '1px solid var(--kg-hairline)',
+                                    border: '1px solid #e1e3e5',
                                     background: 'transparent', cursor: 'pointer',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    color: 'var(--kg-ink-40)',
+                                    color: '#8a8a8a',
                                 }}
                             >
                                 <X size={12} />
@@ -209,11 +210,11 @@ export default function NotificationBell() {
                     <div style={{ overflowY: 'auto', flex: 1 }}>
                         {notifs.length === 0 ? (
                             <div style={{
-                                padding: '40px 20px', textAlign: 'center',
-                                color: 'var(--kg-ink-40)', fontSize: 13,
+                                padding: '36px 20px', textAlign: 'center',
+                                color: '#8a8a8a', fontSize: 13,
                             }}>
-                                <Bell size={28} style={{ margin: '0 auto 10px', opacity: .3 }} />
-                                <p>Belum ada notifikasi</p>
+                                <Bell size={26} style={{ margin: '0 auto 10px', opacity: .3 }} />
+                                <p style={{ fontWeight: 500 }}>Belum ada notifikasi</p>
                             </div>
                         ) : (
                             notifs.map(n => (
@@ -221,25 +222,25 @@ export default function NotificationBell() {
                                     key={n.id}
                                     onClick={() => !n.is_read && markRead(n.id)}
                                     style={{
-                                        display: 'flex', gap: 12, padding: '12px 16px',
-                                        borderBottom: '1px solid var(--kg-hairline)',
-                                        background: n.is_read ? 'transparent' : 'rgba(30,96,145,.04)',
+                                        display: 'flex', gap: 10, padding: '10px 14px',
+                                        borderBottom: '1px solid #ebebeb',
+                                        background: n.is_read ? 'transparent' : '#f4f6f8',
                                         cursor: n.is_read ? 'default' : 'pointer',
-                                        transition: 'background .15s',
+                                        transition: 'background .12s',
                                     }}
                                     onMouseEnter={e => {
-                                        if (!n.is_read) e.currentTarget.style.background = 'rgba(30,96,145,.08)';
+                                        if (!n.is_read) e.currentTarget.style.background = '#e4e7eb';
                                     }}
                                     onMouseLeave={e => {
-                                        if (!n.is_read) e.currentTarget.style.background = 'rgba(30,96,145,.04)';
+                                        if (!n.is_read) e.currentTarget.style.background = '#f4f6f8';
                                     }}
                                 >
                                     {/* Icon */}
                                     <div style={{
-                                        width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                                        background: 'var(--kg-surface-mist)',
+                                        width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                                        background: '#f4f6f8',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        fontSize: 16,
+                                        fontSize: 15, border: '1px solid #e1e3e5',
                                     }}>
                                         {getIcon(n.type)}
                                     </div>
@@ -247,24 +248,24 @@ export default function NotificationBell() {
                                     {/* Content */}
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <div style={{
-                                            fontSize: 13, fontWeight: n.is_read ? 500 : 700,
-                                            color: 'var(--kg-ink)', marginBottom: 2,
+                                            fontSize: 13, fontWeight: n.is_read ? 500 : 600,
+                                            color: '#1a1a1a', marginBottom: 2,
                                         }}>
                                             {n.title}
                                         </div>
                                         <div style={{
-                                            fontSize: 12, color: 'var(--kg-ink-56)',
-                                            lineHeight: 1.5, marginBottom: 4,
+                                            fontSize: 12, color: '#616161',
+                                            lineHeight: 1.45, marginBottom: 3,
                                         }}>
                                             {n.body}
                                         </div>
                                         <div style={{
-                                            fontSize: 11, color: 'var(--kg-ink-40)',
+                                            fontSize: 11, color: '#8a8a8a',
                                             display: 'flex', alignItems: 'center', gap: 6,
                                         }}>
                                             {timeAgo(n.created_at)}
                                             {n.is_read && (
-                                                <span style={{ display: 'flex', alignItems: 'center', gap: 2, color: 'var(--kg-primary)' }}>
+                                                <span style={{ display: 'flex', alignItems: 'center', gap: 2, color: '#008060' }}>
                                                     <Check size={10} /> Dibaca
                                                 </span>
                                             )}
@@ -274,8 +275,8 @@ export default function NotificationBell() {
                                     {/* Unread dot */}
                                     {!n.is_read && (
                                         <div style={{
-                                            width: 8, height: 8, borderRadius: '50%',
-                                            background: 'var(--kg-primary)', flexShrink: 0, marginTop: 4,
+                                            width: 7, height: 7, borderRadius: '50%',
+                                            background: '#2c6ecb', flexShrink: 0, marginTop: 5,
                                         }} />
                                     )}
                                 </div>
